@@ -1,17 +1,22 @@
 {
-  "name": "shadcn-ui-monorepo",
-  "version": "0.0.1",
+  "name": "turbo-repo-tailwind-4-shadcn",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev"
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "clean": "rm -rf .turbo/ node_modules && turbo clean",
+    "format": "prettier --write . --ignore-path ./.prettierignore && turbo format"
   },
   "devDependencies": {
-    "@workspace/typescript-config": "workspace:*",
+    "@workspace/eslint": "workspace:*",
+    "@workspace/typescript": "workspace:*",
+    "@workspace/prettier": "workspace:*",
     "turbo": "^2.3.4",
     "typescript": "5.7.3"
   },
-  "packageManager": "pnpm@9.12.3",
+  "packageManager": "pnpm@9.15.4",
   "engines": {
     "node": ">=20"
   }
