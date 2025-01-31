@@ -1,0 +1,19 @@
+{
+  "name": "@workspace/tailwind",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf node_modules/ .turbo/"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.14",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1"
+  },
+  "exports": {
+    "./tailwind.config": "./tailwind.config.ts",
+    "./globals.css": "./globals.css",
+    "./postcss.config": "./postcss.config.mjs"
+  }
+}

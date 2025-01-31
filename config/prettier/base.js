@@ -27,7 +27,7 @@ export default {
   ],
   importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"],
   tailwindStylesheet: fileURLToPath(
-    new URL("../../packages/ui/src/styles/globals.css", import.meta.url),
+    new URL("../../config/tailwind/globals.css", import.meta.url),
   ),
   tailwindConfig: fileURLToPath(
     new URL("../../packages/ui/tailwind.config.ts", import.meta.url),
