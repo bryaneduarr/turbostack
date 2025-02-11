@@ -3,8 +3,5 @@ node_modules
 .next
 dist
 
-apps
-packages
-
 pnpm-lock.yaml
 package-lock.json

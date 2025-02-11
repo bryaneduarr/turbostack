@@ -55,7 +55,7 @@ export default [
   },
   // General
   {
-    settings: { react: { version: "detect" } },
+    settings: { react: { version: "19" } },
   },
   {
     ignores: [

@@ -8,7 +8,7 @@
     "dev": "turbo dev",
     "lint": "eslint . && turbo lint",
     "clean": "turbo clean && rm -rf .turbo/ node_modules",
-    "format": "prettier --write . --ignore-path ./.prettierignore && turbo format"
+    "format": "turbo format"
   },
   "devDependencies": {
     "@workspace/eslint": "workspace:*",
