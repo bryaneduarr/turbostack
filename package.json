@@ -1,12 +1,13 @@
 {
   "name": "turbo-repo-tailwind-4-shadcn",
   "version": "1.0.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
-    "lint": "turbo lint",
-    "clean": "rm -rf .turbo/ node_modules && turbo clean",
+    "lint": "eslint . && turbo lint",
+    "clean": "turbo clean && rm -rf .turbo/ node_modules",
     "format": "prettier --write . --ignore-path ./.prettierignore && turbo format"
   },
   "devDependencies": {

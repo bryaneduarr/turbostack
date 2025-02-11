@@ -36,7 +36,7 @@ pnpm run format
 
 ### lint
 
-Uses [ESLint](https://eslint.org/docs/latest/) to lint most of the files of the project following the rules from [ ./config/eslint/base.js](./config/eslint/base.js).
+Uses [ESLint](https://eslint.org/docs/latest/) to lint most of the files of the project following the rules from [./config/eslint/base.js](./config/eslint/base.js).
 
 ```bash
 pnpm run lint
