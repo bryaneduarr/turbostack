@@ -1,7 +1,9 @@
 import pluginJs from "@eslint/js";
+import tsPlugin from "@typescript-eslint/eslint-plugin";
 import { Linter } from "eslint";
 import pluginReact from "eslint-plugin-react";
 import globals from "globals";
+import turboPlugin from "eslint-plugin-turbo";
 import tseslint from "typescript-eslint";
 
 export const eslintConfig: Linter.Config[] = [
@@ -11,11 +13,29 @@ export const eslintConfig: Linter.Config[] = [
   ...tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   {
+    plugins: {
+      "@typescript-eslint": tsPlugin,
+      react: pluginReact,
+      turbo: turboPlugin,
+    },
     rules: {
       semi: ["error", "always"],
       quotes: ["error", "double"],
+
+      // React rules
+      ...pluginReact.configs.recommended.rules,
+
+      // React scope no longer necessary with new JSX transform.
       "react/react-in-jsx-scope": "off",
+      "react/prop-types": "off",
     },
+  },
+  // General
+  {
+    settings: { react: { version: "19" } },
+  },
+  {
+    ignores: ["dist", "pnpm-lock.yaml", ".next"],
   },
 ] as Linter.Config[];
 
