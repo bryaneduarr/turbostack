@@ -4,19 +4,20 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf node_modules/ .turbo/",
+    "check-types": "tsc --noEmit",
     "update": "pnpm update --latest"
   },
   "exports": {
     "./index": "./src/index.ts"
   },
   "devDependencies": {
-    "@eslint/js": "^9.20.0",
+    "@eslint/js": "^9.21.0",
     "@typescript-eslint/eslint-plugin": "^8.24.1",
     "@workspace/typescript": "workspace:*",
-    "eslint": "^9.20.1",
+    "eslint": "^9.21.0",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-turbo": "^2.4.2",
-    "globals": "^15.15.0",
+    "globals": "^16.0.0",
     "jiti": "^2.4.2",
     "typescript-eslint": "^8.24.1"
   }

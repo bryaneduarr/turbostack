@@ -4,9 +4,11 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "lint": "eslint .",
+    "clean": "rm -rf node_modules/ .turbo/",
+    "check-types": "tsc --noEmit",
     "format": "prettier --write . --ignore-path ./.gitignore",
-    "clean": "rm -rf node_modules/ .turbo/"
+    "lint": "eslint .",
+    "update": "pnpm update --latest"
   },
   "dependencies": {
     "@radix-ui/react-icons": "^1.3.2",
@@ -20,19 +22,19 @@
     "react": "^19.0.0",
     "react-day-picker": "^9.5.1",
     "react-dom": "^19.0.0",
-    "tailwind-merge": "^3.0.1"
+    "tailwind-merge": "^3.0.2"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.0.6",
-    "@types/node": "^22.13.4",
+    "@tailwindcss/postcss": "^4.0.8",
+    "@types/node": "^22.13.5",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
     "@workspace/eslint": "workspace:*",
     "@workspace/tailwind": "workspace:*",
     "@workspace/typescript": "workspace:*",
-    "postcss": "^8.5.2",
+    "postcss": "^8.5.3",
     "react": "^19.0.0",
-    "tailwindcss": "^4.0.6",
+    "tailwindcss": "^4.0.8",
     "typescript": "^5.7.3"
   },
   "exports": {

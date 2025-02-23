@@ -4,12 +4,14 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "clean": "rm -rf node_modules/ .turbo/"
+    "clean": "rm -rf node_modules/ .turbo/",
+    "check-types": "tsc --noEmit",
+    "update": "pnpm update --latest"
   },
   "dependencies": {
-    "@tailwindcss/postcss": "^4.0.6",
-    "postcss": "^8.5.2",
-    "tailwindcss": "^4.0.6",
+    "@tailwindcss/postcss": "^4.0.8",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.8",
     "tailwindcss-animate": "^1.0.7"
   },
   "exports": {
