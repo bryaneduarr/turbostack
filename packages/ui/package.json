@@ -25,7 +25,7 @@
     "tailwind-merge": "^3.0.2"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.0.9",
+    "@tailwindcss/postcss": "^4.0.10",
     "@types/node": "^22.13.9",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
@@ -34,7 +34,7 @@
     "@workspace/typescript": "workspace:*",
     "postcss": "^8.5.3",
     "react": "^19.0.0",
-    "tailwindcss": "^4.0.9",
+    "tailwindcss": "^4.0.10",
     "typescript": "^5.8.2"
   },
   "exports": {
