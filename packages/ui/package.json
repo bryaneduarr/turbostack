@@ -17,7 +17,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "lucide-react": "0.475.0",
+    "lucide-react": "0.477.0",
     "next-themes": "^0.4.4",
     "react": "^19.0.0",
     "react-day-picker": "^9.5.1",
@@ -25,8 +25,8 @@
     "tailwind-merge": "^3.0.2"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.0.8",
-    "@types/node": "^22.13.5",
+    "@tailwindcss/postcss": "^4.0.9",
+    "@types/node": "^22.13.9",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
     "@workspace/eslint": "workspace:*",
@@ -34,8 +34,8 @@
     "@workspace/typescript": "workspace:*",
     "postcss": "^8.5.3",
     "react": "^19.0.0",
-    "tailwindcss": "^4.0.8",
-    "typescript": "^5.7.3"
+    "tailwindcss": "^4.0.9",
+    "typescript": "^5.8.2"
   },
   "exports": {
     "./postcss.config": "./postcss.config.mjs",
