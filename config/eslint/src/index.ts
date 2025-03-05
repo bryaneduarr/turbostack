@@ -5,6 +5,8 @@ import pluginReact from "eslint-plugin-react";
 import globals from "globals";
 import turboPlugin from "eslint-plugin-turbo";
 import tseslint from "typescript-eslint";
+// @ts-expect-error No types for eslint-plugin-next.
+import pluginNext from "@next/eslint-plugin-next";
 
 export const eslintConfig: Linter.Config[] = [
   { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
@@ -15,6 +17,7 @@ export const eslintConfig: Linter.Config[] = [
   {
     plugins: {
       "@typescript-eslint": tsPlugin,
+      "@next/next": pluginNext,
       react: pluginReact,
       turbo: turboPlugin,
     },
