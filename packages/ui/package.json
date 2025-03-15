@@ -17,16 +17,16 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "lucide-react": "0.477.0",
-    "next-themes": "^0.4.4",
+    "lucide-react": "0.482.0",
+    "next-themes": "^0.4.6",
     "react": "^19.0.0",
-    "react-day-picker": "^9.5.1",
+    "react-day-picker": "^9.6.2",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.0.2"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.0.10",
-    "@types/node": "^22.13.9",
+    "@tailwindcss/postcss": "^4.0.14",
+    "@types/node": "^22.13.10",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
     "@workspace/eslint": "workspace:*",
@@ -34,7 +34,7 @@
     "@workspace/typescript": "workspace:*",
     "postcss": "^8.5.3",
     "react": "^19.0.0",
-    "tailwindcss": "^4.0.10",
+    "tailwindcss": "^4.0.14",
     "typescript": "^5.8.2"
   },
   "exports": {
