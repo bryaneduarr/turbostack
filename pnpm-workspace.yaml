@@ -1,4 +1,6 @@
 packages:
-  - "apps/*"
-  - "config/*"
-  - "packages/*"
+  - apps/*
+  - config/*
+  - packages/*
+onlyBuiltDependencies:
+  - sharp
