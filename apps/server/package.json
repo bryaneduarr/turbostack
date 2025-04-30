@@ -1,0 +1,29 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
+    "check-types": "tsc --noEmit",
+    "clean": "rm -rf ./dist ./node_modules/ ./.turbo/",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
+    "format": "prettier --write . --ignore-path ./.gitignore",
+    "lint": "eslint .",
+    "start": "node dist/server.js",
+    "update": "pnpm update --latest"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.15.3",
+    "@workspace/eslint": "workspace:*",
+    "@workspace/prettier": "workspace:*",
+    "@workspace/typescript": "workspace:*",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.15"
+  }
+}
