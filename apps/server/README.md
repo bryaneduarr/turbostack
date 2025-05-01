@@ -23,6 +23,10 @@ A type-safe **Back-End** server application built with **Express.JS** and **Type
 
 Clone the repository
 
+```sh
+git clone https://github.com/bryaneduarr/turbostack.git
+```
+
 Install dependencies:
 
 ```sh
