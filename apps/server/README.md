@@ -43,7 +43,7 @@ Start the development server with hot reloading (Nodemon):
 pnpm run dev
 ```
 
-The server will be available at [http://localhost:3001] by default.
+The server will be available at [http://localhost:3001](http://localhost:3001) by default.
 
 Build the TypeScript project:
 
