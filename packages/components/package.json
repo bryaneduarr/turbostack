@@ -40,8 +40,10 @@
   "exports": {
     "./postcss.config": "./postcss.config.mjs",
     "./tailwind.config": "./tailwind.config.ts",
-    "./lib/*": "./src/lib/*.ts",
-    "./components/*": "./src/components/*.tsx",
-    "./hooks/*": "./src/hooks/*.ts"
+    "./utils": "./src/lib/utils.ts",
+    "./button": "./src/components/ui/button.tsx",
+    "./calendar": "./src/components/ui/calendar.tsx",
+    "./popover": "./src/components/ui/popover.tsx",
+    "./basic-date-picker": "./src/components/basic-date-picker.tsx"
   }
 }
