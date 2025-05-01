@@ -29,8 +29,8 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 The application uses components from the shared UI library. For example:
 
 ```tsx
-import { Button } from "@workspace/ui/components/button";
-import DatePicker from "@workspace/ui/components/ui/basic-date-picker";
+import DatePicker from "@workspace/components/basic-date-picker";
+import { Button } from "@workspace/components/button";
 ```
 
 ## Configuration
