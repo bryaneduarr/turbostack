@@ -9,9 +9,9 @@
     "update": "pnpm update --latest"
   },
   "dependencies": {
-    "@tailwindcss/postcss": "^4.1.4",
+    "@tailwindcss/postcss": "^4.1.5",
     "postcss": "^8.5.3",
-    "tailwindcss": "^4.1.4",
+    "tailwindcss": "^4.1.5",
     "tailwindcss-animate": "^1.0.7"
   },
   "exports": {
