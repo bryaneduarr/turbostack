@@ -1,6 +1,6 @@
 # @workspace/ui
 
-A shared UI component library for the workspace built with [Shadcn UI](https://ui.shadcn.com/docs) UI and [Tailwind CSS v.4](https://tailwindcss.com/docs/)  This package provides reusable, accessible components that can be imported throughout the monorepo.
+A shared UI component library for the workspace built with [Shadcn UI](https://ui.shadcn.com/docs) UI and [Tailwind CSS v.4](https://tailwindcss.com/docs/) This package provides reusable, accessible components that can be imported throughout the monorepo.
 
 ## Available Components
 
@@ -47,10 +47,8 @@ Components can be imported directly from [@workspace/ui](../../packages/ui/) int
 // Import Individual Components.
 import { Button } from "@workspace/ui/components/button";
 import { Calendar } from "@workspace/ui/components/calendar";
-
 // Import Custom Components.
 import DatePicker from "@workspace/ui/components/ui/basic-date-picker";
-
 // Import Utility Functions.
 import { cn } from "@workspace/ui/lib/utils";
 ```
