@@ -3,9 +3,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@workspace/ui/*": ["./src/*"],
-      "@workspace/config/*": ["../../config/*"]
-    }
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/components/ui/*"],
+      "@lib/*": ["./src/lib/*"]
+    },
+    "module": "ESNext",
+    "moduleResolution": "bundler"
   },
   "include": ["."],
   "exclude": ["node_modules", "dist"]
