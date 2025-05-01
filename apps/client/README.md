@@ -1,24 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Client Application
+
+This is a [Next.js](https://nextjs.org) application that's part of a Turborepo monorepo structure. The application uses **Next.js 15** with **React 19**, **Tailwind CSS v4**, and components from the shared UI library.
+
+## Features
+
+- **Next.js 15** - Latest Next.js framework with App Router
+- **React 19** - Latest React version
+- **Tailwind CSS v4** - Using shared Tailwind configuration
+- **Shadcn/UI Components** - Reusable UI components from the workspace
+- **TypeScript** - Full type safety throughout the application
+- **Turbopack** - Fast development server with hot reloading
+- **Monorepo Integration** - Part of a Turborepo structure
 
 ## Getting Started
 
 First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```sh
+pnpm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Using UI Components
+
+The application uses components from the shared UI library. For example:
+
+```tsx
+import { Button } from "@workspace/ui/components/button";
+import DatePicker from "@workspace/ui/components/ui/basic-date-picker";
+```
+
+## Configuration
+
+This application uses shared configurations from the monorepo workspace:
+
+- **ESLint** - Config from [@workspace/eslint](../../config/eslint)
+- **Prettier** - Config from [@workspace/prettier](../../config/prettier/)
+- **Tailwind** - Config from [@workspace/tailwind](../../config/tailwind/)
+- **TypeScript** - Config from [@workspace/typescript](../../config/typescript/)
+
+## Available Scripts
+
+- **pnpm build** - Builds the Next.js application for production
+- **pnpm clean** - Removes generated directories (node_modules, .turbo, .next)
+- **pnpm check-types** - Checks TypeScript types without emitting files
+- **pnpm dev** - Starts the development server with Turbopack
+- **pnpm format** - Formats code with Prettier
+- **pnpm lint** - Lints code with ESLint
+- **pnpm start** - Starts the production server
+- **pnpm update** - Updates dependencies to their latest versions
 
 ## Learn More
 
