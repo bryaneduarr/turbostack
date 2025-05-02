@@ -2,11 +2,6 @@
   "extends": "@workspace/typescript/react.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@components/*": ["./src/components/ui/*"],
-      "@lib/*": ["./src/lib/*"]
-    },
     "module": "ESNext",
     "moduleResolution": "bundler"
   },
