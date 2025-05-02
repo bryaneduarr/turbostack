@@ -96,5 +96,5 @@ pnpm run setup
 This command does the same as `pnpm run setup` but it includes the script for `update` that will update all the packages and dependencies to the latest version and also execute all the scripts tasks in parallel.
 
 ```sh
-pnpm run setup:updtade
+pnpm run setup:update
 ```
