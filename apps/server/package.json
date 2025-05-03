@@ -19,9 +19,9 @@
   "devDependencies": {
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.3",
-    "@workspace/eslint": "workspace:*",
-    "@workspace/prettier": "workspace:*",
-    "@workspace/typescript": "workspace:*",
+    "@workspace/eslint": "*",
+    "@workspace/prettier": "*",
+    "@workspace/typescript": "*",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.15",
