@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -rf node_modules/ .turbo/",
     "check-types": "tsc --noEmit",
-    "update": "pnpm update --latest"
+    "update": "bun update"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.5",

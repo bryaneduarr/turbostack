@@ -11,7 +11,7 @@
     "format": "prettier --write . --ignore-path ./.gitignore",
     "lint": "eslint .",
     "start": "next start",
-    "update": "pnpm update --latest"
+    "update": "bun update"
   },
   "dependencies": {
     "@workspace/components": "*",

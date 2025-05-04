@@ -8,7 +8,7 @@
     "check-types": "tsc --noEmit",
     "format": "prettier --write . --ignore-path ./.gitignore",
     "lint": "eslint .",
-    "update": "pnpm update --latest"
+    "update": "bun update"
   },
   "dependencies": {
     "@radix-ui/react-icons": "^1.3.2",
@@ -33,7 +33,7 @@
     "@workspace/tailwind": "*",
     "@workspace/typescript": "*",
     "postcss": "^8.5.3",
-    "react": "^19.0.0",
+    "react": "^19.1.0",
     "tailwindcss": "^4.1.5",
     "typescript": "^5.8.3"
   },
