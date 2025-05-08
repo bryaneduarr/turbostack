@@ -18,7 +18,7 @@
     "@workspace/eslint": "workspace:*",
     "@workspace/prettier": "workspace:*",
     "@workspace/typescript": "workspace:*",
-    "turbo": "^2.5.2",
+    "turbo": "^2.5.3",
     "typescript": "5.8.3"
   },
   "packageManager": "pnpm@10.10.0",
