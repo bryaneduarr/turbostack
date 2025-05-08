@@ -12,7 +12,6 @@ This template is organized into a clean monorepo structure with three main secti
 
    - [ESLint](./config/eslint/)
    - [Prettier](./config/prettier/) configuration.
-   - [Tailwind CSS V.4](./config/tailwind/)
    - [TypeScript](./config/typescript/)
 
 2. **[Packages](./packages/)**: Sharable packages across your project.
@@ -33,7 +32,7 @@ Package manager used for this template is [PNPM](https://pnpm.io/motivation).
 
 [Tailwind CSS v.4](https://tailwindcss.com/docs/installation/using-vite) is in the latest version `v4`. You can find all the configuration in [here](./config/tailwind/).
 
-The file [globals.css](./config/tailwind/globals.css) is based on the file from [this external file](https://github.com/shadcn/app-tailwind-v4/blob/main/app/globals.css).
+The file [globals.css](./packages/ui/src/styles/globals.css) is based on the file from [this external file](https://github.com/shadcn/app-tailwind-v4/blob/main/app/globals.css).
 
 ## Available Scripts
 

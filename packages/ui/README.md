@@ -59,7 +59,6 @@ This application uses shared configurations from the monorepo workspace:
 
 - **ESLint** - Config from [@workspace/eslint](../../config/eslint)
 - **Prettier** - Config from [@workspace/prettier](../../config/prettier/)
-- **Tailwind** - Config from [@workspace/tailwind](../../config/tailwind/)
 - **TypeScript** - Config from [@workspace/typescript](../../config/typescript/)
 
 ## Available Scripts
