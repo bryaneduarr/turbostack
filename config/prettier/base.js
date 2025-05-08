@@ -29,9 +29,6 @@ export default {
   tailwindStylesheet: fileURLToPath(
     new URL("../../config/tailwind/globals.css", import.meta.url),
   ),
-  tailwindConfig: fileURLToPath(
-    new URL("../../packages/ui/tailwind.config.ts", import.meta.url),
-  ),
   tailwindPreserveWhitespace: false,
   tailwindPreserveDuplicates: false,
   tailwindFunctions: ["cn"],
