@@ -11,8 +11,8 @@
     "format": "turbo format",
     "lint": "eslint . && turbo lint",
     "update": "turbo update",
-    "setup": "pnpm run clean && rm -rf pnpm-lock.yaml && pnpm install && pnpm run check-types && pnpm run lint && pnpm run format && pnpm run build && pnpm run dev",
-    "setup:update": "pnpm run clean && rm -rf pnpm-lock.yaml && pnpm install && pnpm run update && pnpm run clean && rm -rf pnpm-lock.yaml && pnpm install && pnpm run check-types && pnpm run lint && pnpm run format && pnpm run build && pnpm run dev"
+    "setup": "pnpm run clean && rm -rf pnpm-lock.yaml && pnpm install && pnpm run format && pnpm run lint && pnpm run check-types && pnpm run build && pnpm run dev",
+    "setup:update": "pnpm run clean && rm -rf pnpm-lock.yaml && pnpm install && pnpm run update && pnpm run clean && rm -rf pnpm-lock.yaml && pnpm install && pnpm run format && pnpm run lint && pnpm run check-types && pnpm run build && pnpm run dev"
   },
   "devDependencies": {
     "@workspace/eslint": "workspace:*",

@@ -1,0 +1,21 @@
+{
+  "name": "@workspace/tailwind",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf node_modules/ .turbo/",
+    "update": "pnpm update --latest"
+  },
+  "exports": {
+    "./globals.css": "./globals.css",
+    "./postcss.config": "./postcss.config.mjs"
+  },
+  "dependencies": {
+    "tw-animate-css": "^1.2.9"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.6",
+    "tailwindcss": "^4.1.6"
+  }
+}
