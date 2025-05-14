@@ -76,7 +76,7 @@ pnpm run start
 
 ## Environment Configuration
 
-The application uses a type-safe configuration module to manage environment variables. You can extend the Config interface in [config.ts](./src/config/config.ts) to add new environment variables:
+The application uses a type-safe configuration module to manage environment variables. You can extend the Config interface in [env.ts](./src/config/env.ts) to add new environment variables:
 
 ```typescript
 // Example: Adding a new DATABASE_URL environment variable.

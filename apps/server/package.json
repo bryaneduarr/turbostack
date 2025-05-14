@@ -6,7 +6,7 @@
     "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
     "check-types": "tsc --noEmit",
     "clean": "rm -rf ./dist ./node_modules/ ./.turbo/",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' -r tsconfig-paths/register src/server.ts",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' -r tsconfig-paths/register src/index.ts",
     "format": "prettier --write . --ignore-path ./.gitignore",
     "lint": "eslint .",
     "start": "node dist/server.js",
