@@ -17,7 +17,7 @@ This is a [Next.js](https://nextjs.org) application that's part of a Turborepo m
 First, run the development server:
 
 ```sh
-pnpm run dev
+bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -39,19 +39,18 @@ This application uses shared configurations from the monorepo workspace:
 
 - **ESLint** - Config from [@workspace/eslint](../../config/eslint)
 - **Prettier** - Config from [@workspace/prettier](../../config/prettier/)
-- **Tailwind** - Config from [@workspace/tailwind](../../config/tailwind/)
 - **TypeScript** - Config from [@workspace/typescript](../../config/typescript/)
 
 ## Available Scripts
 
-- **pnpm build** - Builds the Next.js application for production
-- **pnpm clean** - Removes generated directories (node_modules, .turbo, .next)
-- **pnpm check-types** - Checks TypeScript types without emitting files
-- **pnpm dev** - Starts the development server with Turbopack
-- **pnpm format** - Formats code with Prettier
-- **pnpm lint** - Lints code with ESLint
-- **pnpm start** - Starts the production server
-- **pnpm update** - Updates dependencies to their latest versions
+- **bun build** - Builds the Next.js application for production
+- **bun clean** - Removes generated directories (node_modules, .turbo, .next)
+- **bun check-types** - Checks TypeScript types without emitting files
+- **bun dev** - Starts the development server with Turbopack
+- **bun format** - Formats code with Prettier
+- **bun lint** - Lints code with ESLint
+- **bun start** - Starts the production server
+- **bun update** - Updates dependencies to their latest versions
 
 ## Learn More
 

@@ -12,7 +12,6 @@ This template is organized into a clean monorepo structure with three main secti
 
    - [ESLint](./config/eslint/)
    - [Prettier](./config/prettier/) configuration.
-   - [Tailwind CSS V.4](./config/tailwind/)
    - [TypeScript](./config/typescript/)
 
 2. **[Packages](./packages/)**: Sharable packages across your project.
@@ -27,74 +26,74 @@ This template is organized into a clean monorepo structure with three main secti
 
 ## Package Manager
 
-Package manager used for this template is [PNPM](https://pnpm.io/motivation).
+Package manager used for this template is [Bun](https://bun.sh).
 
 ## Tailwind CSS
 
 [Tailwind CSS v.4](https://tailwindcss.com/docs/installation/using-vite) is in the latest version `v4`. You can find all the configuration in [here](./config/tailwind/).
 
-The file [globals.css](./config/tailwind/globals.css) is based on the file from [this external file](https://github.com/shadcn/app-tailwind-v4/blob/main/app/globals.css).
+The file [globals.css](./packages/ui/src/styles/globals.css) is based on the file from [this external file](https://github.com/shadcn/app-tailwind-v4/blob/main/app/globals.css).
 
 ## Available Scripts
 
-Some of the following tasks or commands are handled with [Turborepo](https://turbo.build/repo/docs), they can be used with the package manager [PNPM](https://pnpm.io/motivation) as a regular script, the main difference is that they will work across the project.
+Some of the following tasks or commands are handled with [Turborepo](https://turbo.build/repo/docs), they can be used with the package manager [Bun](https://bun.sh) as a regular script, the main difference is that they will work across the project.
 
 Installs the dependencies needed for the project to work.
 
 ```sh
-pnpm install
+bun install
 ```
 
 Uses [Next.js](https://nextjs.org/docs) to build the client project and [TypeScript](https://www.typescriptlang.org/) to build the server project (TSC).
 
 ```bash
-pnpm run build
+bun run build
 ```
 
 Cleans all the unnecessary folders that are not needed for developing or pushing to remote.
 
 ```bash
-pnpm run clean
+bun run clean
 ```
 
 Checks any error found of [TypeScript](./config/typescript/) types in the projects that uses [TypeScript](./config/typescript/).
 
 ```sh
-pnpm run check-types
+bun run check-types
 ```
 
 Starts the development server for the client project using [Next.js](https://nextjs.org/docs) and [Turbopack](https://turbo.build/pack) with hot reloading. It also starts the server project using [Express.js](https://expressjs.com/) with hot reloading using **Nodemon**.
 
 ```bash
-pnpm run dev
+bun run dev
 ```
 
 Uses [Prettier](https://prettier.io/docs/) to format all the files of the project following the rules from [./config/prettier/base.js](./config/prettier/base.js) and ignores files from [./.gitignore](./.gitignore) and [./.prettierignore](./.prettierignore)
 
 ```bash
-pnpm run format
+bun run format
 ```
 
 Uses [ESLint](https://eslint.org/docs/latest/) to lint most of the files of the project following the rules from [./config/eslint/base.js](./config/eslint/base.js).
 
 ```bash
-pnpm run lint
+bun run lint
 ```
 
 Updates all the packages and dependencies of all the projects and configuration files to the latest version.
 
 ```sh
-pnpm run update
+bun run update
 ```
 
 With a single command you can run all the tasks above in parallel, this is the recommended way to run the project.
 
 ```sh
-pnpm run setup
+bun run setup
 ```
 
-This command does the same as `pnpm run setup` but it includes the script for `update` that will update all the packages and dependencies to the latest version and also execute all the scripts tasks in parallel.
+This command does the same as `bun run setup` but it includes the script for `update` that will update all the packages and dependencies to the latest version and also execute all the scripts tasks in parallel.
 
 ```sh
-pnpm run setup:update
+bun run setup:update
 ```

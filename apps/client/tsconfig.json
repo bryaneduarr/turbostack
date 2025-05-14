@@ -3,7 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@workspace/ui/*": ["../../packages/ui/src/*"]
     },
     "plugins": [
       {
@@ -13,10 +14,11 @@
   },
   "include": [
     "next-env.d.ts",
-    "next.config.mjs",
+    "next.config.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "prettier.config.mjs"
   ],
   "exclude": ["node_modules"]
 }

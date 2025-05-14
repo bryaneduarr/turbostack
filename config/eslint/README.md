@@ -57,6 +57,6 @@ The configuration enforces:
 
 ## Scripts
 
-- `pnpm clean` - Remove generated directories
-- `pnpm check-types` - Verify TypeScript types
-- `pnpm update` - Update dependencies to latest versions
+- `bun clean` - Remove generated directories
+- `bun check-types` - Verify TypeScript types
+- `bun update` - Update dependencies to latest versions

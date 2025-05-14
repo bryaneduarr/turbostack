@@ -11,12 +11,11 @@ This package provides a standardized [Tailwind CSS V.4](https://tailwindcss.com/
 - **Tailwind CSS v4** - Latest version with all new features and optimizations
 - **Shared Theme System** - Unified color scheme and design tokens
 - **CSS Variables** - Custom properties for colors, spacing, and more
-- **Animation Support** - Via `tailwindcss-animate` plugin
-- **Custom Components** - Pre-configured for shadcn/ui components
+- **Animation Support** - Via `tw-animate-css` plugin
+- **Custom Components** - Pre-configured styles for shadcn/ui components
 
 ## Key Files
 
-- **`tailwind.config.ts`** - Main configuration with theme settings
 - **`globals.css`** - Global styles and CSS variables
 - **`postcss.config.mjs`** - PostCSS configuration for Tailwind
 
@@ -24,19 +23,13 @@ This package provides a standardized [Tailwind CSS V.4](https://tailwindcss.com/
 
 To use this configuration in a workspace package:
 
-Import the Tailwind configuration in your `tailwind.config.ts`:
-
-```typescript
-export { default } from "@workspace/tailwind/tailwind.config";
-```
-
-Import the global styles in your main CSS or layout file:
+Import the global styles in your main CSS or layout file (not needed in the default template, if needed you can create a new file `globals.css` and import the default styles from [here](./globals.css)).
 
 ```typescript
 import "@workspace/tailwind/globals.css";
 ```
 
-For PostCSS configuration, create a `postcss.config.mjs`:
+For PostCSS configuration, create a `postcss.config.mjs` (not needed in the default template, if needed you can create a new file `globals.css` and import the default styles from [here](./globals.css)):
 
 ```javascript
 export { default } from "@workspace/tailwind/postcss.config";
@@ -44,6 +37,5 @@ export { default } from "@workspace/tailwind/postcss.config";
 
 ## Scripts
 
-- `pnpm clean` - Remove generated directories
-- `pnpm check-types` - Verify TypeScript types
-- `pnpm update` - Update dependencies to latest versions
+- `bun clean` - Remove generated directories
+- `bun update` - Update dependencies to latest versions

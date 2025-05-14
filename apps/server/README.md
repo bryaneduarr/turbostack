@@ -17,7 +17,7 @@ A type-safe **Back-End** server application built with **Express.JS** and **Type
 ### Prerequisites
 
 - Node.js (v18 or later recommended)
-- pnpm, yarn, or npm package manager (pnpm is recommended)
+- bun, yarn, or npm package manager (bun is recommended)
 
 ### Installation
 
@@ -30,7 +30,7 @@ git clone https://github.com/bryaneduarr/turbostack.git
 Install dependencies:
 
 ```sh
-pnpm install
+bun install
 ```
 
 Create a `.env` file based on the [.env.example](./.env.example) template:
@@ -44,7 +44,7 @@ cp .env.example .env
 Start the development server with hot reloading (Nodemon):
 
 ```sh
-pnpm run dev
+bun run dev
 ```
 
 The server will be available at [http://localhost:3001](http://localhost:3001) by default.
@@ -52,7 +52,7 @@ The server will be available at [http://localhost:3001](http://localhost:3001) b
 Build the TypeScript project:
 
 ```sh
-pnpm run build
+bun run build
 ```
 
 The compiled JavaScript will be generated in the `dist/` directory.
@@ -60,23 +60,23 @@ The compiled JavaScript will be generated in the `dist/` directory.
 Starting the Production Server
 
 ```sh
-pnpm run start
+bun run start
 ```
 
 ## Available Scripts
 
-- **pnpm build** - Compile TypeScript to JavaScript with path alias resolution
-- **pnpm check-types** - Check TypeScript types without emitting files
-- **pnpm clean** - Remove generated directories (dist, node_modules, .turbo)
-- **pnpm dev** - Start development server with hot reloading
-- **pnpm format** - Format code with Prettier
-- **pnpm lint** - Lint code with ESLint
-- **pnpm start** - Start the production server
-- **pnpm update** - Update dependencies to their latest versions
+- **bun build** - Compile TypeScript to JavaScript with path alias resolution
+- **bun check-types** - Check TypeScript types without emitting files
+- **bun clean** - Remove generated directories (dist, node_modules, .turbo)
+- **bun dev** - Start development server with hot reloading
+- **bun format** - Format code with Prettier
+- **bun lint** - Lint code with ESLint
+- **bun start** - Start the production server
+- **bun update** - Update dependencies to their latest versions
 
 ## Environment Configuration
 
-The application uses a type-safe configuration module to manage environment variables. You can extend the Config interface in [config.ts](./src/config/config.ts) to add new environment variables:
+The application uses a type-safe configuration module to manage environment variables. You can extend the Config interface in [env.ts](./src/config/env.ts) to add new environment variables:
 
 ```typescript
 // Example: Adding a new DATABASE_URL environment variable.

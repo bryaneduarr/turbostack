@@ -3,5 +3,5 @@ node_modules
 .next
 dist
 
-pnpm-lock.yaml
+bun.lock
 package-lock.json

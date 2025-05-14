@@ -1,6 +1,0 @@
-{
-  "extends": "@workspace/typescript/base",
-  "include": [
-    "."
-  ]
-}

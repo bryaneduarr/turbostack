@@ -5,18 +5,17 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf node_modules/ .turbo/",
-    "check-types": "tsc --noEmit",
-    "update": "bun update"
-  },
-  "dependencies": {
-    "@tailwindcss/postcss": "^4.1.5",
-    "postcss": "^8.5.3",
-    "tailwindcss": "^4.1.5",
-    "tailwindcss-animate": "^1.0.7"
+    "update": "bun update --latest"
   },
   "exports": {
-    "./tailwind.config": "./tailwind.config.ts",
     "./globals.css": "./globals.css",
     "./postcss.config": "./postcss.config.mjs"
+  },
+  "dependencies": {
+    "tw-animate-css": "^1.2.9"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.6",
+    "tailwindcss": "^4.1.6"
   }
 }

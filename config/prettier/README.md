@@ -63,5 +63,5 @@ The package includes TypeScript type definitions in `base.d.ts` to provide prope
 
 ## Scripts
 
-- `pnpm clean` - Remove generated directories
-- `pnpm update` - Update dependencies to latest versions
+- `bun clean` - Remove generated directories
+- `bun update` - Update dependencies to latest versions

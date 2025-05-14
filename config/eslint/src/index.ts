@@ -38,7 +38,7 @@ export const eslintConfig: Linter.Config[] = [
     settings: { react: { version: "19" } },
   },
   {
-    ignores: ["dist", "pnpm-lock.yaml", ".next"],
+    ignores: ["dist", "bun.lock", ".next"],
   },
 ] as Linter.Config[];
 
