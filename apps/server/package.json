@@ -17,8 +17,8 @@
     "express": "^5.1.0"
   },
   "devDependencies": {
-    "@types/express": "^5.0.1",
-    "@types/node": "^22.15.17",
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.19",
     "@workspace/eslint": "workspace:*",
     "@workspace/prettier": "workspace:*",
     "@workspace/typescript": "workspace:*",
