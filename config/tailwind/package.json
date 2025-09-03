@@ -12,10 +12,10 @@
     "./postcss.config": "./postcss.config.mjs"
   },
   "dependencies": {
-    "tw-animate-css": "^1.3.0"
+    "tw-animate-css": "^1.3.7"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.7",
-    "tailwindcss": "^4.1.7"
+    "@tailwindcss/postcss": "^4.1.12",
+    "tailwindcss": "^4.1.12"
   }
 }

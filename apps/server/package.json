@@ -13,12 +13,12 @@
     "update": "pnpm update --latest"
   },
   "dependencies": {
-    "dotenv": "^16.5.0",
+    "dotenv": "^17.2.2",
     "express": "^5.1.0"
   },
   "devDependencies": {
-    "@types/express": "^5.0.2",
-    "@types/node": "^22.15.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.0",
     "@workspace/eslint": "workspace:*",
     "@workspace/prettier": "workspace:*",
     "@workspace/typescript": "workspace:*",

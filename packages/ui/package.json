@@ -11,25 +11,25 @@
     "update": "pnpm update --latest"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.2.2",
+    "@radix-ui/react-slot": "^1.2.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.511.0",
+    "lucide-react": "^0.542.0",
     "next-themes": "^0.4.6",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "tailwind-merge": "^3.3.0",
-    "zod": "^3.24.4"
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tailwind-merge": "^3.3.1",
+    "zod": "^4.1.5"
   },
   "devDependencies": {
-    "@turbo/gen": "^2.5.3",
-    "@types/node": "^22.15.19",
-    "@types/react": "^19.1.4",
-    "@types/react-dom": "^19.1.5",
+    "@turbo/gen": "^2.5.6",
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
     "@workspace/eslint": "workspace:*",
     "@workspace/tailwind": "workspace:*",
     "@workspace/typescript": "workspace:*",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   },
   "exports": {
     "./lib/*": "./src/lib/*.ts",
