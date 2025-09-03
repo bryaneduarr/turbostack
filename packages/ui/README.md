@@ -1,14 +1,8 @@
 # @workspace/components
 
-A shared UI component library for the workspace built with [Shadcn UI](https://ui.shadcn.com/docs) UI and [Tailwind CSS v.4](https://tailwindcss.com/docs/) This package provides reusable, accessible components that can be imported throughout the monorepo.
+A shared UI component library for the workspace built with [Shadcn UI](https://ui.shadcn.com/docs) UI and [Tailwind CSS v.4](https://tailwindcss.com/docs/) This package provides reusable, accessible components that can be imported throughout the workspace.
 
-## Available Components
-
-This package includes several pre-configured components:
-
-- [Button](./src/components/ui/button.tsx) - Customizable button with multiple variants
-
-## Adding a New Component
+## Adding a New Component with Shadcn UI
 
 Take any component you desire from [Shadcn UI](https://ui.shadcn.com/docs).
 
@@ -26,9 +20,9 @@ pnpm dlx shadcn@latest add card
 
 This will add the component in [src/components](./src/components/) directory with the component's code and styles based on the configuration inside [components.json](./components.json).
 
-### Creating Custom Components
+## Adding a Custom Components with Shadcn UI
 
-You can also create custom composite components using existing Shadcn components following these steps:
+You can also create custom components using existing Shadcn components following these steps:
 
 1. Create a new file in [src/components/](./src/components/) directory.
 
@@ -38,7 +32,9 @@ You can also create custom composite components using existing Shadcn components
 
 ## Using the Components
 
-Components can be imported directly from [@workspace/components](../../packages/components/) into any other package in the monorepo. For example, guide yourself with the next example on how to import components to your packages:
+Components can be imported directly from [@workspace/ui](../../packages/ui/) into any other package in the workspace.
+
+For example, guide yourself with the next example on how to import components to your packages:
 
 ```tsx
 // Import Custom Components.
@@ -52,7 +48,7 @@ import { cn } from "@workspace/ui/lib/utils";
 
 ## Configuration
 
-This application uses shared configurations from the monorepo workspace:
+This application uses shared configurations from the workspace:
 
 - **ESLint** - Config from [@workspace/eslint](../../config/eslint)
 - **Prettier** - Config from [@workspace/prettier](../../config/prettier/)
