@@ -2,6 +2,8 @@
   "extends": "@workspace/typescript/react.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "paths": {
       "@workspace/ui/*": ["./src/*"],
       "@workspace/tailwind/*": ["../../config/tailwind/*"]

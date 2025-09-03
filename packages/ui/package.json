@@ -23,9 +23,7 @@
     "@types/node": "^24.3.0",
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
-    "@workspace/eslint": "workspace:*",
-    "@workspace/tailwind": "workspace:*",
-    "@workspace/typescript": "workspace:*"
+    "@workspace/tailwind": "workspace:*"
   },
   "exports": {
     "./lib/*": "./src/lib/*.ts",
