@@ -5,12 +5,18 @@ import pluginReact from "eslint-plugin-react";
 import globals from "globals";
 import turboPlugin from "eslint-plugin-turbo";
 import tseslint from "typescript-eslint";
-// @ts-expect-error No types for eslint-plugin-next.
 import pluginNext from "@next/eslint-plugin-next";
 
 export const eslintConfig: Linter.Config[] = [
   { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
-  { languageOptions: { globals: globals.browser } },
+  {
+    languageOptions: {
+      globals: globals.browser,
+      parserOptions: {
+        tsconfigRootDir: process.cwd(),
+      },
+    },
+  },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,

@@ -25,6 +25,10 @@
     "lint": {
       "dependsOn": ["^lint"]
     },
+    "start": {
+      "cache": false,
+      "persistent": true
+    },
     "update": {
       "cache": false,
       "persistent": true

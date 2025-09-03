@@ -9,7 +9,7 @@
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' -r tsconfig-paths/register src/index.ts",
     "format": "prettier --write . --ignore-path ./.gitignore",
     "lint": "eslint .",
-    "start": "node dist/server.js",
+    "start": "node dist/index.js",
     "update": "pnpm update --latest"
   },
   "dependencies": {

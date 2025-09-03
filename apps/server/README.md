@@ -103,8 +103,9 @@ Example usage:
 
 ```typescript
 // Instead of this:
-import config from "../config/config";
 
 // You can use:
 import config from "@/config/config";
+
+import config from "../config/config";
 ```
