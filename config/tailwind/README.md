@@ -1,10 +1,10 @@
 # `@workspace/tailwind`
 
-Shared [Tailwind CSS](https://tailwindcss.com/blog/tailwindcss-v4) configuration for the Turborepo workspace.
+Shared [Tailwind CSS](https://tailwindcss.com/blog/tailwindcss-v4) configuration for the workspace.
 
 ## Overview
 
-This package provides a standardized [Tailwind CSS V.4](https://tailwindcss.com/blog/tailwindcss-v4) configuration used across all packages and applications within the monorepo. It ensures consistent styling and theme support throughout the project.
+This package provides a standardized [Tailwind CSS V.4](https://tailwindcss.com/blog/tailwindcss-v4) configuration used across all packages and applications within the workspace. It ensures consistent styling and theme support throughout the project.
 
 ## Features
 

@@ -4,7 +4,7 @@ Shared **ESLint** configuration for the Turborepo workspace.
 
 ## Overview
 
-This package provides a general [ESLint](https://eslint.org/) configuration that is used across all packages and applications within the monorepo. It ensures consistent code quality and style throughout the project.
+This package provides a general [ESLint](https://eslint.org/) configuration that is used across all packages and applications within the workspace. It ensures consistent code quality and style throughout the project.
 
 ## Features
 
@@ -40,8 +40,8 @@ export default [
     files: ["**/*.ts"],
     rules: {
       // Your package-specific rules
-    }
-  }
+    },
+  },
 ];
 ```
 
@@ -57,6 +57,6 @@ The configuration enforces:
 
 ## Scripts
 
-- `pnpm clean` - Remove generated directories
-- `pnpm check-types` - Verify TypeScript types
-- `pnpm update` - Update dependencies to latest versions
+- `pnpm clean` - Remove generated directories.
+- `pnpm check-types` - Verify TypeScript types.
+- `pnpm update` - Update dependencies to latest versions.

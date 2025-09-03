@@ -1,17 +1,17 @@
 # `@workspace/prettier`
 
-Shared [Prettier](https://prettier.io/) configuration for the Turborepo workspace.
+Shared [Prettier](https://prettier.io/) configuration for the workspace.
 
 ## Overview
 
-This package provides a standardized [Prettier](https://prettier.io/) configuration used across all packages and applications within the monorepo. It ensures consistent code formatting and style throughout the project.
+This package provides a standardized [Prettier](https://prettier.io/) configuration used across all packages and applications within the workspace. It ensures consistent code formatting and style throughout the project.
 
 ## Features
 
 - **Consistent Code Style** - Unified formatting across all packages and applications
 - **Import Sorting** - Organized imports using `@ianvs/prettier-plugin-sort-imports`
 - **Tailwind CSS Integration** - Support for formatting Tailwind CSS classes with `prettier-plugin-tailwindcss`
-- **Path Aliases** - Configuration for handling monorepo path aliases
+- **Path Aliases** - Configuration for handling workspace path aliases
 - **TypeScript Support** - Full integration with TypeScript files
 - **JSX/React Support** - Special handling for React components
 
@@ -25,7 +25,7 @@ This package provides a standardized [Prettier](https://prettier.io/) configurat
 The configuration includes:
 
 - **Import Order** - Structured import sorting with type imports prioritized
-- **Tailwind Integration** - Points to the workspace's global Tailwind stylesheet
+- **Tailwind Integration** - Points to the workspace global Tailwind stylesheet
 - **Formatting Rules**:
   - Print width: 80 characters
   - Tab width: 2 spaces

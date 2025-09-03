@@ -1,10 +1,10 @@
 # `@workspace/typescript`
 
-Shared [TypeScript](https://www.typescriptlang.org/) configuration for the Turborepo workspace.
+Shared [TypeScript](https://www.typescriptlang.org/) configuration for the workspace.
 
 ## Overview
 
-This package provides standardized TypeScript configurations used across all TypeScript packages and applications within the monorepo. It ensures consistent type checking, module resolution, and compiler options throughout the project.
+This package provides standardized TypeScript configurations used across all TypeScript packages and applications within the workspace. It ensures consistent type checking, module resolution, and compiler options throughout the project.
 
 ## Features
 

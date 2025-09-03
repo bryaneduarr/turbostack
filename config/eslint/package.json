@@ -8,14 +8,13 @@
     "update": "pnpm update --latest"
   },
   "exports": {
-    "./index": "./src/index.ts"
+    "./index": "./index.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
     "@next/eslint-plugin-next": "^15.5.2",
     "@types/node": "^24.3.0",
     "@typescript-eslint/eslint-plugin": "^8.42.0",
-    "@workspace/typescript": "workspace:*",
     "eslint": "^9.34.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-turbo": "^2.5.6",
