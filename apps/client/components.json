@@ -4,8 +4,7 @@
   "rsc": true,
   "tsx": true,
   "tailwind": {
-    "config": "",
-    "css": "../../packages/ui/src/styles/globals.css",
+    "css": "@workspace/tailwind/globals.css",
     "baseColor": "neutral",
     "cssVariables": true
   },
@@ -14,7 +13,7 @@
     "components": "@/components",
     "hooks": "@/hooks",
     "lib": "@/lib",
-    "utils": "@workspace/ui/lib/utils",
+    "utils": "@workspace/ui/utils",
     "ui": "@workspace/ui/components"
   }
 }

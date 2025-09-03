@@ -1,22 +1,23 @@
 # Client Application
 
-This is a [Next.js](https://nextjs.org) application that's part of a Turborepo monorepo structure. The application uses **Next.js 15** with **React 19**, **Tailwind CSS v4**, and components from the shared UI library.
+This is a [Next.js](https://nextjs.org) application that's part of a apps workspace structure.
+
+The application uses **Next.js 15** with **React 19**, **Tailwind CSS v4**.
 
 ## Features
 
-- **Next.js 15** - Latest Next.js framework with App Router
-- **React 19** - Latest React version
-- **Tailwind CSS v4** - Using shared Tailwind configuration
-- **Shadcn/UI Components** - Reusable UI components from the workspace
-- **TypeScript** - Full type safety throughout the application
-- **Turbopack** - Fast development server with hot reloading
-- **Monorepo Integration** - Part of a Turborepo structure
+- **Next.js 15** - Latest Next.js framework with App Router.
+- **React 19** - Latest React version.
+- **Tailwind CSS v4** - Using shared Tailwind configuration.
+- **Shadcn/UI Components** - Reusable UI components from the workspace.
+- **TypeScript** - Full type safety throughout the application.
+- **Turbopack** - Fast development server with hot reloading.
 
 ## Getting Started
 
 First, run the development server:
 
-```sh
+```shell
 pnpm run dev
 ```
 
@@ -24,18 +25,35 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Building the Application
+
+Build the app with the integrated command:
+
+```shell
+pnpm run build
+```
+
+This will build the entire Next.js app into one.
+
+Now start the production application.
+
+```shell
+pnpm run start
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
 ## Using UI Components
 
 The application uses components from the shared UI library. For example:
 
 ```tsx
-import DatePicker from "@workspace/components/basic-date-picker";
-import { Button } from "@workspace/components/button";
+import { Button } from "@workspace/ui/button";
 ```
 
 ## Configuration
 
-This application uses shared configurations from the monorepo workspace:
+This application uses shared configurations from the workspace:
 
 - **ESLint** - Config from [@workspace/eslint](../../config/eslint)
 - **Prettier** - Config from [@workspace/prettier](../../config/prettier/)
