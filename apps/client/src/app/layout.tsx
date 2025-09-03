@@ -1,7 +1,5 @@
 import "@workspace/tailwind/globals.css";
 
-import { Providers } from "@/components/providers";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -9,9 +7,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="font-sans antialiased">
-        <Providers>{children}</Providers>
-      </body>
+      <body className="font-sans antialiased">{children}</body>
     </html>
   );
 }

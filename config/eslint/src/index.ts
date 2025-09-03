@@ -37,6 +37,10 @@ export const eslintConfig: Linter.Config[] = [
       // React scope no longer necessary with new JSX transform.
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
+
+      // This will disable an error found when using Next.js with 'next-env.d.ts'.
+      // error  Do not use a triple slash reference for ./.next/types/routes.d.ts, use `import` style instead  @typescript-eslint/triple-slash-reference
+      "@typescript-eslint/triple-slash-reference": "off",
     },
   },
   // General
