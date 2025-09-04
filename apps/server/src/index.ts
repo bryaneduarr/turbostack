@@ -1,19 +1,13 @@
-import express, { Express, Request, Response } from "express";
+import { serve } from "@hono/node-server";
 
-import env from "./config/env";
+import app from "./app";
+import env from "./env";
+import logger from "./middleware/defaults/pino-logger";
 
-const app: Express = express();
+const port = Number(env.PORT);
+logger.info(`[server]: Server is running on http://localhost:${port}`);
 
-app.use(express.json());
-
-app.get("/api", (_req: Request, res: Response) => {
-  console.log("[server]: Hello, World!");
-  res.send("Hello, World!");
-  return;
+serve({
+  fetch: app.fetch,
+  port,
 });
-
-app.listen(env.port, () => {
-  console.log(`[server]: Server is running on port ${env.SERVER_URL}`);
-});
-
-export default app;
