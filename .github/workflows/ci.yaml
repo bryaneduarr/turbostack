@@ -1,0 +1,26 @@
+name: CI
+  on:
+    push:
+      branches: [main, "**"]
+    pull_request:
+      branches: [main, "**"]
+    workflow_dispatch:
+  jobs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: latest
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Format with prettier
+        run: pnpm run format
+      - name: Lint
+        run: pnpm run lint
+      - name: Check TypeScript types
+        run: pnpm run check-types
+      - name: Build client and server apps
+        run: pnpm run build
