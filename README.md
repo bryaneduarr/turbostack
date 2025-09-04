@@ -1,28 +1,89 @@
 # Turbostack
 
-This project is a comprehensive **monorepo** template built with [Turborepo](https://turbo.build/repo/docs) that provides a complete **full-stack** development environment for modern web applications. It includes [Tailwind CSS v.4](https://tailwindcss.com/docs/installation/using-vite) with [Shadcn/ui](https://ui.shadcn.com/docs) ready to use.
+A **monorepo** template for full-stack web apps, powered by [Turborepo](https://turbo.build/repo/docs).
 
-Please read each **README.md** for each package for a better understanding of the project.
+Includes [Shadcn/ui](https://ui.shadcn.com/docs) for rapid UI development.
 
-## Project structure
+> For details on each app or package, see their respective **README.md** files.
 
-This template is organized into a clean monorepo structure with three main sections:
+## Project Structure
 
-1. **[Configuration files](./config/)**: In here you will find the configuration for the following project dependencies:
+This repo is organized into three main sections:
 
+1. **[Configuration files](./config/)**: Centralized config for project dependencies:
    - [ESLint](./config/eslint/)
-   - [Prettier](./config/prettier/) configuration.
+   - [Prettier](./config/prettier/)
    - [TypeScript](./config/typescript/)
+   - [Tailwind CSS](./config/tailwind/)
 
-2. **[Packages](./packages/)**: Sharable packages across your project.
+2. **[Packages](./packages/)**: Shared code and UI components:
+   - Reusable React components and utilities (see [ui](./packages/ui/))
+   - Easily add new components via [Shadcn/ui](https://ui.shadcn.com/docs) CLI
 
-   - Pre-configured, accessible components and utilities ready to use across applications
-   - Easy integration of new components via [Shadcn/ui](https://ui.shadcn.com/docs) CLI (components)
+3. **[Applications](./apps/)**: Main apps:
+   - **Client**: [Next.js](https://nextjs.org/docs) 15 + [React 19](https://reactjs.org/) with [Turbopack](https://turbo.build/pack)
+   - **Server**: [Hono.js](https://hono.dev/) + [TypeScript](https://www.typescriptlang.org/) backend
+     - Fast, modern API server.
+     - Auto-generated OpenAPI docs.
+     - Type-safe, Zod-validated environment config.
+     - Modular routing structure.
+     - TypeScript path aliases for clean imports.
+     - See [apps/server/README.md](./apps/server/README.md) for details.
 
-3. **[Applications](./apps/)**: Main applications where you will be working on
+## Setup Instructions
 
-   - Client - [Next.js](https://nextjs.org/docs) 15 application with [React 19](https://reactjs.org/) and [Turbopack](https://turbo.build/pack)
-   - Server - [Express.js](https://expressjs.com/) and [TypeScript](https://www.typescriptlang.org/) back-end with hot reloading using **Nodemon**
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) v20 or newer
+- [PNPM](https://pnpm.io/)
+
+#### Install PNPM
+
+- **Windows**:
+  1. Open the terminal
+  2. Run: `npm install -g pnpm`
+- **Linux/macOS**:
+  1. Open the terminal
+  2. Run: `npm install -g pnpm`
+
+#### Clone and Install
+
+1. Clone the repository:
+
+   ```sh
+   git clone https://github.com/bryaneduarr/turbostack.git
+   cd turbostack
+
+   ```
+
+2. Install dependencies:
+   ```sh
+   pnpm install
+   ```
+
+#### Environment Setup (Server)
+
+1. Copy the example env file:
+
+   ```sh
+   cp apps/server/.env.example apps/server/.env
+   ```
+
+#### Start Development
+
+```sh
+pnpm run dev
+```
+
+#### Full Setup (Recommended)
+
+Runs clean, install, format, lint, type-check, build, and dev:
+
+```sh
+pnpm run setup
+```
+
+---
 
 ## Package Manager
 
@@ -36,64 +97,69 @@ The file [globals.css](./packages/ui/src/styles/globals.css) is based on the fil
 
 ## Available Scripts
 
-Some of the following tasks or commands are handled with [Turborepo](https://turbo.build/repo/docs), they can be used with the package manager [PNPM](https://pnpm.io/motivation) as a regular script, the main difference is that they will work across the project.
+All scripts are run from the project root using [PNPM](https://pnpm.io/) and [Turborepo](https://turbo.build/repo/docs). These commands work across all apps and packages:
 
-Installs the dependencies needed for the project to work.
+- **pnpm install**: Install all dependencies for the monorepo.
 
-```sh
-pnpm install
-```
+  ```sh
+  pnpm install
+  ```
 
-Uses [Next.js](https://nextjs.org/docs) to build the client project and [TypeScript](https://www.typescriptlang.org/) to build the server project (TSC).
+- **pnpm run build**: Build all apps and packages (Next.js client, Hono.js server, shared packages).
 
-```bash
-pnpm run build
-```
+  ```sh
+  pnpm run build
+  ```
 
-Cleans all the unnecessary folders that are not needed for developing or pushing to remote.
+- **pnpm run clean**: Remove build files and node_modules for a fresh start.
 
-```bash
-pnpm run clean
-```
+  ```sh
+  pnpm run clean
+  ```
 
-Checks any error found of [TypeScript](./config/typescript/) types in the projects that uses [TypeScript](./config/typescript/).
+- **pnpm run check-types**: Type-check all TypeScript codebases.
 
-```sh
-pnpm run check-types
-```
+  ```sh
+  pnpm run check-types
+  ```
 
-Starts the development server for the client project using [Next.js](https://nextjs.org/docs) and [Turbopack](https://turbo.build/pack) with hot reloading. It also starts the server project using [Express.js](https://expressjs.com/) with hot reloading using **Nodemon**.
+- **pnpm run dev**: Start development servers for all apps (Next.js client, Hono.js server) with hot reloading.
 
-```bash
-pnpm run dev
-```
+  ```sh
+  pnpm run dev
+  ```
 
-Uses [Prettier](https://prettier.io/docs/) to format all the files of the project following the rules from [./config/prettier/base.js](./config/prettier/base.js) and ignores files from [./.gitignore](./.gitignore) and [./.prettierignore](./.prettierignore)
+- **pnpm run format**: Format all code using Prettier, following project rules that are specified in [here](./config/prettier/base.js).
 
-```bash
-pnpm run format
-```
+  ```sh
+  pnpm run format
+  ```
 
-Uses [ESLint](https://eslint.org/docs/latest/) to lint most of the files of the project following the rules from [./config/eslint/base.js](./config/eslint/base.js).
+- **pnpm run lint**: Lint all code using ESLint, following project rules that are specified in [here](./config/eslint/index.ts).
 
-```bash
-pnpm run lint
-```
+  ```sh
+  pnpm run lint
+  ```
 
-Updates all the packages and dependencies of all the projects and configuration files to the latest version.
+- **pnpm run update**: Update all dependencies to their latest versions **USE IT WITH CAUTION FOR DEPENDENCY CONFLICTS**.
 
-```sh
-pnpm run update
-```
+  ```sh
+  pnpm run update
+  ```
 
-With a single command you can run all the tasks above in parallel, this is the recommended way to run the project.
+- **pnpm run setup**: Clean, install, format, lint, type-check, build, and start dev servers (recommended for first-time setup).
 
-```sh
-pnpm run setup
-```
+  ```sh
+  pnpm run setup
+  ```
 
-This command does the same as `pnpm run setup` but it includes the script for `update` that will update all the packages and dependencies to the latest version and also execute all the scripts tasks in parallel.
+- **pnpm run setup:update**: Like `setup`, but also updates all dependencies before running setup tasks.
 
-```sh
-pnpm run setup:update
-```
+  ```sh
+  pnpm run setup:update
+  ```
+
+- **pnpm run start**: Start all apps in production mode (after build).
+  ```sh
+  pnpm run start
+  ```
