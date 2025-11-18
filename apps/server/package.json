@@ -13,20 +13,20 @@
     "update": "pnpm update --latest"
   },
   "dependencies": {
-    "@hono/node-server": "^1.19.2",
-    "@hono/zod-openapi": "^1.1.0",
-    "@scalar/hono-api-reference": "^0.9.18",
-    "dotenv": "^17.2.2",
-    "hono": "^4.9.7",
-    "hono-pino": "^0.10.2",
-    "pino": "^9.9.5",
-    "zod": "^4.1.8"
+    "@hono/node-server": "^1.19.6",
+    "@hono/zod-openapi": "^1.1.4",
+    "@scalar/hono-api-reference": "^0.9.24",
+    "dotenv": "^17.2.3",
+    "hono": "^4.10.6",
+    "hono-pino": "^0.10.3",
+    "pino": "^10.1.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@types/node": "^24.4.0",
-    "pino-pretty": "^13.1.1",
+    "@types/node": "^24.10.1",
+    "pino-pretty": "^13.1.2",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.16",
-    "tsx": "^4.20.5"
+    "tsx": "^4.20.6"
   }
 }
