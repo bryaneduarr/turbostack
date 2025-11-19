@@ -8,21 +8,19 @@
     "clean": "turbo clean && rm -rf .turbo/ node_modules",
     "check-types": "turbo check-types",
     "dev": "turbo dev",
-    "format": "turbo format",
-    "lint": "eslint . && turbo lint",
+    "format": "biome format --write . && turbo format",
+    "lint": "biome lint . && turbo lint",
     "update": "turbo update",
     "setup": "pnpm run clean && rm -rf pnpm-lock.yaml && pnpm install && pnpm run format && pnpm run lint && pnpm run check-types && pnpm run build && pnpm run dev",
     "setup:update": "pnpm run clean && rm -rf pnpm-lock.yaml && pnpm install && pnpm run update && pnpm run clean && rm -rf pnpm-lock.yaml && pnpm install && pnpm run format && pnpm run lint && pnpm run check-types && pnpm run build && pnpm run dev",
     "start": "turbo start"
   },
   "devDependencies": {
-    "@workspace/eslint": "workspace:*",
-    "@workspace/prettier": "workspace:*",
+    "@workspace/biome": "workspace:*",
     "@workspace/typescript": "workspace:*",
-    "turbo": "^2.5.6",
-    "typescript": "5.9.2"
+    "turbo": "^2.5.6"
   },
-  "packageManager": "pnpm@10.16.1",
+  "packageManager": "pnpm@10.22.0",
   "engines": {
     "node": ">=20"
   }

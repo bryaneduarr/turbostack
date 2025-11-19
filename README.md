@@ -2,7 +2,7 @@
 
 A **monorepo** template for full-stack web apps, powered by [Turborepo](https://turbo.build/repo/docs).
 
-Includes [Shadcn/ui](https://ui.shadcn.com/docs) for rapid UI development.
+Includes a shared UI component library for rapid UI development.
 
 > For details on each app or package, see their respective **README.md** files.
 
@@ -11,14 +11,13 @@ Includes [Shadcn/ui](https://ui.shadcn.com/docs) for rapid UI development.
 This repo is organized into three main sections:
 
 1. **[Configuration files](./config/)**: Centralized config for project dependencies:
-   - [ESLint](./config/eslint/)
-   - [Prettier](./config/prettier/)
+   - [Biome](./config/biome/)
    - [TypeScript](./config/typescript/)
    - [Tailwind CSS](./config/tailwind/)
 
 2. **[Packages](./packages/)**: Shared code and UI components:
    - Reusable React components and utilities (see [ui](./packages/ui/))
-   - Easily add new components via [Shadcn/ui](https://ui.shadcn.com/docs) CLI
+   - Easily add new components via the shared UI library CLI
 
 3. **[Applications](./apps/)**: Main apps:
    - **Client**: [Next.js](https://nextjs.org/docs) 15 + [React 19](https://reactjs.org/) with [Turbopack](https://turbo.build/pack)
@@ -57,6 +56,7 @@ This repo is organized into three main sections:
    ```
 
 2. Install dependencies:
+
    ```sh
    pnpm install
    ```
@@ -93,7 +93,7 @@ Package manager used for this template is [PNPM](https://pnpm.io/motivation).
 
 [Tailwind CSS v.4](https://tailwindcss.com/docs/installation/using-vite) is in the latest version `v4`. You can find all the configuration in [here](./config/tailwind/).
 
-The file [globals.css](./packages/ui/src/styles/globals.css) is based on the file from [this external file](https://github.com/shadcn/app-tailwind-v4/blob/main/app/globals.css).
+The file [globals.css](./packages/ui/src/styles/globals.css) provides default styles for the shared UI components.
 
 ## Available Scripts
 
@@ -129,13 +129,13 @@ All scripts are run from the project root using [PNPM](https://pnpm.io/) and [Tu
   pnpm run dev
   ```
 
-- **pnpm run format**: Format all code using Prettier, following project rules that are specified in [here](./config/prettier/base.js).
+- **pnpm run format**: Format all code using Biome.
 
   ```sh
   pnpm run format
   ```
 
-- **pnpm run lint**: Lint all code using ESLint, following project rules that are specified in [here](./config/eslint/index.ts).
+- **pnpm run lint**: Lint all code using Biome.
 
   ```sh
   pnpm run lint
@@ -160,6 +160,7 @@ All scripts are run from the project root using [PNPM](https://pnpm.io/) and [Tu
   ```
 
 - **pnpm run start**: Start all apps in production mode (after build).
+
   ```sh
   pnpm run start
   ```
