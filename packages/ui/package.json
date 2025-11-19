@@ -6,18 +6,13 @@
   "scripts": {
     "clean": "rm -rf node_modules/ .turbo/",
     "check-types": "tsc --noEmit",
-    "format": "prettier --write . --ignore-path ./.gitignore",
-    "lint": "eslint .",
+    "format": "biome format --write .",
+    "lint": "biome lint .",
     "update": "pnpm update --latest"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.2.4",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "lucide-react": "^0.554.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "tailwind-merge": "^3.4.0"
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
@@ -26,7 +21,6 @@
     "@workspace/tailwind": "workspace:*"
   },
   "exports": {
-    "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx"
   }
 }
