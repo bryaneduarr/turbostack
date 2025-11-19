@@ -11,8 +11,6 @@ This package provides a standardized [Tailwind CSS V.4](https://tailwindcss.com/
 - **Tailwind CSS v4** - Latest version with all new features and optimizations
 - **Shared Theme System** - Unified color scheme and design tokens
 - **CSS Variables** - Custom properties for colors, spacing, and more
-- **Animation Support** - Via `tw-animate-css` plugin
-- **Custom Components** - Pre-configured styles for shadcn/ui components
 
 ## Key Files
 
