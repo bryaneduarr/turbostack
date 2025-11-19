@@ -2,7 +2,14 @@
   "name": "@workspace/typescript",
   "version": "0.0.0",
   "private": true,
-  "publishConfig": {
-    "access": "public"
+  "scripts": {
+    "clean": "rm -rf node_modules/ .turbo/",
+    "update": "pnpm update --latest"
+  },
+  "exports": {
+    "./base": "./base.json"
+  },
+  "devDependencies": {
+    "typescript": "5.9.2"
   }
 }
