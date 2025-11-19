@@ -1,11 +1,19 @@
 {
-  "extends": "@workspace/typescript/base.json",
+  "extends": "../../config/typescript/base.json",
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
   },
-  "exclude": ["./dist/", "./eslint.config.ts", "./node_modules/"]
+  "exclude": [
+    "./dist/",
+    "./node_modules/"
+  ]
 }

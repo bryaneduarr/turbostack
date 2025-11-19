@@ -1,7 +1,7 @@
-import env from "@/env";
 import { pinoLogger } from "hono-pino";
 import pino from "pino";
 import pretty from "pino-pretty";
+import env from "@/env";
 
 /**
  * This module exports a Pino logger instance and Hono middleware.

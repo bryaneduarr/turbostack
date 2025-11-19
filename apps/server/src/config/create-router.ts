@@ -1,6 +1,6 @@
-import { AppBindings } from "@/types/openapi";
+import { type Hook, OpenAPIHono } from "@hono/zod-openapi";
+import type { AppBindings } from "@/types/openapi";
 import { UNPROCESSABLE_ENTITY } from "@/utils/http-status-codes";
-import { Hook, OpenAPIHono } from "@hono/zod-openapi";
 
 /**
  * Default validation hook for Zod OpenAPI integration.
@@ -13,8 +13,17 @@ import { Hook, OpenAPIHono } from "@hono/zod-openapi";
  * @returns JSON response with error details and 422 status code if validation fails,
  *          otherwise returns undefined to continue processing
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const defaultHook: Hook<any, any, any, any> = (result, c) => {
+type ValidationResult = {
+  success: boolean;
+  error?: unknown;
+};
+
+export const defaultHook: Hook<
+  ValidationResult,
+  AppBindings,
+  string,
+  unknown
+> = (result, c) => {
   if (!result.success) {
     return c.json(
       {

@@ -1,6 +1,6 @@
+import { createRoute, z } from "@hono/zod-openapi";
 import { jsonContent } from "@/middleware/defaults/json-content";
 import { INTERNAL_SERVER_ERROR, OK } from "@/utils/http-status-codes";
-import { createRoute, z } from "@hono/zod-openapi";
 
 // Response schema for the route, defining the structure of the response object.
 const responseSchema = z.object({

@@ -1,10 +1,12 @@
 import logger from "@/middleware/defaults/pino-logger";
-import { AppRouterHandler } from "@/types/openapi";
+import type { AppRouterHandler } from "@/types/openapi";
 import { INTERNAL_SERVER_ERROR, OK } from "@/utils/http-status-codes";
 
-import { HelloWorldRoute } from "./route.hello-world";
+import type { HelloWorldRoute } from "./route.hello-world";
 
-export const helloWorldHandler: AppRouterHandler<HelloWorldRoute> = (c) => {
+export const helloWorldHandler: AppRouterHandler<HelloWorldRoute> = async (
+  c,
+) => {
   try {
     return c.json(
       {

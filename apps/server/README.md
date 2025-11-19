@@ -51,8 +51,8 @@ pnpm run start
 - **pnpm check-types** - Check TypeScript types without emitting files
 - **pnpm clean** - Remove generated directories (dist, node_modules, .turbo)
 - **pnpm dev** - Start development server with hot reloading
-- **pnpm format** - Format code with Prettier
-- **pnpm lint** - Lint code with ESLint
+- **pnpm format** - Format code with Biome
+- **pnpm lint** - Lint code with Biome
 - **pnpm start** - Start the production server
 - **pnpm update** - Update dependencies to their latest versions
 

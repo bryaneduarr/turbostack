@@ -1,7 +1,7 @@
-import dotenv from "dotenv";
+import { config } from "dotenv";
 import { z } from "zod";
 
-dotenv.config();
+config();
 
 /**
  * -- Zod schema for server environment variables. --
