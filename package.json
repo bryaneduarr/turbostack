@@ -18,7 +18,7 @@
   "devDependencies": {
     "@workspace/biome": "workspace:*",
     "@workspace/typescript": "workspace:*",
-    "turbo": "^2.5.6"
+    "turbo": "^2.6.1"
   },
   "packageManager": "pnpm@10.22.0",
   "engines": {
