@@ -1,11 +1,23 @@
 {
-  "extends": "@workspace/typescript/next.json",
+  "extends": "@workspace/typescript/base",
+  "display": "Next.js",
   "compilerOptions": {
+    "allowJs": true,
     "baseUrl": ".",
+    "jsx": "preserve",
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "paths": {
-      "@/*": ["./src/*"],
-      "@workspace/ui/*": ["../../packages/ui/src/*"],
-      "@workspace/tailwind/*": ["../../config/tailwind/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@workspace/ui/*": [
+        "../../packages/ui/src/*"
+      ],
+      "@workspace/tailwind/*": [
+        "../../config/tailwind/*"
+      ]
     },
     "plugins": [
       {
@@ -20,5 +32,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

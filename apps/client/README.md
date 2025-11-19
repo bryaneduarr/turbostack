@@ -2,14 +2,14 @@
 
 This is a [Next.js](https://nextjs.org) application that's part of a apps workspace structure.
 
-The application uses **Next.js 15** with **React 19**, **Tailwind CSS v4**.
+The application uses **Next.js 16** with **React 19** and **Tailwind CSS v4**.
 
 ## Features
 
-- **Next.js 15** - Latest Next.js framework with App Router.
+- **Next.js 16** - Latest Next.js framework with App Router.
 - **React 19** - Latest React version.
 - **Tailwind CSS v4** - Using shared Tailwind configuration.
-- **Shadcn/UI Components** - Reusable UI components from the workspace.
+- **UI Components** - Reusable UI components from the workspace.
 - **TypeScript** - Full type safety throughout the application.
 - **Turbopack** - Fast development server with hot reloading.
 
@@ -23,7 +23,7 @@ pnpm run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can start editing the page by modifying `app/page.tsx`.
 
 ## Building the Application
 
@@ -55,8 +55,7 @@ import { Button } from "@workspace/ui/button";
 
 This application uses shared configurations from the workspace:
 
-- **ESLint** - Config from [@workspace/eslint](../../config/eslint)
-- **Prettier** - Config from [@workspace/prettier](../../config/prettier/)
+- **Biome** - Config from [@workspace/biome](../../config/biome)
 - **TypeScript** - Config from [@workspace/typescript](../../config/typescript/)
 
 ## Available Scripts
@@ -65,8 +64,8 @@ This application uses shared configurations from the workspace:
 - **pnpm clean** - Removes generated directories (node_modules, .turbo, .next)
 - **pnpm check-types** - Checks TypeScript types without emitting files
 - **pnpm dev** - Starts the development server with Turbopack
-- **pnpm format** - Formats code with Prettier
-- **pnpm lint** - Lints code with ESLint
+- **pnpm format** - Formats code with Biome
+- **pnpm lint** - Lints code with Biome
 - **pnpm start** - Starts the production server
 - **pnpm update** - Updates dependencies to their latest versions
 

@@ -8,8 +8,8 @@
     "clean": "rm -rf node_modules/ .turbo/ .next/",
     "check-types": "tsc --noEmit",
     "dev": "next dev --turbopack",
-    "format": "prettier --write . --ignore-path ./.gitignore",
-    "lint": "eslint .",
+    "format": "biome format --write .",
+    "lint": "biome lint .",
     "start": "next start",
     "update": "pnpm update --latest"
   },
