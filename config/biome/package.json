@@ -1,0 +1,15 @@
+{
+  "name": "@workspace/biome",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf node_modules/ .turbo/",
+    "update": "pnpm update --latest"
+  },
+  "exports": {
+    "./biome": "./biome.json"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.4"
+  }
+}
