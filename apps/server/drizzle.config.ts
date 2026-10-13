@@ -1,13 +1,9 @@
-import env from "@/env";
-import { config } from "dotenv";
+import { defineConfig } from "drizzle-kit";
+import { databaseCredentials } from "@/db/config/environment/database-credentials.config";
 
-config();
-
-export default {
-  schema: "./src/db/tables/**/*.ts",
+export default defineConfig({
+  schema: "./src/db/tables/users/profile/user-profile.table.ts",
   out: "./src/db/migrations",
   dialect: "postgresql",
-  dbCredentials: {
-    url: `postgresql://${env.DB_USER}:${encodeURIComponent(env.DB_PASSWORD)}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`,
-  },
-};
+  dbCredentials: databaseCredentials,
+});
