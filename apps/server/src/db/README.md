@@ -1,3 +1,10 @@
+# Database configuration
+
+The server uses one Postgres.js pool per process and a Drizzle instance registered
+with the table schema. Import `db` directly from
+`@/db/config/connection/database-connection.config`; do not create clients inside
+request handlers.
+
 ## Startup and shutdown
 
 Startup runs `SELECT 1` before the HTTP listener starts. Unreachable databases,
@@ -56,3 +63,27 @@ The user-profile table belongs to
 value is supplied. This is a Drizzle runtime hook, not a database trigger. Raw SQL
 or other applications must set the field explicitly or use a reviewed trigger
 migration. `now()` uses the current transaction's start time.
+
+## Migrations
+
+Run commands from `apps/server`:
+
+```sh
+bun run drizzle:generate
+bun run drizzle:migrate
+```
+
+Review and commit generated SQL and snapshots before applying migrations in a
+controlled deployment step. Do not automatically run migrations on every server
+startup. Keep `drizzle:push` for deliberate development workflows rather than
+unreviewed production schema changes.
+
+For another database that already has tables, reconcile its live schema and
+migration history before applying this initial create-table migration. Existing
+`timestamp without time zone` data requires a separately reviewed conversion
+using the timezone represented by those values; the session timezone alone does
+not establish historical intent. The runtime update hook is not a database trigger.
+
+Type checks and builds do not verify connection startup, CRUD, defaults, update
+timestamps, or timezone round-tripping. Validate those behaviors separately in a
+controlled environment before deployment.
