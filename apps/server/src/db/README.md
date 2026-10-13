@@ -1,3 +1,16 @@
+## Startup and shutdown
+
+Startup runs `SELECT 1` before the HTTP listener starts. Unreachable databases,
+authentication failures, and TLS failures prevent startup. This check does not
+verify tables, permissions for application operations, or the migration baseline.
+
+SIGINT and SIGTERM stop accepting HTTP requests, wait for active handlers, and
+close the pool. After `SHUTDOWN_TIMEOUT_SECONDS`, active HTTP requests are forced
+closed. Database cleanup uses its own bounded timeout. Startup failures also
+close the pool. Shutdown is handled once, including signals received during startup.
+The implementation lives in
+[`shutdown-server.service.ts`](../services/server/shutdown/shutdown-server.service.ts).
+
 ## Validated settings
 
 The database schema and its `ValidatedDatabaseEnvironment` interface live in

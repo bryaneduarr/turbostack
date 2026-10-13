@@ -12,11 +12,10 @@
   },
   "dependencies": {
     "@workspace/utils": "workspace:*",
-    "@hono/zod-openapi": "^1.6.2",
-    "zod": "^4.5.4"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@types/node": "^26.4.1"
+    "@types/node": "^26.6.5"
   },
   "exports": {
     "./authentication/*": "./src/authentication/*.ts",

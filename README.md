@@ -2,7 +2,7 @@
 
 A **monorepo** template for full-stack web applications, powered by [Turborepo](https://turbo.build/repo/docs) and [Bun](https://bun.sh/).
 
-Build modern applications with **Next.js** on the frontend and **Hono.js** on the backend, sharing code through a unified workspace structure.
+Build modern applications with **Next.js** on the frontend and **Elysia** on the backend, sharing code through a unified workspace structure.
 
 > For details on each app or package, see their respective **README.md** files.
 
@@ -15,7 +15,7 @@ Build modern applications with **Next.js** on the frontend and **Hono.js** on th
 | [Turborepo](https://turbo.build/repo)         |
 | [Next.js](https://nextjs.org/)                |
 | [React](https://react.dev/)                   |
-| [Hono.js](https://hono.dev/)                  |
+| [Elysia](https://elysiajs.com/)                  |
 | [Tailwind CSS](https://tailwindcss.com/)      |
 | [shadcn/ui](https://ui.shadcn.com/)           |
 | [TypeScript](https://www.typescriptlang.org/) |
@@ -33,11 +33,12 @@ This repo is organized into three main sections:
 2. **[Packages](./packages/)**: Shared code and UI components:
    - [@workspace/ui](./packages/ui/) - Reusable React components built with shadcn/ui
    - Easily add new components via the shadcn CLI
+   - [@workspace/schemas](./packages/schemas/) - Zod validation and schema-derived contracts
    - [@workspace/utils](./packages/utils/) - Runtime-neutral utilities and canonical HTTP status constants
 
 3. **[Applications](./apps/)**: Main apps:
    - **[Client](./apps/client/)**: Next.js 16 + React 19 with Turbopack
-   - **[Server](./apps/server/)**: Hono.js + TypeScript backend
+   - **[Server](./apps/server/)**: Elysia + TypeScript backend running on Bun
      - Fast, modern API server
      - Auto-generated OpenAPI docs with Scalar
      - Type-safe, Zod-validated environment config
@@ -179,7 +180,7 @@ All scripts are run from the project root using [Bun](https://bun.sh/) and [Turb
   bun install
   ```
 
-- **bun run build**: Build all apps and packages (Next.js client, Hono.js server, shared packages).
+- **bun run build**: Build all apps and packages (Next.js client, Elysia server, shared packages).
 
   ```sh
   bun run build
@@ -197,7 +198,7 @@ All scripts are run from the project root using [Bun](https://bun.sh/) and [Turb
   bun run check-types
   ```
 
-- **bun run dev**: Start development servers for all apps (Next.js client, Hono.js server) with hot reloading.
+- **bun run dev**: Start development servers for all apps (Next.js client, Elysia server) with hot reloading.
 
   ```sh
   bun run dev
