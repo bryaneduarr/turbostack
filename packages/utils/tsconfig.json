@@ -1,0 +1,19 @@
+{
+  "extends": "@workspace/typescript/base",
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "paths": {
+      "@workspace/utils/*": [
+        "./src/*"
+      ]
+    }
+  },
+  "include": [
+    "."
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

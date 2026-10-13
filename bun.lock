@@ -112,6 +112,10 @@
         "tsx": "^4.23.13",
       },
     },
+    "packages/utils": {
+      "name": "@workspace/utils",
+      "version": "0.0.0",
+    },
   },
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.3.0", "", {}, "sha512-U4+70Pc5ZS9osnCBCE5Jha/ciHM+Yp+CNMNC/7HvYbNRk1Ldd+f7qO65W5qfhu/TCv+/ozljlXXe9Nj8419DMA=="],
@@ -427,6 +431,8 @@
     "@workspace/typescript": ["@workspace/typescript@workspace:config/typescript"],
 
     "@workspace/ui": ["@workspace/ui@workspace:packages/ui"],
+
+    "@workspace/utils": ["@workspace/utils@workspace:packages/utils"],
 
     "acorn": ["acorn@8.18.0", "", { "bin": { "acorn": "bin/acorn" } }, "sha512-lGq+9yr1/GuAWaVYIHRjvvySG5/4VfKIvC8EWxStPdcDh/Ka7FG3twP6v4d5BkravUilhIAsG4Qj83t02LWUPQ=="],
 

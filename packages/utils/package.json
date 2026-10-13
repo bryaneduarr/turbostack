@@ -1,0 +1,16 @@
+{
+  "name": "@workspace/utils",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf node_modules/ .turbo/",
+    "check-types": "tsc --noEmit",
+    "format": "biome format --write .",
+    "lint": "biome lint .",
+    "update": "bun update --latest"
+  },
+  "exports": {
+    "./http/*": "./src/http/*.ts"
+  }
+}

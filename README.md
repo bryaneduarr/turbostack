@@ -33,6 +33,7 @@ This repo is organized into three main sections:
 2. **[Packages](./packages/)**: Shared code and UI components:
    - [@workspace/ui](./packages/ui/) - Reusable React components built with shadcn/ui
    - Easily add new components via the shadcn CLI
+   - [@workspace/utils](./packages/utils/) - Runtime-neutral utilities and canonical HTTP status constants
 
 3. **[Applications](./apps/)**: Main apps:
    - **[Client](./apps/client/)**: Next.js 16 + React 19 with Turbopack
