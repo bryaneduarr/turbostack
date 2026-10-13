@@ -36,6 +36,8 @@
       "name": "server",
       "version": "1.0.0",
       "dependencies": {
+        "@workspace/schemas": "workspace:*",
+        "@workspace/utils": "workspace:*",
         "@hono/node-server": "^2.1.1",
         "@hono/zod-openapi": "^1.6.2",
         "@scalar/hono-api-reference": "^0.12.0",
