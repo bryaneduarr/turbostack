@@ -87,24 +87,22 @@ export type CreateUser = z.infer<typeof createUserSchema>;
 export type UpdateUser = z.infer<typeof updateUserSchema>;
 ```
 
-### Server-Only Schema Example
+## Database and Server Environment
 
-**File:** `src/server/database-user.schema.ts`
+[`database-env.schema.ts`](./src/database/environment/database-env.schema.ts)
+owns PostgreSQL settings, TLS policy, pool limits, and cleanup timeouts.
+[`database-env.interface.ts`](./src/database/environment/database-env.interface.ts)
+exports the schema-derived `ValidatedDatabaseEnvironment` contract. Database
+configuration can validate these settings without requiring HTTP or logging
+variables.
 
-```typescript
-import { z } from "@hono/zod-openapi";
-import { userSchema } from "@workspace/schemas/shared/user.schema";
+[`server-env.schema.ts`](./src/server/environment/server-env.schema.ts) composes
+the database schema with server settings.
+[`server-env.interface.ts`](./src/server/environment/server-env.interface.ts)
+contains its `ValidatedServerEnvironment` interface. An omitted raw `LOG_LEVEL` becomes a
+required output level: debug in development and info in production. Explicit null
+or an invalid level is rejected. Startup configuration uses `parse` to fail fast.
 
-// Extended schema with server-only fields
-export const databaseUserSchema = userSchema.extend({
-  passwordHash: z.string(),
-  salt: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-export type DatabaseUser = z.infer<typeof databaseUserSchema>;
-```
 
 ### Client-Only Schema Example
 

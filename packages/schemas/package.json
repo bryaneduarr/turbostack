@@ -19,6 +19,7 @@
   },
   "exports": {
     "./authentication/*": "./src/authentication/*.ts",
+    "./database/*": "./src/database/*.ts",
     "./server/*": "./src/server/*.ts",
     "./client/*": "./src/client/*.ts"
   }
