@@ -11,14 +11,15 @@
     "update": "bun update --latest"
   },
   "dependencies": {
-    "@hono/zod-openapi": "^1.6.2",
-    "zod": "^4.5.4"
+    "@workspace/utils": "workspace:*",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@types/node": "^26.4.1"
+    "@types/node": "^26.6.5"
   },
   "exports": {
     "./authentication/*": "./src/authentication/*.ts",
+    "./database/*": "./src/database/*.ts",
     "./server/*": "./src/server/*.ts",
     "./client/*": "./src/client/*.ts"
   }

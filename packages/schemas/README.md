@@ -1,236 +1,192 @@
 # @workspace/schemas
 
-Shared Zod schemas for validation across the monorepo (server and client).
-
-## Purpose
-
-This package provides centralized schema definitions using Zod and `@hono/zod-openapi` for:
-
-- **Type safety** across server and client
-- **Consistent validation** logic
-- **OpenAPI documentation** generation
-- **Code reusability** and single source of truth
+Shared [Zod](https://zod.dev/) schemas and schema-derived contracts for the server
+and client. Schemas import `z` directly from `zod`; no framework-specific wrapper
+is needed.
 
 ## Directory Structure
 
 ```text
 src/
-├── shared/          # Schemas used by both server and client
-├── server/          # Server-only schemas (private)
-└── client/          # Client-only schemas (private)
+├── authentication/
+│   └── sign-in/          # Sign-in credentials
+├── database/
+│   └── environment/      # PostgreSQL environment settings
+└── server/
+    ├── environment/      # Server environment composition
+    ├── responses/        # Envelope, success, and error responsibilities
+    └── routes/
+        └── hello-world/  # Greeting response contract
 ```
 
-## Usage
+Directory placement communicates intended use; it is not a security boundary.
+Import runtime schemas and type-only interfaces directly from their owning
+modules. Use extensionless `@workspace/schemas/...` imports within this package and
+from other workspaces, never relative source imports or `.js`/`.ts` extensions.
+The package's wildcard exports and self-alias support these nested module paths.
+Do not create barrel files.
 
-### Import Shared Schemas
+## Sign-In Credentials
 
-**In Server:**
+[`sign-in.schema.ts`](./src/authentication/sign-in/sign-in.schema.ts) exports
+`signInSchema`. It validates the email, normalizes it to lowercase, and requires a
+nonempty password without transforming the password.
+[`sign-in.interface.ts`](./src/authentication/sign-in/sign-in.interface.ts) exports
+`ValidatedSignInCredentials`, derived from the schema's validated output.
 
 ```typescript
-import { userSchema } from "@workspace/schemas/shared/user.schema";
+import type { ValidatedSignInCredentials } from "@workspace/schemas/authentication/sign-in/sign-in.interface";
+import { signInSchema } from "@workspace/schemas/authentication/sign-in/sign-in.schema";
+
+const input: unknown = {
+  email: "example@example.com",
+  password: "example-password",
+};
+const credentials: ValidatedSignInCredentials = signInSchema.parse(input);
 ```
 
-**In Client:**
+Use `safeParse` and handle both outcomes for expected credential validation
+failures. `parse` is appropriate when invalid data should throw.
+
+## Database and Server Environment
+
+[`database-env.schema.ts`](./src/database/environment/database-env.schema.ts)
+owns PostgreSQL settings, TLS policy, pool limits, and cleanup timeouts.
+[`database-env.interface.ts`](./src/database/environment/database-env.interface.ts)
+exports the schema-derived `ValidatedDatabaseEnvironment` contract. Database
+configuration can validate these settings without requiring HTTP or logging
+variables.
+
+[`server-env.schema.ts`](./src/server/environment/server-env.schema.ts) composes
+the database schema with server settings.
+[`server-env.interface.ts`](./src/server/environment/server-env.interface.ts)
+contains its `ValidatedServerEnvironment` interface. An omitted raw `LOG_LEVEL` becomes a
+required output level: debug in development and info in production. Explicit null
+or an invalid level is rejected. Startup configuration uses `parse` to fail fast.
+
+## Server Response Contracts
+
+All JSON API envelopes use `{ success, message, data, error, status, requestId }`.
+Compose each route's concrete payload with `createSuccessResponseSchema` rather
+than duplicating envelope fields. The hello-world route deliberately has no
+domain payload:
 
 ```typescript
-import { userSchema } from "@workspace/schemas/shared/user.schema";
+import { createSuccessResponseSchema } from "@workspace/schemas/server/responses/success/create-success-response.schema";
+import { z } from "zod";
+
+export const helloWorldResponseSchema = createSuccessResponseSchema(z.null());
 ```
 
-### Import Server-Only Schemas
+Its runtime schema and schema-derived interface live in
+[`server/routes/hello-world/`](./src/server/routes/hello-world/).
+Failure contracts live in
+[`server/responses/errors/`](./src/server/responses/errors/). Broad success and
+envelope schemas are composition or documentation bases, not concrete endpoint
+payload validators.
+
+Response envelopes retain intentional protocol nulls: no error on success, no
+success data on failure, and no domain payload for the greeting. Other routes
+must define concrete payload schemas and document legitimate absence. Do not
+substitute arbitrary empty objects for these protocol states.
+See [API response conventions](../../apps/server/README.md#required-values-and-explicit-absence).
+
+## Elysia OpenAPI Integration
+
+The server uses Elysia 1.4.30 and `@elysia/openapi` 1.4.16. Its `jsonContent`
+configuration function converts Zod schemas to JSON Schema for documentation.
+Route metadata belongs in the options' `detail` object:
 
 ```typescript
-import { databaseUserSchema } from "@workspace/schemas/server/database-user.schema";
-```
+import { helloWorldResponseSchema } from "@workspace/schemas/server/routes/hello-world/hello-world-response.schema";
+import { OK } from "@workspace/utils/http/status-codes/http-status-code.constant";
+import { createRouter } from "@/config/http/routing/http-router.config";
+import { jsonContent } from "@/config/openapi/responses/content/json-response-content.config";
+import { helloWorldHandler } from "@/routes/hello-world/hello-world.handler";
 
-### Import Client-Only Schemas
-
-```typescript
-import { formStateSchema } from "@workspace/schemas/client/form-state.schema";
-```
-
-## Schema Naming Convention
-
-- File naming: `{feature}.schema.ts`
-- Export naming: `{feature}Schema` or `{specific}Schema`
-
-**Examples:**
-
-- `user.schema.ts` -> exports `userSchema`, `createUserSchema`, `updateUserSchema`
-- `authentication/authentication.schema.ts` -> exports `signInSchema`
-- `pagination.schema.ts` -> exports `paginationSchema`
-
-## Creating Schemas
-
-### Shared Schema Example
-
-**File:** `src/shared/user.schema.ts`
-
-```typescript
-import { z } from "@hono/zod-openapi";
-
-export const userSchema = z.object({
-  id: z.string().uuid(),
-  email: z.string().email().toLowerCase(),
-  firstName: z.string().min(1).max(100),
-  lastName: z.string().min(1).max(100),
-});
-
-export const createUserSchema = userSchema.omit({ id: true }).extend({
-  password: z.string().min(8).max(128),
-});
-
-export const updateUserSchema = userSchema.partial().omit({ id: true });
-
-// Export types for TypeScript
-export type User = z.infer<typeof userSchema>;
-export type CreateUser = z.infer<typeof createUserSchema>;
-export type UpdateUser = z.infer<typeof updateUserSchema>;
-```
-
-### Server-Only Schema Example
-
-**File:** `src/server/database-user.schema.ts`
-
-```typescript
-import { z } from "@hono/zod-openapi";
-import { userSchema } from "@workspace/schemas/shared/user.schema";
-
-// Extended schema with server-only fields
-export const databaseUserSchema = userSchema.extend({
-  passwordHash: z.string(),
-  salt: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-export type DatabaseUser = z.infer<typeof databaseUserSchema>;
-```
-
-### Client-Only Schema Example
-
-**File:** `src/client/form-state.schema.ts`
-
-```typescript
-import { z } from "@hono/zod-openapi";
-
-export const formStateSchema = z.object({
-  isSubmitting: z.boolean().default(false),
-  errors: z.record(z.string(), z.array(z.string())).optional(),
-  touched: z.record(z.string(), z.boolean()).optional(),
-});
-
-export type FormState = z.infer<typeof formStateSchema>;
-```
-
-## OpenAPI Integration
-
-Schemas in this package work seamlessly with Hono's OpenAPI integration:
-
-```typescript
-import { createRoute } from "@hono/zod-openapi";
-import { userSchema } from "@workspace/schemas/shared/user.schema";
-import { jsonContent } from "@/middleware/defaults/json-content";
-
-const getUserRoute = createRoute({
-  path: "/users/{id}",
-  method: "get",
-  responses: {
-    200: jsonContent(userSchema, "User retrieved successfully"),
+const routeOptions = {
+  detail: {
+    tags: ["Hello World"],
+    summary: "Say hello",
+    responses: {
+      [OK]: jsonContent(helloWorldResponseSchema, "Successful response"),
+    },
   },
-});
+};
+
+const router = createRouter().get(
+  "/hello-world",
+  helloWorldHandler,
+  routeOptions,
+);
 ```
 
-## Best Practices
+The `@/` imports belong in server code, not in this package. Documentation
+metadata does not perform runtime validation or set HTTP status. Server handlers
+use the same concrete schema through `createSuccessResponse` to validate output
+and set matching HTTP metadata. `createRouter()` supplies common error
+documentation automatically.
 
-1. **Shared by Default**: If a schema is used by both server and client, place it in `shared/`
-2. **Private When Needed**: Only use `server/` or `client/` for schemas with sensitive or environment-specific fields
-3. **Compose Schemas**: Use `.extend()`, `.omit()`, `.pick()`, `.partial()` to build variations
-4. **Export Types**: Always export TypeScript types using `z.infer<>`
-5. **No Barrel Files**: Import directly from schema files, never create `index.ts` files
-6. **Group Related Schemas**: Keep related schemas in the same file (e.g., `user.schema.ts` contains all user-related schemas)
+The server serves Scalar at `/api/v1/reference` and OpenAPI 3.0.0 at `/api/v1/doc`.
+See the [server README](../../apps/server/README.md) for configuration and
+compatibility details.
 
-## Examples
+## HTTP Status Constants
 
-### Authentication Schemas
+The canonical catalog belongs to
+[`@workspace/utils`](../utils/README.md), in
+`src/http/status-codes/http-status-code.constant.ts`. Import statuses directly
+through `@workspace/utils/http/status-codes/http-status-code.constant`; never copy
+numbers or import server source into schemas.
 
-**File:** `src/authentication/authentication.schema.ts`
+Use named constants for response statuses, comparisons, validation bounds, and
+computed OpenAPI response keys. Executable descriptions interpolate constants
+rather than repeating their numbers. `MAX_HTTP_STATUS` supplies the upper
+validation bound, including unassigned server-error statuses.
+
+## Creating Schemas and Interfaces
+
+Choose the deepest meaningful domain or operation owner and name files
+`<specific-responsibility>.schema.ts` and `<specific-responsibility>.interface.ts`.
+Keep runtime schemas and their contracts separate. Document every schema field,
+every interface, and every explicitly declared interface member with brief
+`/* ... */` comments.
+
+For example, an illustrative `users/profile/user-profile.schema.ts` could define:
 
 ```typescript
-import { z } from "@hono/zod-openapi";
+import { z } from "zod";
 
-export const signInSchema = z.object({
-  email: z.string().email().toLowerCase(),
-  password: z.string().min(1),
-});
-
-export const signUpSchema = z.object({
-  email: z.string().email().toLowerCase(),
-  password: z.string().min(8).max(128),
+export const userProfileSchema = z.object({
+  /* Identifies the profile using a validated UUID. */
+  id: z.uuid(),
+  /* Contains the profile's validated lowercase contact email. */
+  email: z.email().toLowerCase(),
+  /* Contains the nonempty given name, limited to 100 characters. */
   firstName: z.string().min(1).max(100),
+  /* Contains the nonempty family name, limited to 100 characters. */
   lastName: z.string().min(1).max(100),
 });
-
-export type SignIn = z.infer<typeof signInSchema>;
-export type SignUp = z.infer<typeof signUpSchema>;
 ```
 
-### Pagination Schema
-
-**File:** `src/shared/pagination.schema.ts`
+Its dedicated `users/profile/user-profile.interface.ts` would derive the output:
 
 ```typescript
-import { z } from "@hono/zod-openapi";
+import type { userProfileSchema } from "@workspace/schemas/users/profile/user-profile.schema";
+import type { z } from "zod";
 
-export const paginationSchema = z.object({
-  page: z.coerce.number().int().positive().default(1),
-  limit: z.coerce.number().int().positive().max(100).default(10),
-});
-
-export const paginatedResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
-  z.object({
-    data: z.array(dataSchema),
-    pagination: z.object({
-      page: z.number(),
-      limit: z.number(),
-      total: z.number(),
-      totalPages: z.number(),
-    }),
-  });
-
-export type Pagination = z.infer<typeof paginationSchema>;
+/* Represents the validated profile data exposed by the illustrative contract. */
+export interface ValidatedUserProfile extends z.output<typeof userProfileSchema> {}
 ```
 
-## Common Patterns
+This example does not describe an existing user API or the database table's
+nullable name columns. When transformations change input shape, distinguish raw
+`z.input<typeof schema>` contracts from validated `z.output<typeof schema>`
+contracts in the same responsibility-specific interface file. Use type aliases
+for shapes interfaces cannot faithfully represent.
 
-### Email Schema
-
-```typescript
-export const emailSchema = z.email().toLowerCase();
-```
-
-### UUID Schema
-
-```typescript
-export const uuidSchema = z.uuid();
-```
-
-### Date Range Schema
-
-```typescript
-export const dateRangeSchema = z.object({
-  startDate: z.coerce.date(),
-  endDate: z.coerce.date(),
-});
-```
-
-### Response Schema
-
-```typescript
-export const apiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
-  z.object({
-    success: z.boolean(),
-    message: z.string(),
-    data: dataSchema.optional(),
-    error: z.record(z.string(), z.array(z.string())).optional(),
-  });
-```
+Validated domain values are required by default. Normalize genuinely optional
+boundary values in their owning schemas, and use parsed results afterward. Keep
+server-only operations on the server; type-only imports must not add server
+runtime dependencies to clients. Validate received API responses on the client
+as well as requests and generated responses on the server.

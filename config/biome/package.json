@@ -10,6 +10,6 @@
     "./biome": "./biome.json"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.11"
+    "@biomejs/biome": "^2.5.15"
   }
 }

@@ -1,23 +1,66 @@
-import { serve } from "@hono/node-server";
+import app from "@/application.module";
+import env from "@/config/environment/server-env.config";
+import { connectToDatabase } from "@/db/config/connection/database-connection.config";
+import { flushLogger } from "@/services/logging/output/flush-logger.service";
+import logger from "@/services/logging/output/logger.config";
+import { shutdownServer } from "@/services/server/shutdown/shutdown-server.service";
 
-import app from "@/app";
-import env from "@/env";
-import logger from "@/middleware/defaults/pino-logger";
-import { connectToDatabase } from "@/db/config/connect-to-database";
+let stopping = false;
 
-async function startServer() {
+async function stopServer(): Promise<void> {
+  if (stopping) return;
+  stopping = true;
+
   try {
-    // Connect to the database.
-    await connectToDatabase();
-
-    // Start the server.
-    logger.info(`[server]: Server on port ${env.PORT}. ${env.SERVER_URL}`);
-    serve({ fetch: app.fetch, port: Number(env.PORT) });
+    await shutdownServer();
+    logger.info({ event: "server.stopped" }, "Shutdown complete");
+    await flushLogger();
+    process.exit(0);
   } catch (error) {
-    logger.error(`[server]: Failed to start server: ${error}`);
+    logger.error(
+      { event: "server.stop_failed", err: error },
+      "Shutdown failed",
+    );
+    await flushLogger();
     process.exit(1);
   }
 }
 
-// Start the server with Redis and database connections.
-startServer();
+process.once("SIGTERM", () => {
+  void stopServer();
+});
+process.once("SIGINT", () => {
+  void stopServer();
+});
+
+async function startServer(): Promise<void> {
+  try {
+    await connectToDatabase();
+    if (stopping) return;
+
+    app.listen(env.PORT);
+    logger.info(
+      { event: "server.started", port: env.PORT },
+      "Server listening",
+    );
+  } catch (error) {
+    if (stopping) return;
+    stopping = true;
+    logger.fatal(
+      { event: "server.start_failed", err: error },
+      "Failed to start server",
+    );
+    try {
+      await shutdownServer();
+    } catch (shutdownError) {
+      logger.error(
+        { event: "server.cleanup_failed", err: shutdownError },
+        "Startup cleanup failed",
+      );
+    }
+    await flushLogger();
+    process.exit(1);
+  }
+}
+
+void startServer();

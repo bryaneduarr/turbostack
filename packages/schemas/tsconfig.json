@@ -4,9 +4,6 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
       "@workspace/schemas/*": [
         "./src/*"
       ]
