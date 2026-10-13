@@ -55,8 +55,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@workspace/ui/ui/card"
 // Import custom components
 import DatePicker from "@workspace/ui/components/basic-date-picker";
 
-// Import utilities
-import { cn } from "@workspace/ui/lib/utils";
+// Import the class-merging dependency directly
+import { cn } from "cn";
 ```
 
 ### Component Examples
@@ -82,10 +82,12 @@ import { Button } from "@workspace/ui/ui/button";
 
 #### Using the `cn` Utility
 
-The `cn` utility merges Tailwind classes intelligently:
+The `cn` dependency merges Tailwind classes intelligently. Import it directly
+rather than through a forwarding utility module. Any consumer importing `cn`
+must declare it as a dependency:
 
 ```tsx
-import { cn } from "@workspace/ui/lib/utils";
+import { cn } from "cn";
 
 function MyComponent({ className, isActive }) {
   return (
@@ -124,9 +126,9 @@ The `components.json` file configures shadcn/ui for this package:
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@workspace/components",
-    "utils": "@workspace/lib/utils",
-    "ui": "@workspace/components/ui"
+    "components": "@workspace/ui/components",
+    "utils": "cn",
+    "ui": "@workspace/ui/components/ui"
   }
 }
 ```
@@ -141,15 +143,13 @@ The `components.json` file configures shadcn/ui for this package:
 
 ## Package Exports
 
-This package exports components via path mappings:
+This package exports component modules through extensionless package subpaths:
 
 ```json
 {
   "exports": {
     "./components/*": "./src/components/*.tsx",
     "./ui/*": "./src/components/ui/*.tsx",
-    "./lib/*": "./src/lib/*.ts",
-    "./utils/*": "./src/lib/utils/*.ts",
     "./hooks/*": "./src/hooks/*.ts"
   }
 }

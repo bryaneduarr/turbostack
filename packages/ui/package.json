@@ -28,8 +28,6 @@
   "exports": {
     "./components/*": "./src/components/*.tsx",
     "./ui/*": "./src/components/ui/*.tsx",
-    "./lib/*": "./src/lib/*.ts",
-    "./utils/*": "./src/lib/utils/*.ts",
     "./hooks/*": "./src/hooks/*.ts"
   }
 }
