@@ -86,6 +86,7 @@
       "name": "@workspace/schemas",
       "version": "0.0.0",
       "dependencies": {
+        "@workspace/utils": "workspace:*",
         "@hono/zod-openapi": "^1.6.2",
         "zod": "^4.5.4",
       },
