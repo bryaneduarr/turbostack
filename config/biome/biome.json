@@ -19,10 +19,44 @@
     "rules": {
       "recommended": true,
       "style": {
+        "noNonNullAssertion": "error",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "patterns": [
+              {
+                "group": [":PATH:"],
+                "message": "Use @workspace/<package>/... for package modules or @/... for app-local modules instead of filesystem imports."
+              },
+              {
+                "group": [
+                  "@/**/*.js",
+                  "@/**/*.jsx",
+                  "@/**/*.mjs",
+                  "@/**/*.cjs",
+                  "@/**/*.ts",
+                  "@/**/*.tsx",
+                  "@/**/*.mts",
+                  "@/**/*.cts",
+                  "@workspace/**/*.js",
+                  "@workspace/**/*.jsx",
+                  "@workspace/**/*.mjs",
+                  "@workspace/**/*.cjs",
+                  "@workspace/**/*.ts",
+                  "@workspace/**/*.tsx",
+                  "@workspace/**/*.mts",
+                  "@workspace/**/*.cts"
+                ],
+                "message": "Omit JavaScript and TypeScript file extensions from project module aliases."
+              }
+            ]
+          }
+        },
         "useConst": "warn"
       },
       "correctness": {
-        "noUnusedVariables": "error"
+        "noUnusedVariables": "error",
+        "useImportExtensions": "off"
       }
     }
   },
@@ -42,7 +76,8 @@
   },
   "files": {
     "includes": [
-      "**/*.{js,jsx,ts,tsx}",
+      "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}",
+      "!**/next-env.d.ts",
       "!**/dist/**",
       "!**/build/**",
       "!**/.turbo/**",

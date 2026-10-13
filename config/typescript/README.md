@@ -32,6 +32,7 @@ The foundation for all TypeScript projects with:
     "declaration": true,
     "declarationMap": true,
     "esModuleInterop": true,
+    "exactOptionalPropertyTypes": true,
     "incremental": false,
     "isolatedModules": true,
     "lib": ["es2022", "DOM", "DOM.Iterable"],
@@ -55,7 +56,7 @@ To use these configurations in your workspace package:
 
 ```json
 {
-  "extends": "@workspace/typescript/base.json",
+  "extends": "@workspace/typescript/base",
   "compilerOptions": {
     // Project-specific options
   }
@@ -66,7 +67,7 @@ To use these configurations in your workspace package:
 
 ```json
 {
-  "extends": "@workspace/typescript/base.json",
+  "extends": "@workspace/typescript/base",
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"]

@@ -63,6 +63,21 @@ The `biome.json` file configures:
 }
 ```
 
+### Module Import Policy
+
+The shared `style.noRestrictedImports` rule rejects filesystem module imports
+and JavaScript/TypeScript extensions on `@/...` and `@workspace/...` aliases.
+This includes type-only imports. Package modules use their owning
+`@workspace/<package>/...` alias even within the same package; app-local modules
+use `@/...`. Package exports and declared dependencies must resolve cross-package
+imports without consumer-side source mappings.
+
+Keep bare external dependency imports direct. Stylesheets and JSON imports use
+aliases with their required non-code extensions. The generated Next.js
+`next-env.d.ts` file is excluded so framework-maintained references remain intact.
+`correctness.useImportExtensions` stays disabled because source module aliases
+are extensionless.
+
 ### Import Organization
 
 ```json
@@ -128,7 +143,8 @@ The configuration includes specific file patterns:
 {
   "files": {
     "includes": [
-      "**/*.{js,jsx,ts,tsx}",
+      "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}",
+      "!**/next-env.d.ts",
       "!**/dist",
       "!**/build",
       "!**/.turbo",

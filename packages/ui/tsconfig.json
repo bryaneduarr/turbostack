@@ -6,23 +6,14 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
       "@workspace/ui/*": [
         "./src/*"
-      ],
-      "@workspace/tailwind/*": [
-        "../../config/tailwind/*"
       ],
       "@workspace/ui/components/*": [
         "./src/components/*"
       ],
       "@workspace/ui/ui/*": [
         "./src/components/ui/*"
-      ],
-      "@workspace/ui/lib/*": [
-        "./src/lib/*"
       ]
     }
   },
