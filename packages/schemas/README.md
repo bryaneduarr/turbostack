@@ -56,7 +56,7 @@ import { formStateSchema } from "@workspace/schemas/client/form-state.schema";
 **Examples:**
 
 - `user.schema.ts` -> exports `userSchema`, `createUserSchema`, `updateUserSchema`
-- `authentication/authentication.schema.ts` -> exports `signInSchema`
+- `authentication/sign-in/sign-in.schema.ts` -> exports `signInSchema`
 - `pagination.schema.ts` -> exports `paginationSchema`
 
 ## Creating Schemas
@@ -151,28 +151,28 @@ const getUserRoute = createRoute({
 
 ## Examples
 
-### Authentication Schemas
+## Sign-In Credentials
 
-**File:** `src/authentication/authentication.schema.ts`
+[`sign-in.schema.ts`](./src/authentication/sign-in/sign-in.schema.ts) exports
+`signInSchema`. It validates the email, normalizes it to lowercase, and requires a
+nonempty password without transforming the password.
+[`sign-in.interface.ts`](./src/authentication/sign-in/sign-in.interface.ts) exports
+`ValidatedSignInCredentials`, derived from the schema's validated output.
 
 ```typescript
-import { z } from "@hono/zod-openapi";
+import type { ValidatedSignInCredentials } from "@workspace/schemas/authentication/sign-in/sign-in.interface";
+import { signInSchema } from "@workspace/schemas/authentication/sign-in/sign-in.schema";
 
-export const signInSchema = z.object({
-  email: z.string().email().toLowerCase(),
-  password: z.string().min(1),
-});
-
-export const signUpSchema = z.object({
-  email: z.string().email().toLowerCase(),
-  password: z.string().min(8).max(128),
-  firstName: z.string().min(1).max(100),
-  lastName: z.string().min(1).max(100),
-});
-
-export type SignIn = z.infer<typeof signInSchema>;
-export type SignUp = z.infer<typeof signUpSchema>;
+const input: unknown = {
+  email: "example@example.com",
+  password: "example-password",
+};
+const credentials: ValidatedSignInCredentials = signInSchema.parse(input);
 ```
+
+Use `safeParse` and handle both outcomes for expected credential validation
+failures. `parse` is appropriate when invalid data should throw.
+
 
 ### Pagination Schema
 
