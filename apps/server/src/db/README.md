@@ -56,8 +56,11 @@ statements enabled unless the provider's pooler configuration requires otherwise
 
 The user-profile table belongs to
 [`tables/users/profile/user-profile.table.ts`](./tables/users/profile/user-profile.table.ts).
-`drizzle.config.ts` references that schema; migration SQL and snapshots remain in
-`src/db/migrations/`.
+`drizzle.config.ts` discovers every `*.table.ts` file under `src/db/tables/`, so new
+tables need no Drizzle Kit configuration change. Add a table to the `schema` map in
+[`database-connection.config.ts`](./config/connection/database-connection.config.ts)
+only when it is used through Drizzle's relational query API. Migration SQL and
+snapshots remain in `src/db/migrations/`.
 
 `updatedAt` uses PostgreSQL `now()` for Drizzle updates when no explicit update
 value is supplied. This is a Drizzle runtime hook, not a database trigger. Raw SQL
