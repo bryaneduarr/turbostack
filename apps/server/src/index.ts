@@ -41,6 +41,7 @@ async function startServer(): Promise<void> {
     app.listen({
       port: env.PORT,
       maxRequestBodySize: env.MAX_REQUEST_BODY_BYTES,
+      idleTimeout: env.HTTP_IDLE_TIMEOUT_SECONDS,
     });
     logger.info(
       { event: "server.started", port: env.PORT },

@@ -3,12 +3,16 @@ import app from "@/application.module";
 import env from "@/config/environment/server-env.config";
 import { client } from "@/db/config/connection/database-connection.config";
 import logger from "@/services/logging/output/logger.config";
+import { startServerDraining } from "@/services/server/lifecycle/server-draining-state.service";
 
 export async function shutdownServer(): Promise<void> {
   const server = app.server;
+  startServerDraining();
 
   try {
     if (server) {
+      // Load balancers need failing readiness probes before the listener closes.
+      await delay(env.SHUTDOWN_DRAIN_DELAY_SECONDS * 1000);
       // Capture stop failures immediately while active handlers finish using the pool.
       const stopped = Promise.allSettled([app.stop(false)]);
       const deadline = Date.now() + env.SHUTDOWN_TIMEOUT_SECONDS * 1000;

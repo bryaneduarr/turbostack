@@ -11,7 +11,7 @@ export const healthReadyContract = {
     tags: ["Health"],
     summary: "Readiness probe",
     description:
-      "Confirms the database answers a query. Load balancers should stop routing traffic while this fails.",
+      "Confirms the database answers a query and the server is not shutting down. Load balancers should stop routing traffic while this fails.",
     responses: {
       [OK]: jsonContent(healthReadyRoute.response, "The instance is ready."),
       [SERVICE_UNAVAILABLE]: {

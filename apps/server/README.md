@@ -57,10 +57,18 @@ reference is disabled unless `OPENAPI_ENABLED=true`.
 | Endpoint | Checks | Use |
 |---|---|---|
 | `GET /health/live` | The process serves HTTP | Liveness probe; restart the instance when it fails |
-| `GET /health/ready` | PostgreSQL answers `SELECT 1` | Readiness probe; stop routing traffic while it returns `SERVICE_UNAVAILABLE` |
+| `GET /health/ready` | The server is not shutting down and PostgreSQL answers `SELECT 1` | Readiness probe; stop routing traffic while it returns `SERVICE_UNAVAILABLE` |
 
 Probes stay outside `/api/v1` so infrastructure paths never change with API
 versions. The Docker image's `HEALTHCHECK` uses the liveness endpoint.
+
+On SIGTERM or SIGINT, readiness fails immediately while the server keeps serving
+for `SHUTDOWN_DRAIN_DELAY_SECONDS` (default `0`), so a load balancer stops routing
+new requests before the listener closes. Set it a little longer than the load
+balancer's health-check interval in deployments. Active requests then get
+`SHUTDOWN_TIMEOUT_SECONDS` to finish. `HTTP_IDLE_TIMEOUT_SECONDS` (default `75`,
+at most `255`) closes idle keep-alive connections; keep it above the load
+balancer's idle timeout so it never reuses a connection the server closed.
 
 ## Expected Failures
 
