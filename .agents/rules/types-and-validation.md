@@ -74,6 +74,16 @@ The example shows the required brief comment style. Production comments must des
 - Do not use passthrough schemas for sensitive response objects. Deliberately strip or reject undeclared fields.
 - Do not add placeholder request contracts to endpoints that consume no request input.
 
+## End-to-end route definitions
+
+- Every API endpoint has exactly one route definition, `<operation>.route.ts`, in its owning `packages/schemas/src/server/routes/` domain and operation folder. Declare it `as const satisfies RouteDefinition`.
+- Declare every `RouteDefinition` member: `method`, `path`, `params`, `query`, `body`, and `response`. Use `null` for an input the route does not consume. Never omit members, make them optional, or substitute placeholder schemas.
+- `path` is the full request path the client calls, including any version prefix from `api-version-prefix.constant.ts` and `:name` path parameters. `params`, `query`, and `body` are concrete Zod schemas when the route consumes them.
+- Register server routes only with `.route(route.method, route.path, handler, contract)`. The contract `satisfies RouteContract<typeof route>`, which requires each non-null input schema so Elysia validates it, and forbids null ones. Handlers build responses with `route.response`.
+- Clients call the API only through `sendApiRequest` with the route definition and explicit `params`, `query`, and `body` values, passing `null` for inputs the route does not consume. Never hand-write API paths or methods, or choose response schemas separately from the route.
+- Handle every `ApiResult` variant: `success`, `failure`, `unexpected-response`, and `unreachable`.
+- Clients and servers deploy independently, so change published routes additively: new response fields (older clients strip unknown keys), new routes, or new versioned paths. Removing or renaming fields, tightening inputs, or adding error codes that older clients must understand requires a new versioned route.
+
 ## Required values and explicit absence
 
 - Make validated domain values and internal function parameters required and non-nullable by default. Allow `null`, `undefined`, optional properties, `.optional()`, `.nullable()`, or `.nullish()` only when absence has a concrete domain, persistence, protocol, framework, or library meaning; document that meaning in the owning contract.
