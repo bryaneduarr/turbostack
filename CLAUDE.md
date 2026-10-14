@@ -1,4 +1,4 @@
-## Claude Code
+# Claude Code
 
 `AGENTS.md` above is the single source of instructions for every harness. This file only maps it to Claude Code; do not duplicate rules here.
 
