@@ -16,6 +16,8 @@
     "lint": "biome lint .",
     "start": "bun dist/index.js",
     "start:migrate": "bun dist/db/migrate/apply-migrations.script.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "update": "bun update --latest"
   },
   "dependencies": {
