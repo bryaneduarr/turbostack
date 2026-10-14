@@ -53,9 +53,9 @@ Reviewing the scoped diff, direct consumers, and affected package checks is usua
 
 ## When behavior needs tests
 
-Test the workflow, not each function: send real requests through `app.handle(new Request(...))` for server routes, use a local `Bun.serve` for HTTP clients, and assert on parsed contracts rather than raw text. `bun run --cwd <package> test` runs one package; `bun run test` runs every affected package through Turborepo. Routes that query PostgreSQL need a reachable database.
+Test the workflow, not each function: send real requests through `app.handle(new Request(...))` for server routes, use a local `Bun.serve` for HTTP clients, and assert on parsed contracts rather than raw text. `bun run --cwd <package> test` runs one package; `bun run test` runs every affected package through Turborepo. The server's test task starts PostgreSQL with Docker and applies migrations first; tests that write data delete their rows afterwards.
 
-Browser rendering and interaction, such as maps drawn on a canvas, need a real browser. Propose adding Vitest Browser Mode or Playwright to the owning app when the first such test is needed; do not add them speculatively.
+Browser rendering and interaction, such as maps drawn on a canvas, need a real browser. Propose adding Playwright to the owning app when the first such test is needed; it drives the real Next.js app, including Server Components. Do not add it speculatively.
 
 Report which checks actually ran and what they established. Investigation-only requests can be handled through source inspection and static checks.
 
