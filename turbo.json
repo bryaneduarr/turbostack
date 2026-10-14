@@ -62,6 +62,7 @@
       "dependsOn": ["build", "//#db:up"]
     },
     "test": {
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": []
     }
   }

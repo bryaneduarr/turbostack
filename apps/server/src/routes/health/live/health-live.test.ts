@@ -1,6 +1,6 @@
+import { describe, expect, it } from "bun:test";
 import { healthLiveResponseSchema } from "@workspace/schemas/server/routes/health/live/health-live-response.schema";
 import { OK } from "@workspace/utils/http/status-codes/http-status-code.constant";
-import { describe, expect, it } from "vitest";
 import app from "@/application.module";
 
 describe("GET /health/live", () => {

@@ -1,9 +1,9 @@
+import { describe, expect, it } from "bun:test";
 import { errorResponseSchema } from "@workspace/schemas/server/responses/errors/error-response.schema";
 import {
   CONFLICT,
   NOT_FOUND,
 } from "@workspace/utils/http/status-codes/http-status-code.constant";
-import { describe, expect, it } from "vitest";
 import app from "@/application.module";
 import { createApp } from "@/config/http/application/http-application.config";
 import { ExpectedFailure } from "@/services/responses/errors/expected-failure.error";

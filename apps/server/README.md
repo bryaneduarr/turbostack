@@ -12,7 +12,7 @@ A type-safe **backend** built with [Elysia](https://elysiajs.com/), TypeScript, 
 | Zod | Environment and reusable response schemas |
 | Pino | Logging |
 | Drizzle / Postgres | Database access |
-| Vitest | Tests |
+| Bun test runner | Tests |
 
 ## Getting Started
 
@@ -103,8 +103,9 @@ message.
 - **bun run lint**: Lint with Biome
 - **bun run start**: Run the bundled server
 - **bun run start:migrate**: Apply committed migrations using the bundled runner
-- **bun run test**: Run Vitest once
-- **bun run test:watch**: Run Vitest in watch mode
+- **bun run test**: Run the Bun tests once
+- **bun run test:watch**: Run the Bun tests in watch mode
+- **bun run drizzle:check**: Check that committed migrations do not collide
 - **bun run drizzle:generate**: Generate database migrations
 - **bun run drizzle:migrate**: Apply database migrations with Drizzle Kit
 - **bun run drizzle:push**: Push the database schema
@@ -112,17 +113,15 @@ message.
 
 ## Testing
 
-Tests use [Vitest](https://vitest.dev/) and live next to the code they cover as
-`<responsibility>.test.ts`. [`vitest.config.ts`](./vitest.config.ts) resolves the
-`@/` aliases, loads `apps/server/.env` when present (real environment variables
-take precedence), forces `NODE_ENV=test`, and validates the result with the server
-environment schema before any test runs, so a missing or invalid variable fails
-immediately. Leave `LOG_LEVEL` unset to keep test logs silent. CI copies
-`.env.example` to provide the values. Send requests with
+Tests use Bun's built-in runner (`bun:test`), the same runtime the server runs on,
+and live next to the code they cover as `<responsibility>.test.ts`. Bun resolves
+the `@/` aliases and loads `apps/server/.env`; the `test` script sets
+`NODE_ENV=test`, and importing the app validates the environment, so a missing or
+invalid variable fails immediately. Leave `LOG_LEVEL` unset to keep test logs
+silent. CI copies `.env.example` to provide the values. Send requests with
 `app.handle(new Request(...))`; no port is opened. Routes that query PostgreSQL
-need a reachable database. Tests run under Node.js through Vitest, while the
-server runs on Bun, so avoid Bun-only APIs in code under test or cover them
-another way.
+need a reachable database. Test files share one process, so state such as server
+draining persists between tests in a run.
 
 ## Logging
 
