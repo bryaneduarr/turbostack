@@ -13,7 +13,6 @@
     "@workspace/utils": "workspace:*",
     "zod": "^4.6.7"
   },
-  "devDependencies": {},
   "exports": {
     "./database/*": "./src/database/*.ts",
     "./server/*": "./src/server/*.ts",
