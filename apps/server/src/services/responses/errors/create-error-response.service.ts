@@ -1,18 +1,18 @@
 import { errorResponseSchema } from "@workspace/schemas/server/responses/errors/error-response.schema";
 import { getRequestLog } from "@/services/logging/requests/get-request-log.service";
-import { errorResponseMessages } from "@/services/responses/errors/error-response-messages.config";
 import type { ErrorResponseInput } from "@/types/responses/errors/error-response-input.interface";
 
 export function createErrorResponse({
   request,
   code,
+  message,
   status,
 }: ErrorResponseInput) {
   const entry = getRequestLog(request);
   const requestId = entry.requestId;
   const body = errorResponseSchema.parse({
     success: false,
-    message: errorResponseMessages[code],
+    message,
     data: null,
     error: { code },
     status,

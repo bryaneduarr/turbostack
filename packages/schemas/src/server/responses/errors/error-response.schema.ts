@@ -19,6 +19,8 @@ export const errorResponseSchema = responseEnvelopeSchema.extend({
       "PARSE",
       "UNAUTHORIZED",
       "FORBIDDEN",
+      "CONFLICT",
+      "SERVICE_UNAVAILABLE",
       "REQUEST_ERROR",
       "INTERNAL_SERVER_ERROR",
     ]),

@@ -1,8 +1,10 @@
 import {
   BAD_REQUEST,
+  CONFLICT,
   FORBIDDEN,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
+  SERVICE_UNAVAILABLE,
   UNAUTHORIZED,
   UNPROCESSABLE_ENTITY,
 } from "@workspace/utils/http/status-codes/http-status-code.constant";
@@ -34,6 +36,10 @@ export const errorResponseComponents = {
     ...errorResponse,
     description: `${NOT_FOUND}: resource or route not found (NOT_FOUND).`,
   },
+  Conflict: {
+    ...errorResponse,
+    description: `${CONFLICT}: request conflicts with the current resource state (CONFLICT). The message explains the specific conflict.`,
+  },
   ValidationError: {
     ...errorResponse,
     description: `${UNPROCESSABLE_ENTITY}: request validation failed (VALIDATION). No submitted values are returned.`,
@@ -41,6 +47,10 @@ export const errorResponseComponents = {
   InternalServerError: {
     ...errorResponse,
     description: `${INTERNAL_SERVER_ERROR}: unexpected server error (INTERNAL_SERVER_ERROR). Use requestId for support; exception details remain private.`,
+  },
+  ServiceUnavailable: {
+    ...errorResponse,
+    description: `${SERVICE_UNAVAILABLE}: a required backing service is unavailable (SERVICE_UNAVAILABLE). Retry later.`,
   },
   RequestError: {
     ...errorResponse,
