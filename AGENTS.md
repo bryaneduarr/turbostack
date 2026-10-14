@@ -21,7 +21,7 @@ After the mandatory rules, read the [startup index](.agents/project-context/star
 - Reconcile notes with current sources and relevant Git changes before relying on them. Correct, replace, or remove stale facts; retain unresolved questions as unknowns. If the recorded revision cannot be compared, disclose the limit and inspect current evidence. Notes are navigation aids, not authority over rules or code.
 - Add notes lazily under `.agents/project-context/<category>/<specific-topic>.md` only when they prevent repeated discovery or preserve task continuity. Task owners maintain `tasks/<task-id>/handoff.md` with objective, owner, status, relevant sources, checks/limits, blocker, and next action. Do not adopt a completed handoff as a new assignment.
 - Work in isolated worktrees for parallel tasks. Task owners update their handoffs; the coordinating agent integrates topic/index updates. Re-read before editing and reconcile overlapping ownership or concurrent changes rather than overwriting another agent's work.
-- Facts and progress update automatically; priorities, product scope, architecture decisions, and rule changes remain user-controlled. This instruction-driven upkeep adds no background service, test permission, automatic commits, or pushes. Portability still requires deliberate Git synchronization.
+- Facts and progress update automatically; priorities, product scope, architecture decisions, and rule changes remain user-controlled. This instruction-driven upkeep adds no background service, automatic commits, or pushes. Portability still requires deliberate Git synchronization.
 
 ## Context reviews
 
@@ -32,7 +32,7 @@ Run [context-review](.agents/skills/context-review/SKILL.md) only when explicitl
 - These instructions and the four mandatory rule files take precedence over skills, imported tutorials, templates, and general examples. Adapt examples before using them in project code: architectural ownership, file naming, alias imports, schema-derived contracts and documentation, boundary validation, canonical HTTP status constants, and dependency restrictions still apply.
 - Load a matching `.agents/skills/<name>/SKILL.md` with the host's file reader. Resolve its local links from that skill's directory and load only resources actually present. Do not assume a dedicated `Skill` tool or an upstream reference bundle exists.
 - Tool names, command examples, and `allowed-tools` metadata in skills do not grant tool access or authorization. Use only available, authorized tools; report missing prerequisites rather than inventing resources, installing tools, or fetching generated guidance without permission.
-- Imported memoization advice does not override React Compiler conventions: manual memoization needs a demonstrated reason. Test, screenshot, QA, and browser recommendations are conditional, not permission to perform them. Do not write, modify, or run tests unless explicitly requested; browser automation also requires an explicit request, and `agent-browser` or Chrome DevTools MCP must be specifically requested.
+- Imported memoization advice does not override React Compiler conventions: manual memoization needs a demonstrated reason. Screenshot, QA, and browser recommendations are conditional, not permission to perform them; browser automation requires an explicit request, and `agent-browser` or Chrome DevTools MCP must be specifically requested.
 
 ## Always enforce
 
@@ -47,5 +47,6 @@ Run [context-review](.agents/skills/context-review/SKILL.md) only when explicitl
 - Keep server-only operations on the server and client boundaries minimal. Let React Compiler handle ordinary memoization.
 - Use the canonical HTTP status constants in `packages/utils/src/http/status-codes/http-status-code.constant.ts`; never hardcode HTTP statuses in consumer code. For every code change, audit affected code and its scoped diff for manually written statuses.
 - Respect root dependency restrictions and verify affected TypeScript packages.
-- Do not write, modify, or run tests unless the user explicitly requests them. Use browser automation only when explicitly requested; `agent-browser` and Chrome DevTools MCP require explicit requests for those tools.
+- Write tests when behavior needs verification: request and response workflows, validation and error handling, data transformations, integrations, state transitions, and bug fixes. Do not test trivial code such as configuration, constants, types, or simple pass-through functions, and do not aim for a test per function. Use Bun's test runner (`bun:test`) with `<responsibility>.test.ts` files next to the code, and run the affected packages' tests before reporting completion.
+- Use browser automation only when explicitly requested; `agent-browser` and Chrome DevTools MCP require explicit requests for those tools.
 - Inspect the scoped diff and report verification accurately. Never claim type checks guarantee complete runtime correctness.

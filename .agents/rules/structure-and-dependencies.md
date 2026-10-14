@@ -54,7 +54,7 @@ This is an acceptance condition for all project-owned frontend, backend, schema,
 - Existing code is not grandfathered in. Bring the task's affected ownership area into compliance; do not limit the review to newly created or directly edited files.
 - Related structural adaptation is part of the smallest correct change. A whole-repository migration or reorganization of unrelated ownership areas requires separate authorization.
 - Complete each relocation by normalizing applicable filenames and updating affected imports, package exports, configuration references, and documentation. Remove obsolete empty folders. Preserve behavior, required tool paths and names, and unrelated user changes, including deletions.
-- Do not treat relocation as permission for unrelated behavior changes, speculative abstraction, or test changes. If a required adaptation conflicts with user edits or cannot safely be completed, report the blocker rather than silently omitting it.
+- Do not treat relocation as permission for unrelated behavior changes, speculative abstraction, or unrelated test changes. If a required adaptation conflicts with user edits or cannot safely be completed, report the blocker rather than silently omitting it.
 
 ### Enforce ownership before implementation and completion
 

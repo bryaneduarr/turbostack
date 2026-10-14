@@ -94,7 +94,7 @@ The example shows the required brief comment style. Production comments must des
 - Do not replace meaningful absence with arbitrary empty objects, empty strings, zero, random identifiers, or other fabricated domain values. Defaults must preserve the intended semantics; reject invalid data, return a documented absent-state variant, or omit a genuinely optional external field after narrowing.
 - Preserve intentional wire-level nulls and bodyless HTTP responses when the published protocol requires them. Do not silently change API or database contracts just to remove nullability.
 - Keep genuine boundary `unknown`, including arbitrary thrown values that may themselves be null or undefined, until it is validated or narrowed. Do not assert it into a required domain value.
-- Before completing nullable-contract changes, inspect producers and consumers, review each retained absence case, and run affected package type checks. Do not write or run tests unless explicitly requested.
+- Before completing nullable-contract changes, inspect producers and consumers, review each retained absence case, and run affected package type checks.
 
 ## No unsafe typing
 

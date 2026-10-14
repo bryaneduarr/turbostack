@@ -6,8 +6,8 @@ description: "Use when asked to organize project changes into separate Conventio
 # Commit completed work
 
 Turn the requested changes into purpose-driven, dependency-ordered commits.
-Read repository instructions first. This skill does not authorize source edits,
-tests, browser automation, history rewriting, or pushing.
+Read repository instructions first. This skill does not authorize source or test edits,
+browser automation, history rewriting, or pushing.
 
 ## 1. Inspect the entire change pool
 
@@ -205,7 +205,7 @@ plan and request approval again.
   and footer line <= 72. Validate type, syntax, blank lines, and a factual reason.
 - Run applicable static checks using the owning packages' existing commands.
   Instruction-only commits require documentation checks, not TypeScript checks.
-  Do not write, modify, or run tests without an explicit user request.
+  Run the affected packages' tests; do not write or modify tests here.
 - Review each proposed index-tree snapshot and its committed ancestors for
   missing code providers, broken imports, and incomplete contract transitions.
   Run applicable static checks against the final working tree using the updated

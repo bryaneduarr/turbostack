@@ -51,11 +51,13 @@ Inspect scoped Git status before editing to distinguish existing user changes fr
 
 Reviewing the scoped diff, direct consumers, and affected package checks is usually more useful than running every workspace command. Builds can add confidence when bundling, package exports, or framework integration are part of the change.
 
-## When the user requests tests
+## When behavior needs tests
 
-Choose the smallest test scope that addresses the requested behavior. Vitest fits focused unit and integration checks; browser flows fit browser-testing tools. Existing package scripts and nearby tests can help identify the intended command and setup.
+Test the workflow, not each function: send real requests through `app.handle(new Request(...))` for server routes, use a local `Bun.serve` for HTTP clients, and assert on parsed contracts rather than raw text. `bun run --cwd <package> test` runs one package; `bun run test` runs every affected package through Turborepo. Routes that query PostgreSQL need a reachable database.
 
-Report which checks actually ran and what they established. A generic request to investigate or verify can be handled through source inspection and static checks; test permission is defined separately in `AGENTS.md`.
+Browser rendering and interaction, such as maps drawn on a canvas, need a real browser. Propose adding Vitest Browser Mode or Playwright to the owning app when the first such test is needed; do not add them speculatively.
+
+Report which checks actually ran and what they established. Investigation-only requests can be handled through source inspection and static checks.
 
 ## When browser interaction is requested
 

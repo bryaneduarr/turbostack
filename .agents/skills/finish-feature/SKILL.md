@@ -24,7 +24,7 @@ context, before proceeding. Resolve links relative to this skill directory.
 - Plan approval authorizes only the displayed branch action, commits, push,
   ready-for-review PR targeting `main`, and exact local cleanup actions.
   The component skills alone do not authorize pushing or publishing.
-- No source fixes, tests, browser automation, installations, history rewriting,
+- No source or test fixes, browser automation, installations, history rewriting,
   forced pushes/checkouts, hook bypasses, stashing, hard resets, or `git clean`.
   Applicable static checks remain required; stop on failed checks or hooks.
 - Stop on uncertainty or unexpected changes. Preserve successful commits and
