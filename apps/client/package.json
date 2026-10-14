@@ -4,13 +4,13 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "next build",
+    "build": "next build && cp -r .next/static .next/standalone/apps/client/.next/static",
     "clean": "rm -rf node_modules/ .turbo/ .next/",
     "check-types": "tsc --noEmit",
     "dev": "next dev --turbopack",
     "format": "biome format --write .",
     "lint": "biome lint .",
-    "start": "next start"
+    "start": "node --env-file-if-exists=.env .next/standalone/apps/client/server.js"
   },
   "dependencies": {
     "@workspace/api-client": "workspace:*",

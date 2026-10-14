@@ -47,5 +47,19 @@ services:
       api-server-migrations:
         condition: service_completed_successfully
 
+  web-client:
+    profiles: [production]
+    build:
+      context: .
+      dockerfile: apps/client/Dockerfile
+    image: web-client:local
+    environment:
+      SERVER_URL: http://api-server:3001
+    ports:
+      - "${CLIENT_PORT:-3000}:3000"
+    depends_on:
+      api-server:
+        condition: service_healthy
+
 volumes:
   postgres-data:

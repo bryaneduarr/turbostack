@@ -38,6 +38,6 @@
   },
   "packageManager": "bun@1.4.0",
   "engines": {
-    "node": ">=20"
+    "node": ">=22.9"
   }
 }
