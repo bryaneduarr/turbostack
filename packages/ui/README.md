@@ -1,154 +1,60 @@
 # @workspace/ui
 
-A shared UI component library for the workspace built with [shadcn/ui](https://ui.shadcn.com/) and [Tailwind CSS v4](https://tailwindcss.com/).
+Our own React components for the workspace, built on native HTML elements and the
+shared [Tailwind CSS](https://tailwindcss.com/) tokens. The package depends only on
+React, so there is no UI library to upgrade or work around.
 
-This package provides reusable, accessible components that can be imported throughout the workspace.
+## Structure
 
-## Technology Stack
-
-| Technology |
-|------------|
-| [React](https://react.dev/) |
-| [shadcn/ui](https://ui.shadcn.com/) |
-| [Tailwind CSS](https://tailwindcss.com/) |
-| [Base UI](https://base-ui.com/) |
-| [CVA](https://cva.style/) |
-| [Lucide React](https://lucide.dev/) |
-
-## Adding shadcn/ui Components
-
-Use the shadcn CLI to add new components to this package:
-
-```sh
-cd packages/ui
-bunx shadcn@latest add button
-bunx shadcn@latest add card
-bunx shadcn@latest add dialog
-bunx shadcn@latest add input
+```text
+src/
+├── components/
+│   └── button/
+│       └── button.component.tsx
+├── types/
+│   └── components/
+│       └── button/
+│           └── button-props.interface.ts
+└── globals.css
 ```
 
-Components will be added to `src/components/ui/`.
+## Using Components
 
-### Browse Available Components
-
-See the full list of available components at [ui.shadcn.com/docs/components](https://ui.shadcn.com/docs/components).
-
-## Adding Custom Components
-
-You can also create custom components using existing components in the shared UI library:
-
-1. Create a new file in [src/components/](./src/components/) directory.
-
-2. For example, to create a new component called `basic-date-picker`, create a file named [basic-date-picker.tsx](./src/components/basic-date-picker.tsx)
-
-## Using the Components
-
-Components can be imported directly from `@workspace/ui` into any other package in the workspace.
-
-### Importing UI Components
+Import each component directly from its module:
 
 ```tsx
-// Import UI components (shadcn/ui)
-import { Button } from "@workspace/ui/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@workspace/ui/components/ui/card";
+import { Button } from "@workspace/ui/components/button/button.component";
 
-// Import custom components
-import DatePicker from "@workspace/ui/components/basic-date-picker";
-
-// Import the class-merging dependency directly
-import { cn } from "cn";
+<Button type="submit" variant="primary" size="medium">
+  Save
+</Button>;
 ```
 
-### Component Examples
+`Button` renders a native `<button>` and accepts every native button attribute.
+`variant` (`primary`, `secondary`, `outline`, `ghost`, `destructive`), `size`
+(`small`, `medium`, `large`), and `type` are required, so every use states its
+look and its form behavior. `className` is appended for layout; it does not merge
+or override the variant classes.
 
-#### Button Component
+## Adding a Component
 
-```tsx
-import { Button } from "@workspace/ui/components/ui/button";
+1. Create `src/types/components/<component>/<component>-props.interface.ts` with a
+   documented props interface. Make every prop the component needs required.
+2. Create `src/components/<component>/<component>.component.tsx`. Use native
+   elements, keep variant class maps in the component, and check them with
+   `satisfies Record<Props["variant"], string>`.
+3. Style with the theme tokens from `@workspace/tailwind` (`bg-primary`,
+   `text-muted-foreground`, `border-border`, `ring-ring`, and so on).
+4. Add `"use client"` only when the component itself uses state, effects, or
+   browser APIs. Components such as `Button` that only forward event handlers work
+   in both Server and Client Components.
 
-// Variants: default, outline, secondary, ghost, destructive, link
-<Button variant="default">Primary</Button>
-<Button variant="outline">Outline</Button>
-<Button variant="secondary">Secondary</Button>
-<Button variant="ghost">Ghost</Button>
-<Button variant="destructive">Delete</Button>
-<Button variant="link">Link</Button>
+Add a dependency only when a component needs behavior that is hard to build
+correctly, such as complex focus management, and record why in this README.
 
-// Sizes: default, xs, sm, lg, icon, icon-xs, icon-sm, icon-lg
-<Button size="sm">Small</Button>
-<Button size="lg">Large</Button>
-<Button size="icon"><ChevronRight /></Button>
-```
-
-#### Using the `cn` Utility
-
-The `cn` dependency merges Tailwind classes intelligently. Import it directly
-rather than through a forwarding utility module. Any consumer importing `cn`
-must declare it as a dependency:
-
-```tsx
-import { cn } from "cn";
-
-function MyComponent({ className, isActive }) {
-  return (
-    <div className={cn(
-      "rounded-lg p-4",
-      isActive && "bg-primary text-primary-foreground",
-      className
-    )}>
-      Content
-    </div>
-  );
-}
-```
-
-## Configuration
-
-This package uses shared configurations from the workspace:
-
-- **Biome** - Config from [@workspace/biome](../../config/biome/)
-- **Tailwind CSS** - Config from [@workspace/tailwind](../../config/tailwind/)
-- **TypeScript** - Config from [@workspace/typescript](../../config/typescript/)
-
-### shadcn/ui Configuration
-
-The `components.json` file configures shadcn/ui for this package:
-
-```json
-{
-  "style": "base-lyra",
-  "rsc": true,
-  "tsx": true,
-  "tailwind": {
-    "css": "./src/globals.css",
-    "baseColor": "zinc",
-    "cssVariables": true
-  },
-  "iconLibrary": "lucide",
-  "aliases": {
-    "components": "@workspace/ui/components",
-    "utils": "cn",
-    "ui": "@workspace/ui/components/ui"
-  }
-}
-```
-
-## Available Scripts
+## Scripts
 
 - **bun run check-types** - Check TypeScript types without emitting files
 - **bun run clean** - Remove generated directories (node_modules, .turbo)
 - **bun run format** - Format code with Biome
 - **bun run lint** - Lint code with Biome
-
-## Package Exports
-
-This package exports component modules through extensionless package subpaths:
-
-```json
-{
-  "exports": {
-    "./components/*": "./src/components/*.tsx",
-    "./hooks/*": "./src/hooks/*.ts"
-  }
-}
-```
