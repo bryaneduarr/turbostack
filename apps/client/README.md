@@ -12,8 +12,38 @@ bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000). The home page calls the API's
-`GET /health/ready` from a Server Component through `@workspace/api-client` and
-shows whether the API and its database are ready.
+`GET /health/ready` from a Server Component and shows whether the API and its
+database are ready. [/profiles](http://localhost:3000/profiles) lists, creates,
+and edits user profiles, the reference feature.
+
+## Calling the API
+
+Server Components, Server Actions, and Route Handlers call the API with
+[`requestApi`](./src/services/api/requests/request-api.service.ts). It wraps
+`sendApiRequest` from `@workspace/api-client` with the validated `SERVER_URL`,
+`cache: "no-store"`, and a five-second timeout, so callers pass only the route
+definition and its `params`, `query`, and `body`. Pages that call it start with
+`await connection()` so Next.js renders them per request instead of at build
+time. [`describeApiFailure`](./src/services/api/results/describe-api-failure.service.ts)
+turns every unsuccessful result into a message for users.
+
+## Forms and Server Actions
+
+The profile forms show the pattern for mutations:
+
+1. A Client Component form
+   ([`user-profile-form.component.tsx`](./src/components/users/profiles/form/user-profile-form.component.tsx))
+   submits through `useActionState`, so it also works without JavaScript.
+2. The Server Action
+   ([`actions/users/profiles/`](./src/actions/users/profiles/)) validates the
+   form data with the shared schema, validates bound arguments such as the
+   profile ID, calls the API through `requestApi`, and returns a form state:
+   `editing`, `invalid` with field messages, `failed`, or `saved`.
+3. After a change, the action calls `revalidatePath` only for the pages that show
+   the changed profile.
+
+Form states keep the values that were typed, so a failed submission does not
+clear the form.
 
 ## Environment
 

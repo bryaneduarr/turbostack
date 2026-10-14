@@ -1,5 +1,6 @@
 import { healthReadyRoute } from "@workspace/schemas/server/routes/health/ready/health-ready.route";
 import { Button } from "@workspace/ui/components/button/button.component";
+import Link from "next/link";
 import { connection } from "next/server";
 import { ServerReadinessStatus } from "@/components/health/readiness/server-readiness-status.component";
 import { requestApi } from "@/services/api/requests/request-api.service";
@@ -22,6 +23,9 @@ export default async function Page() {
           Check again
         </Button>
       </form>
+      <Link href="/profiles" className="text-primary hover:underline">
+        Manage user profiles
+      </Link>
     </main>
   );
 }
