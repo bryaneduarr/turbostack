@@ -2,8 +2,9 @@
   "name": "server",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
+    "build": "rm -rf dist && bun build src/index.ts src/db/migrate/apply-migrations.script.ts --root src --target bun --outdir dist --sourcemap=linked && cp -r src/db/migrations dist/db/migrations",
     "check-types": "tsc --noEmit",
     "clean": "rm -rf ./dist ./node_modules/ ./.turbo/",
     "dev": "bun --watch src/index.ts",
@@ -13,7 +14,8 @@
     "drizzle:studio": "bunx drizzle-kit studio --config ./drizzle.config.ts",
     "format": "biome format --write .",
     "lint": "biome lint .",
-    "start": "bun ./dist/src/index.js",
+    "start": "bun dist/index.js",
+    "start:migrate": "bun dist/db/migrate/apply-migrations.script.js",
     "update": "bun update --latest"
   },
   "dependencies": {

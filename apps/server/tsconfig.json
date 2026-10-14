@@ -1,19 +1,15 @@
 {
   "extends": "@workspace/typescript/base",
   "compilerOptions": {
+    "lib": ["es2022"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
     "paths": {
       "@/package.json": ["./package.json"],
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
-    "outDir": "./dist",
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "types": ["bun"]
   },
-  "exclude": [
-    "./dist/",
-    "./node_modules/"
-  ]
+  "exclude": ["./dist/", "./node_modules/"]
 }

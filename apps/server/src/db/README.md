@@ -74,7 +74,11 @@ bun run drizzle:migrate
 ```
 
 Review and commit generated SQL and snapshots before applying migrations in a
-controlled deployment step. Do not automatically run migrations on every server
+controlled deployment step. Production images do not include Drizzle Kit; the
+build bundles [`apply-migrations.script.ts`](./migrate/apply-migrations.script.ts)
+with the committed migrations, and `bun run start:migrate` (or
+`bun db/migrate/apply-migrations.script.js` inside the image) applies them using
+only the `DB_*` variables. Do not automatically run migrations on every server
 startup. Keep `drizzle:push` for deliberate development workflows rather than
 unreviewed production schema changes.
 
