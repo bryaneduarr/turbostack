@@ -113,8 +113,11 @@ message.
 
 Tests use [Vitest](https://vitest.dev/) and live next to the code they cover as
 `<responsibility>.test.ts`. [`vitest.config.ts`](./vitest.config.ts) resolves the
-`@/` aliases and supplies fictional environment values with `NODE_ENV=test`, so
-tests need no `.env` and logs stay silent. Send requests with
+`@/` aliases, loads `apps/server/.env` when present (real environment variables
+take precedence), forces `NODE_ENV=test`, and validates the result with the server
+environment schema before any test runs, so a missing or invalid variable fails
+immediately. Leave `LOG_LEVEL` unset to keep test logs silent. CI copies
+`.env.example` to provide the values. Send requests with
 `app.handle(new Request(...))`; no port is opened. Routes that query PostgreSQL
 need a reachable database. Tests run under Node.js through Vitest, while the
 server runs on Bun, so avoid Bun-only APIs in code under test or cover them
