@@ -27,3 +27,9 @@ export type ApiResult<Route extends RouteDefinition> =
   | { kind: "failure"; response: ErrorResponse }
   | { kind: "unexpected-response"; status: number }
   | { kind: "unreachable"; cause: unknown };
+
+/* Represents every unsuccessful API outcome, which does not depend on the route. */
+export type ApiFailureResult = Exclude<
+  ApiResult<RouteDefinition>,
+  { kind: "success" }
+>;
