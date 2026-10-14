@@ -25,6 +25,6 @@
   },
   "exports": {
     "./components/*": "./src/components/*.tsx",
-    "./hooks/*": "./src/hooks/*.ts"
+    "./types/*": "./src/types/*.ts"
   }
 }
