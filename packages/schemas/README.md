@@ -18,7 +18,9 @@ src/
     └── routes/
         ├── definition/   # RouteDefinition contract shared by server and clients
         ├── versioning/   # API version path prefix
-        └── health/       # Liveness and readiness routes and responses
+        ├── health/       # Liveness and readiness routes and responses
+        └── users/
+            └── profiles/ # Reference feature: list, create, get, and update
 ```
 
 Directory placement communicates intended use; it is not a security boundary.
@@ -156,38 +158,24 @@ Keep runtime schemas and their contracts separate. Document every schema field,
 every interface, and every explicitly declared interface member with brief
 `/* ... */` comments.
 
-For example, an illustrative `users/profile/user-profile.schema.ts` could define:
+The user-profile feature in
+[`server/routes/users/profiles/`](./src/server/routes/users/profiles/) is the
+reference. [`user-profile.schema.ts`](./src/server/routes/users/profiles/user-profile.schema.ts)
+holds the schemas every operation shares: the profile returned by the API, the
+writable names with trimming, length limits, and messages shown to users, the
+path parameters, and the single-profile response.
+[`user-profile.interface.ts`](./src/server/routes/users/profiles/user-profile.interface.ts)
+derives their contracts, including a separate `UserProfileNamesInput` for raw
+names before trimming. An operation with its own schemas, such as
+[`list/`](./src/server/routes/users/profiles/list/), keeps them beside its route
+definition.
 
-```typescript
-import { z } from "zod";
-
-export const userProfileSchema = z.object({
-  /* Identifies the profile using a validated UUID. */
-  id: z.uuid(),
-  /* Contains the profile's validated lowercase contact email. */
-  email: z.email().toLowerCase(),
-  /* Contains the nonempty given name, limited to 100 characters. */
-  firstName: z.string().min(1).max(100),
-  /* Contains the nonempty family name, limited to 100 characters. */
-  lastName: z.string().min(1).max(100),
-});
-```
-
-Its dedicated `users/profile/user-profile.interface.ts` would derive the output:
-
-```typescript
-import type { userProfileSchema } from "@workspace/schemas/users/profile/user-profile.schema";
-import type { z } from "zod";
-
-/* Represents the validated profile data exposed by the illustrative contract. */
-export interface ValidatedUserProfile extends z.output<typeof userProfileSchema> {}
-```
-
-This example does not describe an existing user API or the database table's
-nullable name columns. When transformations change input shape, distinguish raw
+When transformations change input shape, distinguish raw
 `z.input<typeof schema>` contracts from validated `z.output<typeof schema>`
 contracts in the same responsibility-specific interface file. Use type aliases
-for shapes interfaces cannot faithfully represent.
+for shapes interfaces cannot faithfully represent. Query values arrive as
+strings, so use `z.coerce.number<number>()` to accept them on the server while
+clients still pass typed numbers.
 
 Validated domain values are required by default. Normalize genuinely optional
 boundary values in their owning schemas, and use parsed results afterward. Keep

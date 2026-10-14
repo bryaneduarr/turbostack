@@ -157,6 +157,26 @@ const result = await sendApiRequest({
 A wrong path, method, input, or response type fails `check-types`. The home page
 of the web client calls `/health/ready` this way from a Server Component.
 
+## Reference Feature: User Profiles
+
+User profiles are a complete example of a feature through every layer. Copy
+their structure when adding a feature:
+
+| Layer | Where | What it shows |
+|---|---|---|
+| Database | `apps/server/src/db/tables/users/profile/` and migration `0001` | Required columns, an index for listing, a generated migration |
+| Contracts | `packages/schemas/src/server/routes/users/profiles/` | Shared schemas and one route definition per operation, using `params`, `query`, and `body` |
+| Server | `apps/server/src/routes/users/profiles/` and `src/services/users/profiles/` | Contracts, handlers, database services, `NOT_FOUND` failures, and a database-backed workflow test |
+| Client | `apps/client/src/app/profiles/` and `src/actions/users/profiles/` | Server Components that read through the api-client, and Server Actions that validate form data before calling the API |
+| UI | `packages/ui/src/components/text-field/` | A labeled input that shows validation messages |
+
+The API serves `GET` and `POST /api/v1/users/profiles` (list with `limit` and
+`offset`, and create) and `GET` and `PUT /api/v1/users/profiles/:profileId` (read
+and replace names). The web client shows them at `/profiles`. Its forms work
+without JavaScript, keep what was typed when validation fails, and refresh only
+the affected pages after a change. Delete or rename the feature when your project
+has its own domain.
+
 ## Tests
 
 Tests use Bun's built-in runner (`bun:test`) and live next to the code as
