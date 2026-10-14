@@ -2,6 +2,7 @@ import { createRouter } from "@/config/http/routing/http-router.config";
 import onError from "@/middleware/errors/on-error.handler";
 import { cors } from "@/middleware/http/cors/cors.middleware";
 import { serveEmojiFavicon } from "@/middleware/http/favicon/serve-emoji-favicon.middleware";
+import { setSecurityHeaders } from "@/middleware/http/security-headers/security-headers.middleware";
 import { requestLogger } from "@/middleware/logging/requests/request-logger.middleware";
 import { completeRequestLog } from "@/services/logging/requests/complete-request-log.service";
 
@@ -12,7 +13,8 @@ export function createApp() {
   return (
     app
       .use(requestLogger)
-        .onRequest((context) => {
+      .onRequest(setSecurityHeaders)
+      .onRequest((context) => {
         const response = cors(context);
         if (response) {
           completeRequestLog({
@@ -34,7 +36,9 @@ export function createApp() {
         }
         return response;
       })
-          .mapResponse({ as: "global" }, ({ responseValue, set }) => {
+      // Runtime variants such as "application/json;charset=utf-8" are normalized
+      // to the media types published in the OpenAPI document.
+      .mapResponse({ as: "global" }, ({ responseValue, set }) => {
         const contentType =
           responseValue instanceof Response
             ? (responseValue.headers.get("content-type") ??
