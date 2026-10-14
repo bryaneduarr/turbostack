@@ -9,12 +9,16 @@ React, so there is no UI library to upgrade or work around.
 ```text
 src/
 ├── components/
-│   └── button/
-│       └── button.component.tsx
+│   ├── button/
+│   │   └── button.component.tsx
+│   └── text-field/
+│       └── text-field.component.tsx
 ├── types/
 │   └── components/
-│       └── button/
-│           └── button-props.interface.ts
+│       ├── button/
+│       │   └── button-props.interface.ts
+│       └── text-field/
+│           └── text-field-props.interface.ts
 └── globals.css
 ```
 
@@ -35,6 +39,23 @@ import { Button } from "@workspace/ui/components/button/button.component";
 (`small`, `medium`, `large`), and `type` are required, so every use states its
 look and its form behavior. `className` is appended for layout; it does not merge
 or override the variant classes.
+
+```tsx
+import { TextField } from "@workspace/ui/components/text-field/text-field.component";
+
+<TextField
+  label="First name"
+  name="firstName"
+  type="text"
+  defaultValue={values.firstName}
+  errors={fieldErrors.firstName}
+/>;
+```
+
+`TextField` renders a visible label, a native `<input>`, and its validation
+messages. `label`, `name`, `type`, and `errors` are required; pass an empty
+`errors` list when the value is valid. Invalid fields set `aria-invalid` and link
+their messages with `aria-describedby`.
 
 ## Adding a Component
 
