@@ -35,6 +35,7 @@ This repo is organized into three main sections:
    - Easily add new components via the shadcn CLI
    - [@workspace/schemas](./packages/schemas/) - Zod validation and schema-derived contracts
    - [@workspace/utils](./packages/utils/) - Runtime-neutral utilities and canonical HTTP status constants
+   - [@workspace/api-client](./packages/api-client/) - API requests with responses validated by the shared schemas
 
 3. **[Applications](./apps/)**: Main apps:
    - **[web-client](./apps/client/)**: Next.js 16 + React 19 with Turbopack

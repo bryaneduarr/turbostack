@@ -78,6 +78,14 @@
         "typescript": "7.0.2",
       },
     },
+    "packages/api-client": {
+      "name": "@workspace/api-client",
+      "version": "0.0.0",
+      "dependencies": {
+        "@workspace/schemas": "workspace:*",
+        "zod": "^4.6.7",
+      },
+    },
     "packages/schemas": {
       "name": "@workspace/schemas",
       "version": "0.0.0",
@@ -517,6 +525,8 @@
     "@vitest/mocker": ["@vitest/mocker@5.0.4", "", { "dependencies": { "@jridgewell/trace-mapping": "0.3.31", "@vitest/spy": "5.0.4", "estree-walker": "^3.0.3", "magic-string": "^1.4.3" }, "peerDependencies": { "msw": "^2.4.9 || ^3.0.0", "vite": "^6.0.0 || ^7.0.0 || ^8.0.0" }, "optionalPeers": ["msw", "vite"] }, "sha512-tqAlrYWce4iUxhr3ncNohejtCTOcHeE8XWrSNZY3OhPoDn01yeGv+gnaBy64ATp7o6pb03eIbBAjzmibpc9vIQ=="],
 
     "@vitest/spy": ["@vitest/spy@5.0.4", "", {}, "sha512-MZKk/gSkm2q+ICobMxCpH1mA+cCAWm8WV7UhxlqGjq/sJ3AGc1BqFOs5CRVXxH78wQtme9q/NAAgBquj4AcyMw=="],
+
+    "@workspace/api-client": ["@workspace/api-client@workspace:packages/api-client"],
 
     "@workspace/biome": ["@workspace/biome@workspace:config/biome"],
 
