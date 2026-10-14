@@ -40,6 +40,8 @@ and Drizzle Kit use the same structured credentials and TLS policy.
 | `DB_IDLE_TIMEOUT_SECONDS` | `0` | Zero keeps idle connections open |
 | `DB_PREPARE` | `true` | Accepts `true` or `false`; use the provider's pooler requirements |
 | `DB_SHUTDOWN_TIMEOUT_SECONDS` | `5` | Deadline for finishing database queries during cleanup |
+| `DB_STATEMENT_TIMEOUT_SECONDS` | `30` | PostgreSQL cancels application queries running longer; `0` disables |
+| `DB_MIGRATION_LOCK_TIMEOUT_SECONDS` | `10` | A migration statement fails instead of waiting longer for a table lock |
 | `SHUTDOWN_TIMEOUT_SECONDS` | `30` | HTTP request drain deadline; not needed by Drizzle Kit |
 
 Existing local `.env` files must explicitly set `DB_SSL_MODE=disable` if PostgreSQL
@@ -51,6 +53,8 @@ Budget total connections as the number of server processes multiplied by
 `DB_POOL_MAX`, leaving capacity for migrations and administration. Do not increase
 the pool without measuring database capacity and query load. Keep prepared
 statements enabled unless the provider's pooler configuration requires otherwise.
+The statement timeout is sent as a connection startup parameter; PgBouncer must
+list `statement_timeout` in `ignore_startup_parameters` or set it on the role.
 
 ## Table behavior
 
@@ -81,8 +85,22 @@ controlled deployment step. Production images do not include Drizzle Kit; the
 build bundles [`apply-migrations.script.ts`](./migrate/apply-migrations.script.ts)
 with the committed migrations, and `bun run start:migrate` (or
 `bun db/migrate/apply-migrations.script.js` inside the image) applies them using
-only the `DB_*` variables. Do not automatically run migrations on every server
-startup. Keep `drizzle:push` for deliberate development workflows rather than
+only the `DB_*` variables. The runner holds a PostgreSQL advisory lock, so
+concurrent deployments wait instead of applying the same migrations twice, and
+sets `lock_timeout` so a migration cannot queue behind a long query and block
+traffic to that table. Do not automatically run migrations on every server
+startup.
+
+Drizzle applies migrations newer than the last applied one, so a migration
+generated on an older branch is skipped silently if a newer one was applied first.
+CI runs `drizzle-kit check`, which rejects two migrations generated from the same
+parent, and fails when `drizzle:generate` would create a migration that is not
+committed. After merging a branch that also changed tables, delete your
+unapplied migration and run `bun run drizzle:generate` again.
+
+Old and new server versions run together during a deploy, so keep each migration
+compatible with the previous release: add columns and tables first, and remove or
+rename them in a later release once no deployed code uses them. Keep `drizzle:push` for deliberate development workflows rather than
 unreviewed production schema changes.
 
 For another database that already has tables, reconcile its live schema and
