@@ -1,5 +1,5 @@
-import { OK } from "@workspace/utils/http/status-codes/http-status-code.constant";
 import { helloWorldResponseSchema } from "@workspace/schemas/server/routes/hello-world/hello-world-response.schema";
+import { OK } from "@workspace/utils/http/status-codes/http-status-code.constant";
 import { jsonContent } from "@/config/openapi/responses/content/json-response-content.config";
 
 export const helloWorldContract = {
