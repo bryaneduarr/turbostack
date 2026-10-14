@@ -1,12 +1,21 @@
-import { Button } from "@workspace/ui/components/ui/button";
+import { Button } from "@workspace/ui/components/button/button.component";
+import { connection } from "next/server";
+import { ServerReadinessStatus } from "@/components/health/readiness/server-readiness-status.component";
+import { getServerReadiness } from "@/services/health/readiness/get-server-readiness.service";
 
-export default function Page() {
+export default async function Page() {
+  await connection();
+  const readiness = await getServerReadiness();
+
   return (
-    <div className="flex min-h-svh items-center justify-center">
-      <div className="flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold">Hello World</h1>
-        <Button>Button</Button>
-      </div>
-    </div>
+    <main className="flex min-h-svh flex-col items-center justify-center gap-4 p-6 text-center">
+      <h1 className="text-2xl font-bold">Web Client</h1>
+      <ServerReadinessStatus readiness={readiness} />
+      <form>
+        <Button type="submit" variant="outline" size="medium">
+          Check again
+        </Button>
+      </form>
+    </main>
   );
 }
