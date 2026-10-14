@@ -1,8 +1,9 @@
 # Setup and database pitfalls
 
-Evidence: 2026-10-13; `0ebf76b`; sources/docs inspected, no application changes; runtime unverified.
+Evidence: 2026-10-14; base `018c6c1` plus uncommitted changes; compose stack verified locally.
 
-- [setup](../../../package.json) deletes the lockfile, reinstalls, generates/applies migrations, and writes formatting. `setup:update` also updates dependencies; neither is harmless verification.
-- [Database docs](../../../apps/server/src/db/README.md) require reviewing generated migrations and reconciling existing databases before application.
-- Docs specify verified TLS by default; non-TLS local PostgreSQL needs explicit `DB_SSL_MODE=disable`.
-- The documented startup connection check does not validate tables or migration history.
+- [setup](../../../package.json) installs from the lockfile, runs `db:up` (Docker), then applies migrations; it needs `apps/server/.env` first.
+- Port 5432 may be taken by a host PostgreSQL; use `POSTGRES_PORT` and matching `DB_PORT`.
+- TLS defaults to `verify-full`; local PostgreSQL needs `DB_SSL_MODE=disable`.
+- `SELECT 1` checks skip tables and migration history.
+- Local Docker here logs to journald; `docker logs` may be empty.
