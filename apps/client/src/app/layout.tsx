@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Public_Sans } from "next/font/google";
-import "@workspace/tailwind/globals.css";
+import "@/app/globals.css";
 
 const publicSans = Public_Sans({
   subsets: ["latin"],
