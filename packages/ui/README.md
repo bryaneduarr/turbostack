@@ -139,7 +139,6 @@ The `components.json` file configures shadcn/ui for this package:
 - **bun run clean** - Remove generated directories (node_modules, .turbo)
 - **bun run format** - Format code with Biome
 - **bun run lint** - Lint code with Biome
-- **bun run update** - Update dependencies to their latest versions
 
 ## Package Exports
 

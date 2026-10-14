@@ -102,7 +102,6 @@ This application uses shared configurations from the workspace:
 - **bun run format** - Formats code with Biome
 - **bun run lint** - Lints code with Biome
 - **bun run start** - Starts the production server
-- **bun run update** - Updates dependencies to their latest versions
 
 ## Learn More
 

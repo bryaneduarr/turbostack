@@ -158,4 +158,3 @@ The configuration includes specific file patterns:
 ## Scripts
 
 - **bun run clean** - Remove generated directories
-- **bun run update** - Update dependencies to latest versions

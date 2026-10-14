@@ -106,4 +106,3 @@ The theme colors are available as Tailwind utilities:
 ## Scripts
 
 - **bun run clean** - Remove generated directories
-- **bun run update** - Update dependencies to latest versions
