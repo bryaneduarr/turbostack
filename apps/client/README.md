@@ -57,7 +57,7 @@ The application uses shadcn/ui components from the shared UI library:
 
 ```tsx
 // Import UI components from the shared package
-import { Button } from "@workspace/ui/ui/button";
+import { Button } from "@workspace/ui/components/ui/button";
 
 // Use with different variants
 <Button variant="default">Primary Action</Button>
@@ -82,7 +82,7 @@ bunx shadcn@latest add [component-name]
 Then import them in your client application:
 
 ```tsx
-import { Card, CardHeader, CardTitle, CardContent } from "@workspace/ui/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@workspace/ui/components/ui/card";
 ```
 
 ## Configuration

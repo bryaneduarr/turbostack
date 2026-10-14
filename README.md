@@ -208,7 +208,7 @@ Import components from the shared UI package in your applications:
 
 ```tsx
 // Import UI components
-import { Button } from "@workspace/ui/ui/button";
+import { Button } from "@workspace/ui/components/ui/button";
 
 // Use in your component
 export function MyComponent() {

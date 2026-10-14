@@ -49,8 +49,8 @@ Components can be imported directly from `@workspace/ui` into any other package 
 
 ```tsx
 // Import UI components (shadcn/ui)
-import { Button } from "@workspace/ui/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@workspace/ui/ui/card";
+import { Button } from "@workspace/ui/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@workspace/ui/components/ui/card";
 
 // Import custom components
 import DatePicker from "@workspace/ui/components/basic-date-picker";
@@ -64,7 +64,7 @@ import { cn } from "cn";
 #### Button Component
 
 ```tsx
-import { Button } from "@workspace/ui/ui/button";
+import { Button } from "@workspace/ui/components/ui/button";
 
 // Variants: default, outline, secondary, ghost, destructive, link
 <Button variant="default">Primary</Button>
@@ -149,7 +149,6 @@ This package exports component modules through extensionless package subpaths:
 {
   "exports": {
     "./components/*": "./src/components/*.tsx",
-    "./ui/*": "./src/components/ui/*.tsx",
     "./hooks/*": "./src/hooks/*.ts"
   }
 }

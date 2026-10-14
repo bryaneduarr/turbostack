@@ -25,7 +25,6 @@
   },
   "exports": {
     "./components/*": "./src/components/*.tsx",
-    "./ui/*": "./src/components/ui/*.tsx",
     "./hooks/*": "./src/hooks/*.ts"
   }
 }
