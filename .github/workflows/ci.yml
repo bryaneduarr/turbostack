@@ -39,6 +39,13 @@ jobs:
 
       - run: cp apps/server/.env.example apps/server/.env
 
+      - name: Check migrations match the tables
+        run: |
+          bun run --cwd apps/server drizzle:check
+          bun run --cwd apps/server drizzle:generate
+          git diff --exit-code
+          test -z "$(git status --porcelain)"
+
       - run: bunx turbo run check-types test build --affected
         env:
           TURBO_SCM_BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}

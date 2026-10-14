@@ -8,6 +8,7 @@
     "check-types": "tsc --noEmit",
     "clean": "rm -rf ./dist ./node_modules/ ./.turbo/",
     "dev": "bun --watch src/index.ts",
+    "drizzle:check": "drizzle-kit check --config ./drizzle.config.ts",
     "drizzle:generate": "drizzle-kit generate --config ./drizzle.config.ts",
     "drizzle:migrate": "drizzle-kit migrate --config ./drizzle.config.ts",
     "drizzle:push": "drizzle-kit push --config ./drizzle.config.ts",

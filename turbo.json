@@ -40,6 +40,9 @@
       "persistent": true,
       "dependsOn": ["//#db:up"]
     },
+    "drizzle:check": {
+      "cache": false
+    },
     "drizzle:generate": {
       "cache": false
     },
