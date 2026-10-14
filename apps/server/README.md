@@ -127,9 +127,14 @@ the `@/` aliases and loads `apps/server/.env`; the `test` script sets
 `NODE_ENV=test`, and importing the app validates the environment, so a missing or
 invalid variable fails immediately. Leave `LOG_LEVEL` unset to keep test logs
 silent. CI copies `.env.example` to provide the values. Send requests with
-`app.handle(new Request(...))`; no port is opened. Routes that query PostgreSQL
-need a reachable database. Test files share one process, so state such as server
-draining persists between tests in a run.
+`app.handle(new Request(...))`; no port is opened. The `test` task in
+[`turbo.json`](./turbo.json) depends on `drizzle:migrate`, which depends on the
+root `db:up`, so `bun run test` starts PostgreSQL and applies migrations before
+running tests, locally and in CI. Tests that write data delete their rows
+afterwards, as
+[`user-profiles.test.ts`](./src/routes/users/profiles/user-profiles.test.ts) does.
+Test files share one process, so state such as server draining persists between
+tests in a run.
 
 ## Logging
 
