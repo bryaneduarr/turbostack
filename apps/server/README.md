@@ -173,8 +173,10 @@ Routers created with `createRouter()` inherit standard error documentation.
 
 Request schemas and their dedicated schema-derived interfaces belong under their
 operation owners in `packages/schemas/src/`. Attach request schemas to route
-options as `body`, `query`, `params`, or `headers`. The app mounts feature routers
-under `/api/v1` in [src/application.module.ts](./src/application.module.ts).
+options as `body`, `query`, `params`, or `headers`. Mount versioned feature
+routers in [src/application.module.ts](./src/application.module.ts) with
+`.group(API_VX_PREFIX, (app) => app.use(featureRouter))`, which serves them under
+`/api/v1`.
 
 HTTP application hooks and content-type normalization live in
 [src/config/http/application/http-application.config.ts](./src/config/http/application/http-application.config.ts).
@@ -208,8 +210,7 @@ Every code change must audit affected code and its diff for hardcoded HTTP statu
 - Captured exceptions remain `unknown`, including thrown null or undefined;
   serialization narrows them and never exposes raw messages or credentials.
 - The published envelope intentionally uses `error: null` on success and
-  `data: null` on failure. The greeting also has null data because it carries no
-  domain payload. HEAD and `NO_CONTENT` responses have no body. These protocol cases
+  `data: null` on failure. HEAD and `NO_CONTENT` responses have no body. These protocol cases
   are not nullable internal status or message fields.
 - Application-owned access must use concrete contracts or explicit narrowing,
   never optional chaining or non-null assertions to hide missing-value cases.

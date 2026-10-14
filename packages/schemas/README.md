@@ -14,8 +14,7 @@ src/
     ├── environment/      # Server environment composition
     ├── responses/        # Envelope, success, and error responsibilities
     └── routes/
-        ├── health/       # Liveness and readiness response contracts
-        └── hello-world/  # Greeting response contract
+        └── health/       # Liveness and readiness response contracts
 ```
 
 Directory placement communicates intended use; it is not a security boundary.
@@ -47,26 +46,30 @@ or an invalid level is rejected. Startup configuration uses `parse` to fail fast
 
 All JSON API envelopes use `{ success, message, data, error, status, requestId }`.
 Compose each route's concrete payload with `createSuccessResponseSchema` rather
-than duplicating envelope fields. The hello-world route deliberately has no
-domain payload:
+than duplicating envelope fields. The liveness probe defines its payload like this:
 
 ```typescript
 import { createSuccessResponseSchema } from "@workspace/schemas/server/responses/success/create-success-response.schema";
 import { z } from "zod";
 
-export const helloWorldResponseSchema = createSuccessResponseSchema(z.null());
+export const healthLiveResponseSchema = createSuccessResponseSchema(
+  z.object({
+    /* Confirms the process is running and able to serve HTTP requests. */
+    status: z.literal("alive"),
+  }),
+);
 ```
 
 Its runtime schema and schema-derived interface live in
-[`server/routes/hello-world/`](./src/server/routes/hello-world/).
+[`server/routes/health/live/`](./src/server/routes/health/live/).
 Failure contracts live in
 [`server/responses/errors/`](./src/server/responses/errors/). Broad success and
 envelope schemas are composition or documentation bases, not concrete endpoint
 payload validators.
 
 Response envelopes retain intentional protocol nulls: no error on success, no
-success data on failure, and no domain payload for the greeting. Other routes
-must define concrete payload schemas and document legitimate absence. Do not
+success data on failure. Routes must define concrete payload schemas and
+document legitimate absence. Do not
 substitute arbitrary empty objects for these protocol states.
 See [API response conventions](../../apps/server/README.md#required-values-and-explicit-absence).
 
@@ -77,25 +80,25 @@ configuration function converts Zod schemas to JSON Schema for documentation.
 Route metadata belongs in the options' `detail` object:
 
 ```typescript
-import { helloWorldResponseSchema } from "@workspace/schemas/server/routes/hello-world/hello-world-response.schema";
+import { healthLiveResponseSchema } from "@workspace/schemas/server/routes/health/live/health-live-response.schema";
 import { OK } from "@workspace/utils/http/status-codes/http-status-code.constant";
 import { createRouter } from "@/config/http/routing/http-router.config";
 import { jsonContent } from "@/config/openapi/responses/content/json-response-content.config";
-import { helloWorldHandler } from "@/routes/hello-world/hello-world.handler";
+import { healthLiveHandler } from "@/routes/health/live/health-live.handler";
 
 const routeOptions = {
   detail: {
-    tags: ["Hello World"],
-    summary: "Say hello",
+    tags: ["Health"],
+    summary: "Liveness probe",
     responses: {
-      [OK]: jsonContent(helloWorldResponseSchema, "Successful response"),
+      [OK]: jsonContent(healthLiveResponseSchema, "The process is alive."),
     },
   },
 };
 
 const router = createRouter().get(
-  "/hello-world",
-  helloWorldHandler,
+  "/health/live",
+  healthLiveHandler,
   routeOptions,
 );
 ```
