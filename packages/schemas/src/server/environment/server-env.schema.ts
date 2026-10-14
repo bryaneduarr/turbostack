@@ -1,10 +1,15 @@
 import { databaseEnvSchema } from "@workspace/schemas/database/environment/database-env.schema";
 import { z } from "zod";
 
+// Tests stay quiet unless a run explicitly overrides LOG_LEVEL.
+const defaultLogLevels = {
+  development: "debug",
+  test: "silent",
+  production: "info",
+} as const;
+
 export const serverEnvSchema = z
   .object({
-    /* Contains the public base URL for the server. */
-    SERVER_URL: z.url().describe("The base URL for the server."),
     /* Defines the allowed CORS origin, defaulting to local development. */
     CLIENT_URL: z
       .url()
@@ -19,23 +24,39 @@ export const serverEnvSchema = z
       .describe("The port the server runs on."),
     /* Limits how long active HTTP requests may drain before forced shutdown. */
     SHUTDOWN_TIMEOUT_SECONDS: z.coerce.number().int().positive().default(30),
-    /* Selects environment-specific behavior and the default logging level. */
+    /* Rejects request bodies larger than this many bytes, defaulting to 1 MiB. */
+    MAX_REQUEST_BODY_BYTES: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(1_048_576)
+      .describe("The maximum accepted request body size in bytes."),
+    /* Selects environment-specific behavior, logging defaults, and docs exposure. */
     NODE_ENV: z
-      .enum(["development", "production"])
+      .enum(["development", "test", "production"])
       .describe("The environment mode."),
     /* Allows an omitted raw override; the parsed output always has a concrete level. */
     LOG_LEVEL: z
       .enum(["info", "warn", "error", "debug", "fatal", "trace", "silent"])
       .optional()
       .describe(
-        "The log level. Defaults to debug in development and info in production.",
+        "The log level. Defaults to debug in development, silent in test, and info in production.",
+      ),
+    /* Allows an omitted raw override; the parsed output always decides docs exposure. */
+    OPENAPI_ENABLED: z
+      .stringbool({ truthy: ["true"], falsy: ["false"] })
+      .optional()
+      .describe(
+        "Whether the OpenAPI document and reference are served. Defaults to false in production.",
       ),
   })
   .extend(databaseEnvSchema.shape)
   .transform((environment) => ({
     ...environment,
-    LOG_LEVEL:
-      environment.LOG_LEVEL ??
-      (environment.NODE_ENV === "development" ? "debug" : "info"),
+    LOG_LEVEL: environment.LOG_LEVEL ?? defaultLogLevels[environment.NODE_ENV],
+    OPENAPI_ENABLED:
+      environment.OPENAPI_ENABLED ?? environment.NODE_ENV !== "production",
   }))
-  .describe("Validated server environment with a required logging level.");
+  .describe(
+    "Validated server environment with a required logging level and docs exposure.",
+  );

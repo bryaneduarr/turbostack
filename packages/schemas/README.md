@@ -37,7 +37,9 @@ variables.
 the database schema with server settings.
 [`server-env.interface.ts`](./src/server/environment/server-env.interface.ts)
 contains its `ValidatedServerEnvironment` interface. An omitted raw `LOG_LEVEL` becomes a
-required output level: debug in development and info in production. Explicit null
+required output level: debug in development, silent in test, and info in
+production. An omitted `OPENAPI_ENABLED` becomes `false` in production and `true`
+otherwise. Explicit null
 or an invalid level is rejected. Startup configuration uses `parse` to fail fast.
 
 ## Server Response Contracts
