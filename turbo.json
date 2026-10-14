@@ -59,7 +59,8 @@
       "cache": false
     },
     "drizzle:migrate": {
-      "cache": false
+      "cache": false,
+      "dependsOn": ["//#db:up"]
     },
     "drizzle:push": {
       "cache": false

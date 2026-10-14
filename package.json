@@ -19,7 +19,7 @@
     "lint": "biome lint .",
     "outdated": "bun outdated --recursive",
     "rename-scope": "bun scripts/rename-workspace-scope.script.ts",
-    "setup": "bun install && bun run db:up && bun run drizzle:migrate",
+    "setup": "bun install && bun run drizzle:migrate",
     "start": "turbo start",
     "start:docker": "docker compose --env-file apps/server/.env --profile production up --build",
     "test": "turbo test",

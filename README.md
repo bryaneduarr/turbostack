@@ -98,8 +98,8 @@ This repo is organized into three main sections:
 
 #### First-Time Setup
 
-Installs dependencies from the lockfile, starts PostgreSQL in Docker, and applies
-the committed migrations:
+Installs dependencies from the lockfile, then applies the committed migrations;
+Turborepo starts PostgreSQL in Docker first:
 
 ```sh
 bun run setup
@@ -163,6 +163,10 @@ Tests use Bun's built-in runner (`bun:test`) and live next to the code as
 `<responsibility>.test.ts`. Server route tests send requests through
 `app.handle(new Request(...))`, so no port is opened. Write tests for workflows
 and logic that need verification, not for every function.
+
+The server's `test` task starts PostgreSQL with Docker and applies migrations
+first, so `bun run test` and CI run database-backed tests the same way. Tests
+remove the rows they create.
 
 ### Package Boundaries
 
