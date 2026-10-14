@@ -11,6 +11,22 @@ Follow every applicable rule, subject to higher-priority instructions. Do not si
 
 For scenario-based help choosing tools and checks, consult the [verification and tools guide](.agents/methods/verification-and-tools.md). It explains methods, not additional rules.
 
+## Working context
+
+After the mandatory rules, read the [startup index](.agents/project-context/start-here.md) and your assigned task's handoff. Load only relevant linked topics, not the entire context folder. The process-review checkpoint is not startup context.
+
+- During authorized project work, autonomously maintain useful factual notes and task handoffs without separate invocation or approval. Explicit read-only requests remain read-only. Capture meaningful discoveries, milestones, and the next action before finishing; skip updates that add no useful knowledge.
+- Keep the startup index at most 120 words, topic notes 80 words, task handoffs 120 words, and the manual review checkpoint 160 words, including evidence. Use concise bullets and source links, never copied code, rules, transcripts, raw logs, or speculative inventories.
+- Each topic note and handoff records its UTC date, inspected Git revision, relevant uncommitted changes, and evidence paths/symbols or actual command/results. Distinguish source-inspected facts, user-confirmed intent, and specifically checked outcomes; never imply runtime verification from inspection or type checks.
+- Reconcile notes with current sources and relevant Git changes before relying on them. Correct, replace, or remove stale facts; retain unresolved questions as unknowns. If the recorded revision cannot be compared, disclose the limit and inspect current evidence. Notes are navigation aids, not authority over rules or code.
+- Add notes lazily under `.agents/project-context/<category>/<specific-topic>.md` only when they prevent repeated discovery or preserve task continuity. Task owners maintain `tasks/<task-id>/handoff.md` with objective, owner, status, relevant sources, checks/limits, blocker, and next action. Do not adopt a completed handoff as a new assignment.
+- Work in isolated worktrees for parallel tasks. Task owners update their handoffs; the coordinating agent integrates topic/index updates. Re-read before editing and reconcile overlapping ownership or concurrent changes rather than overwriting another agent's work.
+- Facts and progress update automatically; priorities, product scope, architecture decisions, and rule changes remain user-controlled. This instruction-driven upkeep adds no background service, test permission, automatic commits, or pushes. Portability still requires deliberate Git synchronization.
+
+## Context reviews
+
+Run [context-review](.agents/skills/context-review/SKILL.md) only when explicitly requested (`/skill:context-review` in Pi). It reviews the maintenance process, proposes at most one small improvement, and saves the [review checkpoint](.agents/project-context/review-checkpoint.md) only after approval. Routine factual upkeep is separate; process reviews never run on a schedule or automatically at session start.
+
 ## Skills and imported guidance
 
 - These instructions and the four mandatory rule files take precedence over skills, imported tutorials, templates, and general examples. Adapt examples before using them in project code: architectural ownership, file naming, alias imports, schema-derived contracts and documentation, boundary validation, canonical HTTP status constants, and dependency restrictions still apply.
