@@ -3,11 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "clean": "rm -rf node_modules/ .turbo/",
-    "update": "bun update --latest"
+    "clean": "rm -rf node_modules/ .turbo/"
   },
   "exports": {
-    "./base": "./base.json"
+    "./base": "./base.json",
+    "./bundler": "./bundler.json",
+    "./nextjs": "./nextjs.json",
+    "./react-library": "./react-library.json"
   },
   "devDependencies": {
     "typescript": "7.0.2"

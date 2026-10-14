@@ -7,14 +7,9 @@
     "clean": "rm -rf node_modules/ .turbo/",
     "check-types": "tsc --noEmit",
     "format": "biome format --write .",
-    "lint": "biome lint .",
-    "update": "bun update --latest"
+    "lint": "biome lint ."
   },
   "dependencies": {
-    "@base-ui/react": "^1.9.0",
-    "class-variance-authority": "^0.7.1",
-    "cn": "^0.4.0",
-    "lucide-react": "^1.56.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
@@ -22,12 +17,10 @@
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@workspace/tailwind": "workspace:*",
-    "tsx": "^4.23.15"
+    "@workspace/tailwind": "workspace:*"
   },
   "exports": {
     "./components/*": "./src/components/*.tsx",
-    "./ui/*": "./src/components/ui/*.tsx",
-    "./hooks/*": "./src/hooks/*.ts"
+    "./types/*": "./src/types/*.ts"
   }
 }

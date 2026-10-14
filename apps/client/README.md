@@ -1,120 +1,84 @@
-# Client Application
+# Web Client
 
-A [Next.js](https://nextjs.org) frontend application that's part of the Turbostack monorepo.
-
-## Technology Stack
-
-| Technology |
-|------------|
-| [Next.js](https://nextjs.org/) |
-| [React](https://react.dev/) |
-| [Tailwind CSS](https://tailwindcss.com/) |
-| [Turbopack](https://turbo.build/pack) |
-| [TypeScript](https://www.typescriptlang.org/) |
-
-## Features
-
-- **Next.js 16** - Latest Next.js framework with App Router
-- **React 19** - Latest React version with new features
-- **Tailwind CSS v4** - Using shared Tailwind configuration
-- **shadcn/ui** - Beautiful, accessible UI components from the workspace
-- **TypeScript** - Full type safety throughout the application
-- **Turbopack** - Fast development server with hot reloading
+A [Next.js](https://nextjs.org) 16 App Router application using React 19, the
+shared [Tailwind CSS](https://tailwindcss.com/) theme, and components from
+`@workspace/ui`. The package is named `web-client`.
 
 ## Getting Started
 
-First, run the development server:
-
 ```sh
+cp apps/client/.env.example apps/client/.env
 bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). The home page calls the API's
+`GET /health/ready` from a Server Component and shows whether the API and its
+database are ready. [/profiles](http://localhost:3000/profiles) lists, creates,
+and edits user profiles, the reference feature.
 
-You can start editing the page by modifying `app/page.tsx`.
+## Calling the API
 
-## Building the Application
+Server Components, Server Actions, and Route Handlers call the API with
+[`requestApi`](./src/services/api/requests/request-api.service.ts). It wraps
+`sendApiRequest` from `@workspace/api-client` with the validated `SERVER_URL`,
+`cache: "no-store"`, and a five-second timeout, so callers pass only the route
+definition and its `params`, `query`, and `body`. Pages that call it start with
+`await connection()` so Next.js renders them per request instead of at build
+time. [`describeApiFailure`](./src/services/api/results/describe-api-failure.service.ts)
+turns every unsuccessful result into a message for users.
 
-Build the app with the integrated command:
+## Forms and Server Actions
+
+The profile forms show the pattern for mutations:
+
+1. A Client Component form
+   ([`user-profile-form.component.tsx`](./src/components/users/profiles/form/user-profile-form.component.tsx))
+   submits through `useActionState`, so it also works without JavaScript.
+2. The Server Action
+   ([`actions/users/profiles/`](./src/actions/users/profiles/)) validates the
+   form data with the shared schema, validates bound arguments such as the
+   profile ID, calls the API through `requestApi`, and returns a form state:
+   `editing`, `invalid` with field messages, `failed`, or `saved`.
+3. After a change, the action calls `revalidatePath` only for the pages that show
+   the changed profile.
+
+Form states keep the values that were typed, so a failed submission does not
+clear the form.
+
+## Environment
+
+| Variable | Purpose |
+|---|---|
+| `SERVER_URL` | API server base URL, used by the client's server; never sent to the browser |
+
+[`client-env.config.ts`](./src/config/environment/client-env.config.ts) validates
+it with the shared `clientEnvSchema` at request time, and
+[`instrumentation.ts`](./src/instrumentation.ts) validates it when the server
+starts, so a missing value fails fast. Because it is read at runtime rather than
+inlined at build time, one build or Docker image works in every environment. Call
+the API from Server Components, Server Actions, or Route Handlers; add a
+`NEXT_PUBLIC_` variable only if the browser must call the API directly.
+
+## Production
+
+`bun run build` creates a [standalone](https://nextjs.org/docs/app/api-reference/config/next-config-js/output)
+server in `.next/standalone` and copies the static assets into it. `bun run start`
+runs it with Node.js and loads `apps/client/.env` when present.
+
+The [Dockerfile](./Dockerfile) builds the same output from the repository root and
+runs it on Node.js's slim image as the unprivileged `node` user:
 
 ```sh
-bun run build
+docker build -f apps/client/Dockerfile -t web-client .
+docker run --rm -e SERVER_URL=http://host.docker.internal:3001 -p 3000:3000 web-client
 ```
 
-This will build the entire Next.js app for production.
+## Scripts
 
-Now start the production application:
-
-```sh
-bun run start
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## Using UI Components
-
-The application uses shadcn/ui components from the shared UI library:
-
-```tsx
-// Import UI components from the shared package
-import { Button } from "@workspace/ui/ui/button";
-
-// Use with different variants
-<Button variant="default">Primary Action</Button>
-<Button variant="outline">Secondary Action</Button>
-<Button variant="destructive">Delete</Button>
-
-// Use with different sizes
-<Button size="sm">Small</Button>
-<Button size="lg">Large</Button>
-<Button size="icon"><ChevronRight /></Button>
-```
-
-### Adding New shadcn Components
-
-To add new components to the shared UI library:
-
-```sh
-cd packages/ui
-bunx shadcn@latest add [component-name]
-```
-
-Then import them in your client application:
-
-```tsx
-import { Card, CardHeader, CardTitle, CardContent } from "@workspace/ui/ui/card";
-```
-
-## Configuration
-
-This application uses shared configurations from the workspace:
-
-- **Biome** - Config from [@workspace/biome](../../config/biome/)
-- **Tailwind CSS** - Config from [@workspace/tailwind](../../config/tailwind/)
-- **TypeScript** - Config from [@workspace/typescript](../../config/typescript/)
-
-## Available Scripts
-
-- **bun run build** - Builds the Next.js application for production
-- **bun run clean** - Removes generated directories (node_modules, .turbo, .next)
-- **bun run check-types** - Checks TypeScript types without emitting files
-- **bun run dev** - Starts the development server with Turbopack
-- **bun run format** - Formats code with Biome
-- **bun run lint** - Lints code with Biome
-- **bun run start** - Starts the production server
-- **bun run update** - Updates dependencies to their latest versions
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **bun run build** - Build the standalone production server
+- **bun run check-types** - Check TypeScript types without emitting files
+- **bun run clean** - Remove node_modules, .turbo, and .next
+- **bun run dev** - Start the development server with Turbopack
+- **bun run format** - Format code with Biome
+- **bun run lint** - Lint code with Biome
+- **bun run start** - Run the standalone production server

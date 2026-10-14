@@ -54,7 +54,7 @@ This is an acceptance condition for all project-owned frontend, backend, schema,
 - Existing code is not grandfathered in. Bring the task's affected ownership area into compliance; do not limit the review to newly created or directly edited files.
 - Related structural adaptation is part of the smallest correct change. A whole-repository migration or reorganization of unrelated ownership areas requires separate authorization.
 - Complete each relocation by normalizing applicable filenames and updating affected imports, package exports, configuration references, and documentation. Remove obsolete empty folders. Preserve behavior, required tool paths and names, and unrelated user changes, including deletions.
-- Do not treat relocation as permission for unrelated behavior changes, speculative abstraction, or test changes. If a required adaptation conflicts with user edits or cannot safely be completed, report the blocker rather than silently omitting it.
+- Do not treat relocation as permission for unrelated behavior changes, speculative abstraction, or unrelated test changes. If a required adaptation conflicts with user edits or cannot safely be completed, report the blocker rather than silently omitting it.
 
 ### Enforce ownership before implementation and completion
 
@@ -78,6 +78,13 @@ This is an acceptance condition for all project-owned frontend, backend, schema,
 - Keep Zod schemas and schema-derived application data contracts in `packages/schemas/src/`. Keep feature-owned business logic and server-only operations in their owning applications; do not relocate them merely because another consumer exists.
 - Import cross-package utilities directly from exported `@workspace/utils/...` modules. Declare `@workspace/utils: workspace:*` in every importing package's dependencies; do not bypass workspace boundaries with relative filesystem imports or consumer-side path mappings.
 - Do not add utility barrels, forwarding modules, aggregate registries, speculative scaffolding, or dependencies on consuming applications or schemas that create a dependency cycle. Add new capabilities only for actual use cases.
+
+## Growth by business area
+
+- Turborepo decides affected builds, tests, and deployments per package, so a change anywhere in a shared package affects every app that depends on it.
+- Keep `packages/schemas` as one package while it serves one business area or a few closely related apps. Organize it by business area inside the package so a later split is a move, not a rewrite.
+- When unrelated business areas share it and changes to one area routinely rebuild or redeploy apps that do not use that area, propose splitting it into one contract package per business area plus a small core package for shared response envelopes and environment contracts.
+- A split is an architectural decision. Get user approval, then update this file, `types-and-validation.md`, package exports, dependencies, boundary tags, and imports together. Do not split speculatively or create empty packages ahead of real business areas.
 
 ## Mandatory module import aliases
 

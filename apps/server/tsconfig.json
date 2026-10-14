@@ -1,19 +1,11 @@
 {
-  "extends": "@workspace/typescript/base",
+  "extends": "@workspace/typescript/bundler",
   "compilerOptions": {
     "paths": {
       "@/package.json": ["./package.json"],
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
-    "outDir": "./dist",
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "types": ["bun"]
   },
-  "exclude": [
-    "./dist/",
-    "./node_modules/"
-  ]
+  "exclude": ["./dist/", "./node_modules/"]
 }

@@ -11,6 +11,7 @@ const errorNames = new Set([
   "ValidationError",
   "ParseError",
   "PostgresError",
+  "ExpectedFailure",
 ]);
 const errorCodes = new Set([
   "ECONNREFUSED",

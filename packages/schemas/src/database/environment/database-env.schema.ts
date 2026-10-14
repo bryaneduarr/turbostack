@@ -25,4 +25,16 @@ export const databaseEnvSchema = z.object({
     .default(true),
   /* Bounds the time in seconds allowed for database queries to finish during cleanup. */
   DB_SHUTDOWN_TIMEOUT_SECONDS: z.coerce.number().int().positive().default(5),
+  /* Cancels application queries running longer than this many seconds; zero disables the limit. */
+  DB_STATEMENT_TIMEOUT_SECONDS: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(30),
+  /* Fails a migration statement that waits longer than this many seconds for a table lock. */
+  DB_MIGRATION_LOCK_TIMEOUT_SECONDS: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(10),
 });

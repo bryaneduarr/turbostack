@@ -1,22 +1,9 @@
 {
-  "extends": "@workspace/typescript/base",
-  "display": "Next.js",
+  "extends": "@workspace/typescript/nextjs",
   "compilerOptions": {
-    "allowJs": true,
-    "jsx": "preserve",
-    "noEmit": true,
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    },
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+      "@/*": ["./src/*"]
+    }
   },
   "include": [
     "next-env.d.ts",
@@ -25,7 +12,5 @@
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

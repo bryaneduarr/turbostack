@@ -36,7 +36,7 @@ const redactPaths = sensitiveFields.flatMap((field) => [
 ]);
 const logger = pino({
   level: env.LOG_LEVEL,
-  base: { service: "server", environment: env.NODE_ENV },
+  base: { service: "api-server", environment: env.NODE_ENV },
   redact: {
     paths: [
       ...redactPaths,

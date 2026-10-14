@@ -1,23 +1,22 @@
 {
-  "name": "client",
+  "name": "web-client",
   "version": "1.0.0",
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "next build",
+    "build": "next build && cp -r .next/static .next/standalone/apps/client/.next/static",
     "clean": "rm -rf node_modules/ .turbo/ .next/",
     "check-types": "tsc --noEmit",
     "dev": "next dev --turbopack",
     "format": "biome format --write .",
     "lint": "biome lint .",
-    "start": "next start",
-    "update": "bun update --latest"
+    "start": "node --env-file-if-exists=.env .next/standalone/apps/client/server.js"
   },
   "dependencies": {
+    "@workspace/api-client": "workspace:*",
+    "@workspace/schemas": "workspace:*",
     "@workspace/ui": "workspace:*",
-    "lucide-react": "^1.56.0",
     "next": "^16.4.0",
-    "next-themes": "^0.4.6",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "zod": "^4.6.7"
@@ -28,7 +27,6 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@workspace/tailwind": "workspace:*",
-    "tailwindcss": "^4.3.3",
-    "tsx": "^4.23.15"
+    "tailwindcss": "^4.3.3"
   }
 }

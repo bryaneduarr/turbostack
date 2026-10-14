@@ -5,19 +5,26 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "clean": "turbo clean && rm -rf .turbo/ node_modules",
+    "check": "biome ci . && turbo boundaries && turbo run check-types test build",
     "check-types": "turbo check-types",
+    "clean": "turbo clean && rm -rf .turbo/ node_modules",
+    "db:down": "docker compose --env-file apps/server/.env down",
+    "db:up": "docker compose --env-file apps/server/.env up --detach --wait postgres",
     "dev": "turbo dev",
     "drizzle:generate": "turbo drizzle:generate",
     "drizzle:migrate": "turbo drizzle:migrate",
     "drizzle:push": "turbo drizzle:push",
     "drizzle:studio": "turbo drizzle:studio",
-    "format": "biome format --write . && turbo format",
-    "lint": "biome lint . && turbo lint",
-    "update": "turbo update",
-    "setup": "bun run clean && rm -rf bun.lock && bun install && bun run drizzle:generate && bun run drizzle:migrate && bun run check-types && bun run lint && bun run format && bun run build && bun run dev",
-    "setup:update": "bun run clean && rm -rf bun.lock && bun install && bun run update && bun run clean && rm -rf bun-lock.yaml && bun install && bun run drizzle:generate && bun run drizzle:migrate && bun run check-types && bun run lint && bun run format && bun run build && bun run dev",
-    "start": "turbo start"
+    "format": "biome check --write .",
+    "lint": "biome lint .",
+    "outdated": "bun outdated --recursive",
+    "rename-scope": "bun scripts/rename-workspace-scope.script.ts",
+    "setup": "bun install && bun run drizzle:migrate",
+    "start": "turbo start",
+    "start:docker": "docker compose --env-file apps/server/.env --profile production up --build",
+    "test": "turbo test",
+    "update": "bun update --interactive --recursive",
+    "update:toolchain": "bun scripts/update-toolchain.script.ts"
   },
   "workspaces": [
     "apps/*",
@@ -31,6 +38,6 @@
   },
   "packageManager": "bun@1.4.0",
   "engines": {
-    "node": ">=20"
+    "node": ">=22.9"
   }
 }

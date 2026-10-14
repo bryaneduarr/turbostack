@@ -1,8 +1,8 @@
 # Runtime and ownership
 
-Evidence: 2026-10-13; `0ebf76b`; source-inspected, no application changes; runtime unverified.
+Evidence: 2026-10-14; base `dd078d8` plus uncommitted changes; source-inspected; boundaries, builds, and Docker images checked.
 
-- UI: Next/React [client](../../../apps/client/package.json); routing starts at [page](../../../apps/client/src/app/page.tsx).
-- API: Bun/Elysia [server](../../../apps/server/package.json). [Bootstrap](../../../apps/server/src/index.ts) connects the database before listening.
-- [Composition](../../../apps/server/src/application.module.ts) mounts OpenAPI and the versioned greeting router.
-- Greeting contracts live in the [schema package](../../../packages/schemas/src/server/routes/hello-world/hello-world-response.schema.ts); canonical statuses in the [catalog](../../../packages/utils/src/http/status-codes/http-status-code.constant.ts).
+- `web-client`: Next standalone [client](../../../apps/client/package.json) on Node; reads `SERVER_URL` at runtime. `api-server`: Bun/Elysia [server](../../../apps/server/package.json), bundled by `bun build`.
+- [Composition](../../../apps/server/src/application.module.ts) mounts optional OpenAPI and health probes; versioned paths use `API_V1_PREFIX` from schemas.
+- [Boundary tags](../../../turbo.json) restrict app, runtime-neutral, server, and config dependencies.
+- `@workspace/ui` depends only on React.

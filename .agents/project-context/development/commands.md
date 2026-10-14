@@ -1,8 +1,9 @@
 # Development commands
 
-Evidence: 2026-10-13; `0ebf76b`; manifests inspected, no application changes; commands not executed.
+Evidence: 2026-10-14; base `56951b6` plus uncommitted changes; check steps, `start`, Compose, and toolchain update (temporary worktree) run locally.
 
-- Declared toolchain: Bun `1.4.0`, Node `>=20`.
-- Root: `bun install`; `bun run dev`; `bun run check-types`; `bun run lint`.
-- Scoped server checks: `bun run --cwd apps/server check-types`; `bun run --cwd apps/server lint`. Other owning packages expose their own scripts; inspect before using.
-- Sources: [root manifest](../../../package.json), [server scripts](../../../apps/server/package.json), [verification guide](../../methods/verification-and-tools.md).
+- Toolchain: Bun (`packageManager`), Node `>=22.9`, Docker. `update:toolchain` pins Bun/Turbo in manifests, Dockerfiles, and lockfile.
+- Root: `setup`, `dev`, `start`, `start:docker`, `check`, `test` (`bun:test`), `rename-scope`.
+- Server `test` depends on `drizzle:migrate`, which starts PostgreSQL through `db:up`.
+- CI runs `drizzle:check` plus a clean `drizzle:generate`; release builds every Dockerfile app after CI.
+- Sources: [turbo](../../../turbo.json), [CI](../../../.github/workflows/ci.yml).

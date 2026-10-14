@@ -74,6 +74,16 @@ The example shows the required brief comment style. Production comments must des
 - Do not use passthrough schemas for sensitive response objects. Deliberately strip or reject undeclared fields.
 - Do not add placeholder request contracts to endpoints that consume no request input.
 
+## End-to-end route definitions
+
+- Every API endpoint has exactly one route definition, `<operation>.route.ts`, in its owning `packages/schemas/src/server/routes/` domain and operation folder. Declare it `as const satisfies RouteDefinition`.
+- Declare every `RouteDefinition` member: `method`, `path`, `params`, `query`, `body`, and `response`. Use `null` for an input the route does not consume. Never omit members, make them optional, or substitute placeholder schemas.
+- `path` is the full request path the client calls, including any version prefix from `api-version-prefix.constant.ts` and `:name` path parameters. `params`, `query`, and `body` are concrete Zod schemas when the route consumes them.
+- Register server routes only with `.route(route.method, route.path, handler, contract)`. The contract `satisfies RouteContract<typeof route>`, which requires each non-null input schema so Elysia validates it, and forbids null ones. Handlers build responses with `route.response`.
+- Clients call the API only through `sendApiRequest` with the route definition and explicit `params`, `query`, and `body` values, passing `null` for inputs the route does not consume. Never hand-write API paths or methods, or choose response schemas separately from the route.
+- Handle every `ApiResult` variant: `success`, `failure`, `unexpected-response`, and `unreachable`.
+- Clients and servers deploy independently, so change published routes additively: new response fields (older clients strip unknown keys), new routes, or new versioned paths. Removing or renaming fields, tightening inputs, or adding error codes that older clients must understand requires a new versioned route.
+
 ## Required values and explicit absence
 
 - Make validated domain values and internal function parameters required and non-nullable by default. Allow `null`, `undefined`, optional properties, `.optional()`, `.nullable()`, or `.nullish()` only when absence has a concrete domain, persistence, protocol, framework, or library meaning; document that meaning in the owning contract.
@@ -84,7 +94,7 @@ The example shows the required brief comment style. Production comments must des
 - Do not replace meaningful absence with arbitrary empty objects, empty strings, zero, random identifiers, or other fabricated domain values. Defaults must preserve the intended semantics; reject invalid data, return a documented absent-state variant, or omit a genuinely optional external field after narrowing.
 - Preserve intentional wire-level nulls and bodyless HTTP responses when the published protocol requires them. Do not silently change API or database contracts just to remove nullability.
 - Keep genuine boundary `unknown`, including arbitrary thrown values that may themselves be null or undefined, until it is validated or narrowed. Do not assert it into a required domain value.
-- Before completing nullable-contract changes, inspect producers and consumers, review each retained absence case, and run affected package type checks. Do not write or run tests unless explicitly requested.
+- Before completing nullable-contract changes, inspect producers and consumers, review each retained absence case, and run affected package type checks.
 
 ## No unsafe typing
 

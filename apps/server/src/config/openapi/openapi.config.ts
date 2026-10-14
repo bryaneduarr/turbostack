@@ -2,7 +2,8 @@ import { openapi } from "@elysia/openapi";
 import type { ApiReferenceConfiguration } from "@scalar/types/api-reference";
 import { errorResponseSchema } from "@workspace/schemas/server/responses/errors/error-response.schema";
 import { successResponseSchema } from "@workspace/schemas/server/responses/success/success-response.schema";
-import { API_VX_PREFIX } from "@/config/http/routing/api-prefix.constant";
+import { API_V1_PREFIX } from "@workspace/schemas/server/routes/versioning/api-version-prefix.constant";
+import { z } from "zod";
 import { requestIdHeader } from "@/config/openapi/headers/request-id-header.constant";
 import { jsonContent } from "@/config/openapi/responses/content/json-response-content.config";
 import { errorResponseComponents } from "@/config/openapi/responses/errors/default-error-responses.config";
@@ -10,8 +11,9 @@ import packageJson from "@/package.json";
 
 export default function OpenApiConfig() {
   return openapi({
-    path: `${API_VX_PREFIX}/reference`,
-    specPath: `${API_VX_PREFIX}/doc`,
+    path: `${API_V1_PREFIX}/reference`,
+    specPath: `${API_V1_PREFIX}/doc`,
+    mapJsonSchema: { zod: z.toJSONSchema },
     openapiVersion: "3.0.0",
     documentation: {
       info: {
@@ -36,6 +38,7 @@ export default function OpenApiConfig() {
         parameters: {},
       },
     },
+    // The plugin types require every option, so Scalar's values are listed in full.
     scalar: {
       theme: "kepler",
       defaultHttpClient: { targetKey: "js", clientKey: "fetch" },
@@ -44,7 +47,7 @@ export default function OpenApiConfig() {
       showDeveloperTools: "localhost",
       operationTitleSource: "summary",
       persistAuth: false,
-      telemetry: true,
+      telemetry: false,
       externalUrls: {
         dashboardUrl: "https://dashboard.scalar.com",
         registryUrl: "https://registry.scalar.com",

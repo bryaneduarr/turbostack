@@ -16,6 +16,9 @@ const client = postgres({
   connect_timeout: databaseEnv.DB_CONNECT_TIMEOUT_SECONDS,
   idle_timeout: databaseEnv.DB_IDLE_TIMEOUT_SECONDS,
   prepare: databaseEnv.DB_PREPARE,
+  connection: {
+    statement_timeout: databaseEnv.DB_STATEMENT_TIMEOUT_SECONDS * 1000,
+  },
 });
 
 export async function connectToDatabase(): Promise<void> {

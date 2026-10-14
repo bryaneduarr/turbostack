@@ -2,27 +2,17 @@ import { createRouter } from "@/config/http/routing/http-router.config";
 import onError from "@/middleware/errors/on-error.handler";
 import { cors } from "@/middleware/http/cors/cors.middleware";
 import { serveEmojiFavicon } from "@/middleware/http/favicon/serve-emoji-favicon.middleware";
+import { setSecurityHeaders } from "@/middleware/http/security-headers/security-headers.middleware";
 import { requestLogger } from "@/middleware/logging/requests/request-logger.middleware";
 import { completeRequestLog } from "@/services/logging/requests/complete-request-log.service";
-import { headRequests } from "@/services/logging/requests/request-log-state.service";
 
 export function createApp() {
   const app = createRouter();
   const favicon = serveEmojiFavicon("📦");
 
   return app
-    .onRequest(async ({ request }) => {
-      if (request.method === "HEAD") {
-        const getRequest = new Request(request, { method: "GET" });
-        headRequests.add(getRequest);
-        const response = await app.handle(getRequest);
-        return new Response(null, {
-          status: response.status,
-          headers: response.headers,
-        });
-      }
-    })
     .use(requestLogger)
+    .onRequest(setSecurityHeaders)
     .onRequest((context) => {
       const response = cors(context);
       if (response) {

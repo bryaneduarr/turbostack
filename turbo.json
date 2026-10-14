@@ -1,7 +1,41 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalPassThroughEnv": [
+    "NODE_ENV",
+    "PORT",
+    "CLIENT_URL",
+    "SERVER_URL",
+    "LOG_LEVEL",
+    "OPENAPI_ENABLED",
+    "MAX_REQUEST_BODY_BYTES",
+    "HTTP_*",
+    "SHUTDOWN_*",
+    "DB_*"
+  ],
+  "boundaries": {
+    "tags": {
+      "app": {
+        "dependents": { "allow": [] }
+      },
+      "package": {
+        "dependencies": { "deny": ["app"] }
+      },
+      "runtime-neutral": {
+        "dependencies": { "allow": ["runtime-neutral", "config"] }
+      },
+      "server": {
+        "dependencies": { "deny": ["browser"] }
+      },
+      "config": {
+        "dependencies": { "allow": ["config"] }
+      }
+    }
+  },
   "tasks": {
+    "//#db:up": {
+      "cache": false
+    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
@@ -11,43 +45,38 @@
       "dependsOn": ["^check-types"]
     },
     "clean": {
-      "cache": false,
-      "persistent": true
+      "cache": false
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dependsOn": ["//#db:up"]
+    },
+    "drizzle:check": {
+      "cache": false
     },
     "drizzle:generate": {
-      "cache": false,
-      "persistent": true
+      "cache": false
     },
     "drizzle:migrate": {
       "cache": false,
-      "persistent": true
+      "dependsOn": ["//#db:up"]
     },
     "drizzle:push": {
-      "cache": false,
-      "persistent": true
+      "cache": false
     },
     "drizzle:studio": {
       "cache": false,
       "persistent": true
     },
-    "format": {
-      "cache": false,
-      "persistent": true
-    },
-    "lint": {
-      "dependsOn": ["^lint"]
-    },
     "start": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dependsOn": ["build", "//#db:up"]
     },
-    "update": {
-      "cache": false,
-      "persistent": true
+    "test": {
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": []
     }
   }
 }

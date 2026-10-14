@@ -6,6 +6,8 @@ export interface ErrorResponseInput {
   request: Request;
   /* Classifies the failure without exposing private exception details. */
   code: ErrorResponse["error"]["code"];
+  /* Contains the client-safe summary, either standard or deliberately specific. */
+  message: ErrorResponse["message"];
   /* Contains the actual HTTP error status, validated before serialization. */
   status: ErrorResponse["status"];
 }

@@ -8,15 +8,19 @@ is needed.
 
 ```text
 src/
-├── authentication/
-│   └── sign-in/          # Sign-in credentials
+├── client/
+│   └── environment/      # Web client runtime settings
 ├── database/
 │   └── environment/      # PostgreSQL environment settings
 └── server/
     ├── environment/      # Server environment composition
     ├── responses/        # Envelope, success, and error responsibilities
     └── routes/
-        └── hello-world/  # Greeting response contract
+        ├── definition/   # RouteDefinition contract shared by server and clients
+        ├── versioning/   # API version path prefix
+        ├── health/       # Liveness and readiness routes and responses
+        └── users/
+            └── profiles/ # Reference feature: list, create, get, and update
 ```
 
 Directory placement communicates intended use; it is not a security boundary.
@@ -25,28 +29,6 @@ modules. Use extensionless `@workspace/schemas/...` imports within this package 
 from other workspaces, never relative source imports or `.js`/`.ts` extensions.
 The package's wildcard exports and self-alias support these nested module paths.
 Do not create barrel files.
-
-## Sign-In Credentials
-
-[`sign-in.schema.ts`](./src/authentication/sign-in/sign-in.schema.ts) exports
-`signInSchema`. It validates the email, normalizes it to lowercase, and requires a
-nonempty password without transforming the password.
-[`sign-in.interface.ts`](./src/authentication/sign-in/sign-in.interface.ts) exports
-`ValidatedSignInCredentials`, derived from the schema's validated output.
-
-```typescript
-import type { ValidatedSignInCredentials } from "@workspace/schemas/authentication/sign-in/sign-in.interface";
-import { signInSchema } from "@workspace/schemas/authentication/sign-in/sign-in.schema";
-
-const input: unknown = {
-  email: "example@example.com",
-  password: "example-password",
-};
-const credentials: ValidatedSignInCredentials = signInSchema.parse(input);
-```
-
-Use `safeParse` and handle both outcomes for expected credential validation
-failures. `parse` is appropriate when invalid data should throw.
 
 ## Database and Server Environment
 
@@ -61,64 +43,88 @@ variables.
 the database schema with server settings.
 [`server-env.interface.ts`](./src/server/environment/server-env.interface.ts)
 contains its `ValidatedServerEnvironment` interface. An omitted raw `LOG_LEVEL` becomes a
-required output level: debug in development and info in production. Explicit null
+required output level: debug in development, silent in test, and info in
+production. An omitted `OPENAPI_ENABLED` becomes `false` in production and `true`
+otherwise. Explicit null
 or an invalid level is rejected. Startup configuration uses `parse` to fail fast.
 
 ## Server Response Contracts
 
 All JSON API envelopes use `{ success, message, data, error, status, requestId }`.
 Compose each route's concrete payload with `createSuccessResponseSchema` rather
-than duplicating envelope fields. The hello-world route deliberately has no
-domain payload:
+than duplicating envelope fields. The liveness probe defines its payload like this:
 
 ```typescript
 import { createSuccessResponseSchema } from "@workspace/schemas/server/responses/success/create-success-response.schema";
 import { z } from "zod";
 
-export const helloWorldResponseSchema = createSuccessResponseSchema(z.null());
+export const healthLiveResponseSchema = createSuccessResponseSchema(
+  z.object({
+    /* Confirms the process is running and able to serve HTTP requests. */
+    status: z.literal("alive"),
+  }),
+);
 ```
 
 Its runtime schema and schema-derived interface live in
-[`server/routes/hello-world/`](./src/server/routes/hello-world/).
+[`server/routes/health/live/`](./src/server/routes/health/live/).
 Failure contracts live in
 [`server/responses/errors/`](./src/server/responses/errors/). Broad success and
 envelope schemas are composition or documentation bases, not concrete endpoint
 payload validators.
 
 Response envelopes retain intentional protocol nulls: no error on success, no
-success data on failure, and no domain payload for the greeting. Other routes
-must define concrete payload schemas and document legitimate absence. Do not
+success data on failure. Routes must define concrete payload schemas and
+document legitimate absence. Do not
 substitute arbitrary empty objects for these protocol states.
 See [API response conventions](../../apps/server/README.md#required-values-and-explicit-absence).
+
+## Route Definitions
+
+Each endpoint has one `<operation>.route.ts` next to its schemas. It declares every
+`RouteDefinition` member, using `null` for inputs the route does not consume:
+
+```typescript
+import { API_V1_PREFIX } from "@workspace/schemas/server/routes/versioning/api-version-prefix.constant";
+
+export const getUserProfileRoute = {
+  method: "GET",
+  path: `${API_V1_PREFIX}/users/:userId/profile`,
+  params: getUserProfileParamsSchema,
+  query: null,
+  body: null,
+  response: getUserProfileResponseSchema,
+} as const satisfies RouteDefinition;
+```
+
+The server registers it with `.route(route.method, route.path, handler, contract)`
+and clients call it with `sendApiRequest` from `@workspace/api-client`, so both
+sides share one typed contract. See the
+[server README](../../apps/server/README.md#adding-a-route) for the server side.
 
 ## Elysia OpenAPI Integration
 
 The server uses Elysia 1.4.30 and `@elysia/openapi` 1.4.16. Its `jsonContent`
-configuration function converts Zod schemas to JSON Schema for documentation.
-Route metadata belongs in the options' `detail` object:
+configuration function converts Zod schemas to JSON Schema for response
+documentation, and the OpenAPI plugin maps Zod input schemas automatically. Route
+metadata belongs in the contract's `detail` object, which the server checks with
+`satisfies RouteContract<typeof route>`:
 
 ```typescript
-import { helloWorldResponseSchema } from "@workspace/schemas/server/routes/hello-world/hello-world-response.schema";
+import { healthLiveRoute } from "@workspace/schemas/server/routes/health/live/health-live.route";
 import { OK } from "@workspace/utils/http/status-codes/http-status-code.constant";
-import { createRouter } from "@/config/http/routing/http-router.config";
 import { jsonContent } from "@/config/openapi/responses/content/json-response-content.config";
-import { helloWorldHandler } from "@/routes/hello-world/hello-world.handler";
+import type { RouteContract } from "@/types/http/routes/route-contract.interface";
 
-const routeOptions = {
+export const healthLiveContract = {
   detail: {
-    tags: ["Hello World"],
-    summary: "Say hello",
+    tags: ["Health"],
+    summary: "Liveness probe",
     responses: {
-      [OK]: jsonContent(helloWorldResponseSchema, "Successful response"),
+      [OK]: jsonContent(healthLiveRoute.response, "The process is alive."),
     },
   },
-};
-
-const router = createRouter().get(
-  "/hello-world",
-  helloWorldHandler,
-  routeOptions,
-);
+} satisfies RouteContract<typeof healthLiveRoute>;
 ```
 
 The `@/` imports belong in server code, not in this package. Documentation
@@ -152,38 +158,24 @@ Keep runtime schemas and their contracts separate. Document every schema field,
 every interface, and every explicitly declared interface member with brief
 `/* ... */` comments.
 
-For example, an illustrative `users/profile/user-profile.schema.ts` could define:
+The user-profile feature in
+[`server/routes/users/profiles/`](./src/server/routes/users/profiles/) is the
+reference. [`user-profile.schema.ts`](./src/server/routes/users/profiles/user-profile.schema.ts)
+holds the schemas every operation shares: the profile returned by the API, the
+writable names with trimming, length limits, and messages shown to users, the
+path parameters, and the single-profile response.
+[`user-profile.interface.ts`](./src/server/routes/users/profiles/user-profile.interface.ts)
+derives their contracts, including a separate `UserProfileNamesInput` for raw
+names before trimming. An operation with its own schemas, such as
+[`list/`](./src/server/routes/users/profiles/list/), keeps them beside its route
+definition.
 
-```typescript
-import { z } from "zod";
-
-export const userProfileSchema = z.object({
-  /* Identifies the profile using a validated UUID. */
-  id: z.uuid(),
-  /* Contains the profile's validated lowercase contact email. */
-  email: z.email().toLowerCase(),
-  /* Contains the nonempty given name, limited to 100 characters. */
-  firstName: z.string().min(1).max(100),
-  /* Contains the nonempty family name, limited to 100 characters. */
-  lastName: z.string().min(1).max(100),
-});
-```
-
-Its dedicated `users/profile/user-profile.interface.ts` would derive the output:
-
-```typescript
-import type { userProfileSchema } from "@workspace/schemas/users/profile/user-profile.schema";
-import type { z } from "zod";
-
-/* Represents the validated profile data exposed by the illustrative contract. */
-export interface ValidatedUserProfile extends z.output<typeof userProfileSchema> {}
-```
-
-This example does not describe an existing user API or the database table's
-nullable name columns. When transformations change input shape, distinguish raw
+When transformations change input shape, distinguish raw
 `z.input<typeof schema>` contracts from validated `z.output<typeof schema>`
 contracts in the same responsibility-specific interface file. Use type aliases
-for shapes interfaces cannot faithfully represent.
+for shapes interfaces cannot faithfully represent. Query values arrive as
+strings, so use `z.coerce.number<number>()` to accept them on the server while
+clients still pass typed numbers.
 
 Validated domain values are required by default. Normalize genuinely optional
 boundary values in their owning schemas, and use parsed results afterward. Keep

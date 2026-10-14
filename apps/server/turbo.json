@@ -1,0 +1,9 @@
+{
+  "extends": ["//"],
+  "tags": ["app", "server"],
+  "tasks": {
+    "test": {
+      "dependsOn": ["drizzle:migrate"]
+    }
+  }
+}

@@ -24,7 +24,7 @@ context, before proceeding. Resolve links relative to this skill directory.
 - Plan approval authorizes only the displayed branch action, commits, push,
   ready-for-review PR targeting `main`, and exact local cleanup actions.
   The component skills alone do not authorize pushing or publishing.
-- No source fixes, tests, browser automation, installations, history rewriting,
+- No source or test fixes, browser automation, installations, history rewriting,
   forced pushes/checkouts, hook bypasses, stashing, hard resets, or `git clean`.
   Applicable static checks remain required; stop on failed checks or hooks.
 - Stop on uncertainty or unexpected changes. Preserve successful commits and
@@ -56,7 +56,9 @@ context, before proceeding. Resolve links relative to this skill directory.
   stop with its URL and request direction rather than duplicating or overwriting
   it. If there are no changes or existing feature differences, report a no-op.
 - Perform useful factual context upkeep before finalizing the inventory and
-  plan. Include those edits in the plan; do not leave reporting edits for `main`
+  plan. Move durable facts from this task's handoff into topic notes, then
+  delete `project-context/tasks/<task-id>/` and its startup-index link so
+  completed handoffs do not go stale. Include those edits in the plan; do not leave reporting edits for `main`
   after cleanup. Never fabricate future publication or verification results.
 
 ## 2. Present one complete plan and wait

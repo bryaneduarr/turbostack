@@ -1,8 +1,9 @@
 # Setup and database pitfalls
 
-Evidence: 2026-10-13; `0ebf76b`; sources/docs inspected, no application changes; runtime unverified.
+Evidence: 2026-10-14; base `56951b6` plus uncommitted changes; dev, start, and test flows run locally with `DB_PORT=55432`.
 
-- [setup](../../../package.json) deletes the lockfile, reinstalls, generates/applies migrations, and writes formatting. `setup:update` also updates dependencies; neither is harmless verification.
-- [Database docs](../../../apps/server/src/db/README.md) require reviewing generated migrations and reconciling existing databases before application.
-- Docs specify verified TLS by default; non-TLS local PostgreSQL needs explicit `DB_SSL_MODE=disable`.
-- The documented startup connection check does not validate tables or migration history.
+- A host PostgreSQL on `DB_PORT` (from `apps/server/.env`) blocks `db:up`, `dev`, `start`, and server tests.
+- The client needs `apps/client/.env`; `start` loads it with `--env-file-if-exists`.
+- The standalone client runs as `next-server`; stop it by port.
+- Local PostgreSQL needs `DB_SSL_MODE=disable`.
+- Turbo passes only `globalPassThroughEnv` variables.

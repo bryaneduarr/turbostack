@@ -37,9 +37,10 @@ These rules are mandatory for code and refactors.
 ## Comments
 
 - Document each responsibility-specific interface, its explicitly declared members, and schema fields as required by `types-and-validation.md`, using brief `/* ... */` comments that explain purpose without file paths.
-- For other code, add comments only for useful context, behavior, or constraints, not to restate code.
-- Document isolated complex logic with descriptive comments explaining its purpose, why the complexity is necessary, and the constraints or consequences that matter when maintaining or changing it. Follow all comment rules in this section.
-- Simplify avoidable complexity before documenting it. Comments must not substitute for a clearer implementation.
+- Write code that is readable and understandable without explanation: descriptive names, focused functions, and a straightforward flow. This rule targets code quality, not comments themselves; contract documentation remains required.
+- Outside the required contract documentation, do not add comments that explain what the code, configuration, scripts, or workflow files already show, such as narrative, summary, or usage comments.
+- Add another comment only when it records something the code cannot express and a future maintainer needs, such as a non-obvious external constraint, a value that must stay in sync elsewhere, or a reason an apparently simpler change would break behavior. Keep it to one short line when possible.
+- Simplify unclear code instead of explaining it. Comments must not substitute for a clearer implementation.
 - Do not prefix comments with `Why:` or `What:`.
 - Do not use numbered step comments, decorative separators, or label-style function comments.
 - Do not mention "human readable", "human friendly", or "human-like" in comments.

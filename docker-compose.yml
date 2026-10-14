@@ -1,0 +1,65 @@
+x-production-environment: &production-environment
+  NODE_ENV: production
+  DB_HOST: postgres
+  DB_PORT: 5432
+  DB_SSL_MODE: disable
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:?DB_USER is required}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      POSTGRES_DB: ${DB_NAME:?DB_NAME is required}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api-server-migrations:
+    profiles: [production]
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+    image: api-server:local
+    command: ["bun", "db/migrate/apply-migrations.script.js"]
+    env_file: apps/server/.env
+    environment: *production-environment
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api-server:
+    profiles: [production]
+    image: api-server:local
+    env_file: apps/server/.env
+    environment:
+      <<: *production-environment
+      PORT: 3001
+    ports:
+      - "${PORT:-3001}:3001"
+    depends_on:
+      api-server-migrations:
+        condition: service_completed_successfully
+
+  web-client:
+    profiles: [production]
+    build:
+      context: .
+      dockerfile: apps/client/Dockerfile
+    image: web-client:local
+    environment:
+      SERVER_URL: http://api-server:3001
+    ports:
+      - "${CLIENT_PORT:-3000}:3000"
+    depends_on:
+      api-server:
+        condition: service_healthy
+
+volumes:
+  postgres-data:

@@ -28,4 +28,8 @@ export interface ValidatedDatabaseEnvironment
   DB_PREPARE: ValidatedDatabaseEnvironmentData["DB_PREPARE"];
   /* Limits query-drain time in seconds when closing the pool. */
   DB_SHUTDOWN_TIMEOUT_SECONDS: ValidatedDatabaseEnvironmentData["DB_SHUTDOWN_TIMEOUT_SECONDS"];
+  /* Limits each application query in seconds, with zero disabling the limit. */
+  DB_STATEMENT_TIMEOUT_SECONDS: ValidatedDatabaseEnvironmentData["DB_STATEMENT_TIMEOUT_SECONDS"];
+  /* Limits how long a migration statement waits for a table lock in seconds. */
+  DB_MIGRATION_LOCK_TIMEOUT_SECONDS: ValidatedDatabaseEnvironmentData["DB_MIGRATION_LOCK_TIMEOUT_SECONDS"];
 }
