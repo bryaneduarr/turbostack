@@ -13,8 +13,19 @@ const databaseEnv: ValidatedDatabaseEnvironment = databaseEnvSchema.parse(
 const migrationsFolder = fileURLToPath(
   new URL("../migrations", import.meta.url),
 );
+// Drizzle recreates its bookkeeping schema and table with IF NOT EXISTS on every run.
+const alreadyExistsNoticeCodes = new Set(["42P06", "42P07"]);
 // One connection keeps the advisory lock and lock timeout on the migrating session.
-const client = postgres({ ...databaseCredentials, max: 1 });
+const client = postgres({
+  ...databaseCredentials,
+  max: 1,
+  onnotice: (notice) => {
+    const code = notice.code;
+    if (code === undefined || !alreadyExistsNoticeCodes.has(code)) {
+      console.warn(notice);
+    }
+  },
+});
 
 try {
   // Concurrent deployments wait here instead of applying the same migrations twice.
