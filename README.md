@@ -88,7 +88,8 @@ This repo is organized into three main sections:
 
 #### Environment Setup (Server)
 
-1. Copy the example env file. Its database values match `docker-compose.yml`:
+1. Copy the example env file. Docker Compose reads the same `DB_*` values, so the
+   local database is created with the credentials and port the server uses:
 
    ```sh
    cp apps/server/.env.example apps/server/.env
@@ -103,18 +104,26 @@ the committed migrations:
 bun run setup
 ```
 
-If port 5432 is already used, start the database on another port and set the same
-`DB_PORT` in `apps/server/.env`:
-
-```sh
-POSTGRES_PORT=55432 bun run db:up
-```
+If port 5432 is already used by another PostgreSQL, change `DB_PORT` in
+`apps/server/.env` (for example to `55432`); the container and the server both use it.
 
 #### Start Development
 
 ```sh
 bun run dev
 ```
+
+Turborepo starts PostgreSQL first, then the API server and the web client with hot
+reloading, and shows every task's logs.
+
+#### Run the Production Build Locally
+
+```sh
+bun run start
+```
+
+Builds every app, starts PostgreSQL, then runs the bundled API server with
+`NODE_ENV=production` and the Next.js production server.
 
 ---
 
@@ -138,11 +147,14 @@ repository root and contains one bundled file, so no `node_modules` ship:
 docker build -f apps/server/Dockerfile -t api-server .
 ```
 
-To run the production-like stack locally (PostgreSQL, migrations, then the server):
+To run the production containers locally (PostgreSQL, migrations, then the API
+server), using the settings in `apps/server/.env`:
 
 ```sh
-docker compose --profile production up --build
+bun run start:docker
 ```
+
+Images are named after their package: `ghcr.io/<owner>/<repository>/api-server`.
 
 [`.github/workflows/release-images.yml`](./.github/workflows/release-images.yml)
 runs on pushes to `main`. It asks Turborepo which apps the push affected and
@@ -168,8 +180,6 @@ This template uses [shadcn/ui](https://ui.shadcn.com/).
 ### Adding New Components
 
 Components are added to the shared UI package at `packages/ui`. Navigate there and use the shadcn CLI:
-
-Images are named after their package: `ghcr.io/<owner>/<repository>/api-server`.
 
 ```sh
 cd packages/ui
@@ -252,7 +262,7 @@ All scripts are run from the project root using [Bun](https://bun.sh/) and [Turb
   bun run check-types
   ```
 
-- **bun run dev**: Start development servers for all apps (Next.js client, Elysia server) with hot reloading.
+- **bun run dev**: Start PostgreSQL, then every app with hot reloading.
 
   ```sh
   bun run dev
@@ -306,10 +316,16 @@ All scripts are run from the project root using [Bun](https://bun.sh/) and [Turb
   bun run setup
   ```
 
-- **bun run start**: Start all apps in production mode (after build).
+- **bun run start**: Build every app, start PostgreSQL, and run the production servers.
 
   ```sh
   bun run start
+  ```
+
+- **bun run start:docker**: Build and run the production API server containers with PostgreSQL and migrations.
+
+  ```sh
+  bun run start:docker
   ```
 
 ---

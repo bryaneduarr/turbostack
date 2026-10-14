@@ -8,8 +8,8 @@
     "check": "biome ci . && turbo run check-types test build",
     "check-types": "turbo check-types",
     "clean": "turbo clean && rm -rf .turbo/ node_modules",
-    "db:down": "docker compose down",
-    "db:up": "docker compose up --detach --wait postgres",
+    "db:down": "docker compose --env-file apps/server/.env down",
+    "db:up": "docker compose --env-file apps/server/.env up --detach --wait postgres",
     "dev": "turbo dev",
     "drizzle:generate": "turbo drizzle:generate",
     "drizzle:migrate": "turbo drizzle:migrate",
@@ -20,6 +20,7 @@
     "outdated": "bun outdated --recursive",
     "setup": "bun install && bun run db:up && bun run drizzle:migrate",
     "start": "turbo start",
+    "start:docker": "docker compose --env-file apps/server/.env --profile production up --build",
     "test": "turbo test",
     "update": "bun update --interactive --recursive"
   },

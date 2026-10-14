@@ -16,16 +16,16 @@ A type-safe **backend** built with [Elysia](https://elysiajs.com/), TypeScript, 
 
 ## Getting Started
 
-Run these commands from `apps/server` after installing workspace dependencies at the repository root:
+The package is named `api-server`. From the repository root:
 
 ```sh
-cp .env.example .env
-bun run --cwd ../.. db:up
-bun run drizzle:migrate
+cp apps/server/.env.example apps/server/.env
+bun run setup
 bun run dev
 ```
 
-Development uses `bun --watch src/index.ts`. Bun loads `.env` automatically, and
+`bun run dev` starts PostgreSQL through Turborepo, then runs
+`bun --watch src/index.ts`. Bun loads `.env` automatically, and
 Drizzle Kit loads it for its own commands, so no `dotenv` package is needed. The
 default server URL is [http://localhost:3001](http://localhost:3001).
 
@@ -33,7 +33,8 @@ default server URL is [http://localhost:3001](http://localhost:3001).
 
 `bun run build` bundles the server and every runtime dependency into
 `dist/index.js` with Bun, which also resolves the `@/` and `@workspace/` aliases.
-`bun run start` runs that bundle. The build also emits
+`bun run start` runs that bundle with `NODE_ENV=production`; from the repository
+root it also builds first and starts PostgreSQL. The build also emits
 `dist/db/migrate/apply-migrations.script.js` and copies the committed migrations
 next to it; `bun run start:migrate` applies them without Drizzle Kit. Run
 migrations as a deliberate deployment step before starting new server versions.

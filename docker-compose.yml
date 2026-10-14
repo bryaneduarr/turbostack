@@ -1,25 +1,18 @@
-# Local development database:
-#   bun run db:up
-# Production-like stack (Postgres, migrations, and the bundled server image):
-#   docker compose --profile production up --build
-
-x-server-environment: &server-environment
+x-production-environment: &production-environment
+  NODE_ENV: production
   DB_HOST: postgres
   DB_PORT: 5432
-  DB_USER: ${POSTGRES_USER:-postgres}
-  DB_PASSWORD: ${POSTGRES_PASSWORD:-example-local-password}
-  DB_NAME: ${POSTGRES_DB:-postgres}
   DB_SSL_MODE: disable
 
 services:
   postgres:
     image: postgres:18-alpine
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-example-local-password}
-      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      POSTGRES_USER: ${DB_USER:?DB_USER is required}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      POSTGRES_DB: ${DB_NAME:?DB_NAME is required}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql
     healthcheck:
@@ -28,29 +21,30 @@ services:
       timeout: 5s
       retries: 10
 
-  migrate:
+  api-server-migrations:
     profiles: [production]
     build:
       context: .
       dockerfile: apps/server/Dockerfile
-    image: server:local
+    image: api-server:local
     command: ["bun", "db/migrate/apply-migrations.script.js"]
-    environment: *server-environment
+    env_file: apps/server/.env
+    environment: *production-environment
     depends_on:
       postgres:
         condition: service_healthy
 
-  server:
+  api-server:
     profiles: [production]
-    image: server:local
+    image: api-server:local
+    env_file: apps/server/.env
     environment:
-      <<: *server-environment
+      <<: *production-environment
       PORT: 3001
-      CLIENT_URL: ${CLIENT_URL:-http://localhost:3000}
     ports:
-      - "${SERVER_PORT:-3001}:3001"
+      - "${PORT:-3001}:3001"
     depends_on:
-      migrate:
+      api-server-migrations:
         condition: service_completed_successfully
 
 volumes:

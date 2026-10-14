@@ -14,7 +14,7 @@
     "drizzle:studio": "drizzle-kit studio --config ./drizzle.config.ts",
     "format": "biome format --write .",
     "lint": "biome lint .",
-    "start": "bun dist/index.js",
+    "start": "NODE_ENV=production bun dist/index.js",
     "start:migrate": "bun dist/db/migrate/apply-migrations.script.js",
     "test": "vitest run",
     "test:watch": "vitest"
