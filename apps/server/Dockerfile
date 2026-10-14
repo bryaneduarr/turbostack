@@ -8,7 +8,7 @@ FROM oven/bun:${BUN_VERSION} AS prune
 ARG TURBO_VERSION
 WORKDIR /repo
 COPY . .
-RUN bunx turbo@${TURBO_VERSION} prune server --docker
+RUN bunx turbo@${TURBO_VERSION} prune api-server --docker
 
 FROM oven/bun:${BUN_VERSION} AS build
 WORKDIR /repo

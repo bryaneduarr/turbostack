@@ -42,9 +42,9 @@ The [Dockerfile](./Dockerfile) builds the same bundle from the repository root a
 ships only `dist/` on Bun's slim image, running as the unprivileged `bun` user:
 
 ```sh
-docker build -f apps/server/Dockerfile -t server .
-docker run --rm --env-file apps/server/.env server bun db/migrate/apply-migrations.script.js
-docker run --rm --env-file apps/server/.env -p 3001:3001 server
+docker build -f apps/server/Dockerfile -t api-server .
+docker run --rm --env-file apps/server/.env api-server bun db/migrate/apply-migrations.script.js
+docker run --rm --env-file apps/server/.env -p 3001:3001 api-server
 ```
 
 Set `NODE_ENV=production` and real database settings in the deployment

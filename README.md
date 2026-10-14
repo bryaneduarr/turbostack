@@ -37,8 +37,8 @@ This repo is organized into three main sections:
    - [@workspace/utils](./packages/utils/) - Runtime-neutral utilities and canonical HTTP status constants
 
 3. **[Applications](./apps/)**: Main apps:
-   - **[Client](./apps/client/)**: Next.js 16 + React 19 with Turbopack
-   - **[Server](./apps/server/)**: Elysia + TypeScript backend running on Bun
+   - **[web-client](./apps/client/)**: Next.js 16 + React 19 with Turbopack
+   - **[api-server](./apps/server/)**: Elysia + TypeScript backend running on Bun
      - Fast, modern API server
      - Auto-generated OpenAPI docs with Scalar
      - Type-safe, Zod-validated environment config
@@ -131,11 +131,11 @@ secret and `TURBO_TEAM` variable to share Turborepo's remote cache with CI.
 
 ## Production and Deployment
 
-Each deployable app owns a `Dockerfile`. The server image is built from the
+Each deployable app owns a `Dockerfile`. The API server image is built from the
 repository root and contains one bundled file, so no `node_modules` ship:
 
 ```sh
-docker build -f apps/server/Dockerfile -t server .
+docker build -f apps/server/Dockerfile -t api-server .
 ```
 
 To run the production-like stack locally (PostgreSQL, migrations, then the server):
@@ -168,6 +168,8 @@ This template uses [shadcn/ui](https://ui.shadcn.com/).
 ### Adding New Components
 
 Components are added to the shared UI package at `packages/ui`. Navigate there and use the shadcn CLI:
+
+Images are named after their package: `ghcr.io/<owner>/<repository>/api-server`.
 
 ```sh
 cd packages/ui
