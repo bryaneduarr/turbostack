@@ -1,170 +1,66 @@
 ---
 name: pr
-description: "Use when writing a PR body."
-metadata:
-  credits:
-    skill: show-me
-    author: Dex Horthy
-    organisation: Humanlayer
-    url: "https://github.com/humanlayer/skills/blob/main/plugins/show-me/skills/show-me/SKILL.md"
+description: "Write clear pull request bodies with newcomer context, Mermaid flows, GitHub review links, honest verification, and a final tl;dr. Use when writing or revising a PR body."
 ---
 
-Use this template for writing the PR body:
+# Pull request body
 
-```markdown
-## Summary
+Write for a tired reviewer who understands programming but knows nothing about the codebase. The PR must explain the change without requiring a tour of the entire repository.
 
-<diagram, diff-sketch, or tree>
+## Preparation
 
-## Evidence
+- Identify the requested PR base, head, and scope. Inspect the relevant diff, surrounding implementation, and product documentation; do not treat unrelated working-tree edits as part of the PR.
+- Establish what the product does, the behavior before the change, and the intended outcome. Use confirmed intent and inspected sources, not an invented backstory.
+- Resolve the GitHub repository and reviewed revisions from local Git or available PR metadata. Ask a focused question only when essential information cannot be established; label remaining unknowns honestly.
+- Use existing evidence or checks permitted by repository instructions. Writing a PR body does not authorize code changes, commits, PR publication, tests, or browser automation.
 
-- **Before:** <screenshot/output/failing test run>
-  **After:** <screenshot/output/passing test run>
+## Writing rules
 
-## Merge Danger
+- Use the six titles below as second-level Markdown headings, in the given order. Keep titles in third person, without first- or second-person pronouns.
+- Prefer short paragraphs and useful bullets. Include enough context to judge the change, not an exhaustive architecture lesson or commit log.
+- Define project-specific terms and acronyms on first use. Assume programming knowledge, but no familiarity with this project's names or conventions.
+- Distinguish previous behavior, new behavior, intended benefits, and verified outcomes. Avoid repeating the same explanation across sections.
+- Return only the completed PR body, without a preamble, unfilled placeholders, or commentary after the final summary.
 
-**Door:** <one-way or two-way>
+## Body structure
 
-<optional: description>
+### What's the story so far?
 
-**Blast Radius:** <one-word description>
+- Introduce the relevant product capability, what it does, and who uses it.
+- Explain how it worked before this PR and the concrete problem, missing capability, or limitation that prompted the change.
+- Include a brief before-change example when it makes the problem easier to understand.
 
-<optional: potential ramifications of merge>
-```
+### Why is this change worth making?
 
-## Sections
+- State the purpose, expected benefit, and who benefits. Explain the value rather than repeating the implementation.
+- Explain why this approach fits the problem. Mention meaningful trade-offs or alternatives only when supported by inspected sources or confirmed intent.
+- Clarify important non-goals when needed to avoid implying a broader fix.
 
-Skip all preambles and keep prose brief. If a project glossary exists, read it with the host's file reader and use its domain language; otherwise use the terminology established by the user and existing code. Do not require or create a glossary merely to write a PR body.
+### How does the new flow work?
 
-### Summary
+- Summarize the new behavior briefly and define the concepts needed to understand the flow.
+- Include a fenced `mermaid` diagram in every PR. Show the relevant start, main steps, important decisions or failure branches, and final outcome.
+- Use simple Mermaid syntax and descriptive, quoted node labels. Make existing versus changed behavior clear where it matters; do not diagram the entire codebase.
+- Follow the diagram with a brief walkthrough explaining its meaningful steps and outcomes in plain language.
+- For documentation, configuration, or non-runtime refactors, show a before/change/after relationship or the actual update workflow. Label conceptual diagrams clearly; never invent runtime behavior.
+- Give concrete, relevant edge cases as **Situation -> expected outcome**. Distinguish verified outcomes from source-inferred behavior and unresolved cases. If no meaningful edge case applies, explain that briefly rather than inventing one.
 
-Pick the smallest view that makes the key point clear.
+### Where should the review start?
 
-- Show logic or an algorithm as pseudocode:
+- List the most important files in a useful review order, not every changed file.
+- For each file, explain its responsibility and the specific behavior, contract, or decision that deserves attention.
+- Use GitHub links pinned to the reviewed head commit. Use the base commit for deleted files or before-change references. Add accurate line anchors when useful.
+- Link shape: `https://github.com/<owner>/<repo>/blob/<commit>/<path>#L<start>-L<end>`. Replace every placeholder with known values and encode paths correctly.
+- If changes are unpublished or a valid link cannot be established, state the limitation instead of fabricating a link or linking to a revision that lacks the change.
 
-```text
-on(save)
-  if content is unchanged
-    return cached result
-  write new content
-  return fresh result
-```
+### What was checked, and what could go wrong?
 
-- Show runtime control flow as a call tree:
+- **Checked:** Report actual commands or manual checks, their results, and what those results establish. Attribute existing CI or user-provided evidence rather than implying it was run locally.
+- **Not checked:** State relevant unchecked behavior, blocked checks, and remaining uncertainty. Say explicitly when no checks were run.
+- **Risks:** Describe relevant failure modes, affected users or consumers, and compatibility concerns. Include deployment, migration, rollout, or rollback considerations only when applicable.
+- Never present a proposed check as completed, static inspection as runtime verification, or a passing type check as proof of complete correctness. Avoid unsupported claims that a change is risk-free or safe to merge.
 
-```text
-submitForm
-  createSession
-    persistPrompt
-    launchAgent
-  navigateToSession
-```
+### tl;dr
 
-- Show UI structure as a component tree, including state and module boundaries that matter:
-
-```text
-<SessionPage> (apps/example/src/routes/session.tsx)
-  useSessionEvents()
-  <SessionToolbar>
-    <RunSkillButton> (packages/ui)
-```
-
-- Show file responsibility or a broad refactor as a shallow file tree:
-
-```text
-src/
-├── commands/       # parses user actions
-├── sessions/       # owns session state
-└── transport/      # sends API requests
-```
-
-- Show component interaction, control flow, or data flow with Mermaid:
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant UI
-    participant Daemon
-    User->>UI: choose command
-    UI->>Daemon: send expanded prompt
-    Daemon-->>UI: stream result
-```
-
-- Use `diff` when the point is what changes and the surrounding shape already exists. Match the diff shape to the topic.
-
-For a component change:
-
-```diff
- <SessionPage>
-   useSessionEvents()
-   <SessionToolbar>
-+    <RunSkillButton />
-   <SessionTimeline>
-+    <SkillResultCard />
-```
-
-For a file-layout change:
-
-```diff
- src/
- ├── commands/
-+│   └── show-me.ts       # expands the slash command
- ├── sessions/
--└── transport.ts
-+└── transport/
-+    ├── client.ts
-+    └── stream.ts
-```
-
-For a call-tree or call-stack change:
-
-```diff
- submitForm
-   createSession
-     persistPrompt
-+    expandSkillMention
-     launchAgent
--  navigateToSession
-+  navigateToSession
-+    subscribeToEvents
-```
-
-For a state or control-flow change:
-
-```diff
- on(save)
--  write content
-+  if content is unchanged
-+    return cached result
-+  write new content
-+  invalidate cache
-```
-
-- Show the whole block when most of it is new, when omitted context would hide ownership or order, or when the user needs a copyable target shape:
-
-```ts
-function expandSkill(command: string): string {
-  const skillName = command.slice(1);
-  return `use the ${skillName} skill`;
-}
-```
-
-#### Guidance
-
-Place each visual next to the short text it supports. Keep only the calls, files, props, states, and boundaries needed to answer the user's current question or the options to resolve the current discussion point.
-
-You may use one of these, you may use several, it is unlikely you will use all of them. Use your judgement and don't overwhelm the user.
-
-### Evidence
-
-Concrete evidence that the change works. Show a before and after when available. Use existing evidence or explicitly authorized checks; writing a PR body does not authorize tests or browser tools. Report verification limits rather than inventing evidence. Mandatory repository rules take precedence over this template.
-
-Screenshots are S-tier - when the environment is set up for it and the change is visual.
-
-Execution-based evidence is A-tier. Test results, console output. Show the exact test that now fails and passes, using pseudocode.
-
-### Merge Danger
-
-Describe whether it's a one-way or two-way door. You can walk back through two-way doors, but not one-way doors. A PR that is cheap to roll back is lower risk. Changes that involve destructive actions or hard-to-reverse decisions are one-way doors.
-
-The blast radius is the potential impact or scope of the changes introduced by this PR. Consider all possibilities. Examples are layout shift, breakages for consumers, mobile responsiveness, etc.
+- Finish with one extremely short sentence, ideally no more than 40 words, stating what changed and why it matters.
+- Summarize only information already explained. Introduce no new claims, details, or sections afterward.
