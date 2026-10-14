@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 ARG BUN_VERSION=1.4.0
-# Keep in step with the turbo version in bun.lock.
+# Updated with the root package.json by `bun run update:toolchain`.
 ARG TURBO_VERSION=2.11.8
 
 FROM oven/bun:${BUN_VERSION} AS prune

@@ -23,7 +23,8 @@
     "start": "turbo start",
     "start:docker": "docker compose --env-file apps/server/.env --profile production up --build",
     "test": "turbo test",
-    "update": "bun update --interactive --recursive"
+    "update": "bun update --interactive --recursive",
+    "update:toolchain": "bun scripts/update-toolchain.script.ts"
   },
   "workspaces": [
     "apps/*",
