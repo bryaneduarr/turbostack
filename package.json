@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "check": "biome ci . && turbo run check-types test build",
+    "check": "biome ci . && turbo boundaries && turbo run check-types test build",
     "check-types": "turbo check-types",
     "clean": "turbo clean && rm -rf .turbo/ node_modules",
     "db:down": "docker compose --env-file apps/server/.env down",

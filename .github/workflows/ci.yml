@@ -35,6 +35,8 @@ jobs:
 
       - run: bunx biome ci .
 
+      - run: bunx turbo boundaries
+
       - run: cp apps/server/.env.example apps/server/.env
 
       - run: bunx turbo run check-types test build --affected

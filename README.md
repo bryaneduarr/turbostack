@@ -130,7 +130,21 @@ Builds every app, starts PostgreSQL, then runs the bundled API server with
 ## Quality Checks and CI
 
 `bun run check` runs the same checks as CI: Biome (lint, formatting, and import
-order), type checks, Vitest tests, and builds.
+order), Turborepo boundaries, type checks, Vitest tests, and builds.
+
+### Package Boundaries
+
+`turbo boundaries` rejects imports of undeclared packages and files outside a
+package, plus these tag rules from the root `turbo.json` (tags live in each
+package's `turbo.json`):
+
+| Tag | Rule |
+|---|---|
+| `app` | Nothing may depend on an app |
+| `package` | Shared packages may not depend on apps |
+| `runtime-neutral` | May depend only on other runtime-neutral packages and configs |
+| `server` | May not depend on browser packages such as `@workspace/ui` |
+| `config` | May depend only on other config packages |
 
 [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) runs on pull requests and
 pushes to `main`. Biome checks the whole repository; type checks, tests, and builds

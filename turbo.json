@@ -1,6 +1,25 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "boundaries": {
+    "tags": {
+      "app": {
+        "dependents": { "allow": [] }
+      },
+      "package": {
+        "dependencies": { "deny": ["app"] }
+      },
+      "runtime-neutral": {
+        "dependencies": { "allow": ["runtime-neutral", "config"] }
+      },
+      "server": {
+        "dependencies": { "deny": ["browser"] }
+      },
+      "config": {
+        "dependencies": { "allow": ["config"] }
+      }
+    }
+  },
   "tasks": {
     "//#db:up": {
       "cache": false
