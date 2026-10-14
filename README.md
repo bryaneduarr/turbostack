@@ -17,7 +17,6 @@ Build modern applications with **Next.js** on the frontend and **Elysia** on the
 | [React](https://react.dev/)                   |
 | [Elysia](https://elysiajs.com/)                  |
 | [Tailwind CSS](https://tailwindcss.com/)      |
-| [shadcn/ui](https://ui.shadcn.com/)           |
 | [TypeScript](https://www.typescriptlang.org/) |
 | [Biome](https://biomejs.dev/)                 |
 
@@ -31,11 +30,10 @@ This repo is organized into three main sections:
    - [Tailwind CSS](./config/tailwind/) - Shared styling and theme
 
 2. **[Packages](./packages/)**: Shared code and UI components:
-   - [@workspace/ui](./packages/ui/) - Reusable React components built with shadcn/ui
-   - Easily add new components via the shadcn CLI
+   - [@workspace/ui](./packages/ui/) - Our own React components, with no UI library dependencies
    - [@workspace/schemas](./packages/schemas/) - Zod validation and schema-derived contracts
    - [@workspace/utils](./packages/utils/) - Runtime-neutral utilities and canonical HTTP status constants
-   - [@workspace/api-client](./packages/api-client/) - API requests with responses validated by the shared schemas
+   - [@workspace/api-client](./packages/api-client/) - Typed API requests built from shared route definitions
 
 3. **[Applications](./apps/)**: Main apps:
    - **[web-client](./apps/client/)**: Next.js 16 + React 19 with Turbopack
@@ -48,7 +46,7 @@ This repo is organized into three main sections:
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) v20 or newer (used by the Next.js client)
+- [Node.js](https://nodejs.org/) v22.9 or newer (used by the Next.js client)
 - [Bun](https://bun.sh/) v1.4.0 or newer; CI uses the exact version in the root `packageManager` field
 - [Docker](https://docs.docker.com/get-docker/) for the local PostgreSQL database and production images
 
@@ -87,13 +85,15 @@ This repo is organized into three main sections:
    bun install
    ```
 
-#### Environment Setup (Server)
+#### Environment Setup
 
-1. Copy the example env file. Docker Compose reads the same `DB_*` values, so the
-   local database is created with the credentials and port the server uses:
+1. Copy the example env files. Docker Compose reads the server's `DB_*` values, so
+   the local database is created with the credentials and port the server uses.
+   The client's `SERVER_URL` points at the API server:
 
    ```sh
    cp apps/server/.env.example apps/server/.env
+   cp apps/client/.env.example apps/client/.env
    ```
 
 #### First-Time Setup
@@ -131,7 +131,38 @@ Builds every app, starts PostgreSQL, then runs the bundled API server with
 ## Quality Checks and CI
 
 `bun run check` runs the same checks as CI: Biome (lint, formatting, and import
-order), Turborepo boundaries, type checks, Vitest tests, and builds.
+order), Turborepo boundaries, type checks, tests, and builds. CI also checks that
+committed migrations match the Drizzle tables.
+
+## End-to-End Type Safety
+
+Each API endpoint has one route definition in `@workspace/schemas` that declares
+its method, full path, `params`, `query`, `body`, and response schema, using
+`null` for inputs it does not consume. The server registers the route from that
+definition and Elysia validates its inputs with the same Zod schemas. Clients call
+it through `@workspace/api-client`, which derives the input and response types from
+the same definition and validates the response at runtime:
+
+```typescript
+const result = await sendApiRequest({
+  baseUrl: getClientEnvironment().SERVER_URL,
+  route: healthReadyRoute,
+  params: null,
+  query: null,
+  body: null,
+  init: { cache: "no-store" },
+});
+```
+
+A wrong path, method, input, or response type fails `check-types`. The home page
+of the web client calls `/health/ready` this way from a Server Component.
+
+## Tests
+
+Tests use Bun's built-in runner (`bun:test`) and live next to the code as
+`<responsibility>.test.ts`. Server route tests send requests through
+`app.handle(new Request(...))`, so no port is opened. Write tests for workflows
+and logic that need verification, not for every function.
 
 ### Package Boundaries
 
@@ -155,15 +186,18 @@ secret and `TURBO_TEAM` variable to share Turborepo's remote cache with CI.
 
 ## Production and Deployment
 
-Each deployable app owns a `Dockerfile`. The API server image is built from the
-repository root and contains one bundled file, so no `node_modules` ship:
+Each deployable app owns a `Dockerfile`, built from the repository root. The API
+server image contains one bundled file, so no `node_modules` ship. The web client
+image contains the Next.js standalone server on Node.js and reads `SERVER_URL` at
+runtime, so the same image runs in every environment:
 
 ```sh
 docker build -f apps/server/Dockerfile -t api-server .
+docker build -f apps/client/Dockerfile -t web-client .
 ```
 
-To run the production containers locally (PostgreSQL, migrations, then the API
-server), using the settings in `apps/server/.env`:
+To run the production containers locally (PostgreSQL, migrations, the API server,
+then the web client on port 3000), using the settings in `apps/server/.env`:
 
 ```sh
 bun run start:docker
@@ -172,68 +206,64 @@ bun run start:docker
 Images are named after their package: `ghcr.io/<owner>/<repository>/api-server`.
 
 [`.github/workflows/release-images.yml`](./.github/workflows/release-images.yml)
-runs on pushes to `main`. It asks Turborepo which apps the push affected and
-builds and publishes images to GitHub Container Registry only for affected apps
-that have a `Dockerfile`. A documentation-only change builds nothing; a change to
-`packages/schemas` rebuilds the apps that import it. Add a deploy job for the
-chosen hosting platform after the publish job.
+runs after CI passes on `main`. It builds every app that has a `Dockerfile` and
+publishes it to GitHub Container Registry tagged `sha-<commit>` and `latest`.
+Building every app means a failed release never leaves an app without a later
+change; Docker layer caching keeps unchanged apps fast.
+
+When adding a deploy job for the chosen hosting platform, deploy in this order:
+
+1. Run migrations with the new server image:
+   `bun db/migrate/apply-migrations.script.js`. Concurrent runs wait on a
+   PostgreSQL advisory lock, and `DB_MIGRATION_LOCK_TIMEOUT_SECONDS` stops a
+   migration that cannot get a table lock from blocking traffic.
+2. Deploy the API server, then the web client, using the same `sha-<commit>` tag.
+3. Point readiness probes at `GET /health/ready` and liveness probes at
+   `GET /health/live`.
+
+Behind a load balancer, set `SHUTDOWN_DRAIN_DELAY_SECONDS` a little longer than its
+health-check interval, and keep `HTTP_IDLE_TIMEOUT_SECONDS` above its idle
+timeout. Make schema changes backward compatible (add, deploy, then remove in a
+later release), because old and new server versions run together during a deploy.
 
 ## Dependency Updates
 
 The committed `bun.lock` is the source of truth; CI installs with
 `--frozen-lockfile`. [Dependabot](./.github/dependabot.yml) opens weekly pull
 requests: grouped minor and patch updates, separate major updates, and GitHub
-Actions and Docker Compose image updates. Update the Bun version manually in the
-root `packageManager` field and the server `Dockerfile` `BUN_VERSION` argument.
+Actions and Docker Compose image updates.
+
+Bun and Turbo are pinned in more than one place: the root `packageManager` field,
+the root `turbo` version, and every app `Dockerfile`. Update them together with:
+
+```sh
+bun run update:toolchain
+```
+
+It reads the latest versions from npm, updates those files and `bun.lock`, and
+reminds you to run `bun upgrade` for your local Bun. Dependabot ignores `turbo`
+so the two never disagree.
 
 ---
 
-## shadcn/ui Components
+## UI Components
 
-This template uses [shadcn/ui](https://ui.shadcn.com/).
-
-### Adding New Components
-
-Components are added to the shared UI package at `packages/ui`. Navigate there and use the shadcn CLI:
-
-```sh
-cd packages/ui
-bunx shadcn@latest add button
-bunx shadcn@latest add card
-bunx shadcn@latest add dialog
-```
-
-### Using Components
-
-Import components from the shared UI package in your applications:
+`@workspace/ui` contains our own components, built on native elements and Tailwind
+classes with no UI library dependencies. Each component lives in
+`packages/ui/src/components/<component>/<component>.component.tsx`, and its props
+interface in `packages/ui/src/types/components/<component>/`. Props such as
+`variant`, `size`, and `type` are required, so every use states its intent:
 
 ```tsx
-// Import UI components
-import { Button } from "@workspace/ui/components/ui/button";
+import { Button } from "@workspace/ui/components/button/button.component";
 
-// Use in your component
-export function MyComponent() {
-  return (
-    <Button variant="default" size="lg">
-      Click me
-    </Button>
-  );
-}
+<Button type="button" variant="primary" size="medium">
+  Save
+</Button>;
 ```
 
-### Available Button Variants
-
-The Button component supports multiple variants and sizes:
-
-```tsx
-// Variants: default, outline, secondary, ghost, destructive, link
-<Button variant="outline">Outline Button</Button>
-<Button variant="destructive">Delete</Button>
-
-// Sizes: default, xs, sm, lg, icon, icon-xs, icon-sm, icon-lg
-<Button size="sm">Small Button</Button>
-<Button size="icon"><IconComponent /></Button>
-```
+Variants: `primary`, `secondary`, `outline`, `ghost`, `destructive`. Sizes:
+`small`, `medium`, `large`.
 
 ---
 
@@ -244,8 +274,7 @@ The Button component supports multiple variants and sizes:
 The global styles in [globals.css](./config/tailwind/globals.css) provide:
 
 - Light and dark mode color schemes
-- shadcn/ui design tokens
-- Animation utilities via `tw-animate-css`
+- Color, border, ring, and radius tokens used by `@workspace/ui`
 
 ---
 
@@ -289,7 +318,7 @@ All scripts are run from the project root using [Bun](https://bun.sh/) and [Turb
   bun run check
   ```
 
-- **bun run test**: Run Vitest suites in every package that defines them.
+- **bun run test**: Run Bun tests in every package that defines them.
 
   ```sh
   bun run test
@@ -323,6 +352,12 @@ All scripts are run from the project root using [Bun](https://bun.sh/) and [Turb
 
   ```sh
   bun run update
+  ```
+
+- **bun run update:toolchain**: Pin the latest Bun and Turbo in `package.json`, every app `Dockerfile`, and `bun.lock`.
+
+  ```sh
+  bun run update:toolchain
   ```
 
 - **bun run setup**: Install from the lockfile, start PostgreSQL, and apply migrations (first-time setup).
