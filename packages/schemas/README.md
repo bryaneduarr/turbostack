@@ -8,8 +8,6 @@ is needed.
 
 ```text
 src/
-├── authentication/
-│   └── sign-in/          # Sign-in credentials
 ├── database/
 │   └── environment/      # PostgreSQL environment settings
 └── server/
@@ -25,28 +23,6 @@ modules. Use extensionless `@workspace/schemas/...` imports within this package 
 from other workspaces, never relative source imports or `.js`/`.ts` extensions.
 The package's wildcard exports and self-alias support these nested module paths.
 Do not create barrel files.
-
-## Sign-In Credentials
-
-[`sign-in.schema.ts`](./src/authentication/sign-in/sign-in.schema.ts) exports
-`signInSchema`. It validates the email, normalizes it to lowercase, and requires a
-nonempty password without transforming the password.
-[`sign-in.interface.ts`](./src/authentication/sign-in/sign-in.interface.ts) exports
-`ValidatedSignInCredentials`, derived from the schema's validated output.
-
-```typescript
-import type { ValidatedSignInCredentials } from "@workspace/schemas/authentication/sign-in/sign-in.interface";
-import { signInSchema } from "@workspace/schemas/authentication/sign-in/sign-in.schema";
-
-const input: unknown = {
-  email: "example@example.com",
-  password: "example-password",
-};
-const credentials: ValidatedSignInCredentials = signInSchema.parse(input);
-```
-
-Use `safeParse` and handle both outcomes for expected credential validation
-failures. `parse` is appropriate when invalid data should throw.
 
 ## Database and Server Environment
 

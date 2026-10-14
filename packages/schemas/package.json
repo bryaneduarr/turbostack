@@ -18,7 +18,6 @@
     "@types/node": "^26.6.5"
   },
   "exports": {
-    "./authentication/*": "./src/authentication/*.ts",
     "./database/*": "./src/database/*.ts",
     "./server/*": "./src/server/*.ts",
     "./client/*": "./src/client/*.ts"
