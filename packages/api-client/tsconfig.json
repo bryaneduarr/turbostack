@@ -4,7 +4,8 @@
     "lib": ["es2022", "dom"],
     "paths": {
       "@workspace/api-client/*": ["./src/*"]
-    }
+    },
+    "types": ["bun"]
   },
   "include": ["."],
   "exclude": ["node_modules", "dist"]

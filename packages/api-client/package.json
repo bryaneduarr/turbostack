@@ -7,11 +7,16 @@
     "clean": "rm -rf node_modules/ .turbo/",
     "check-types": "tsc --noEmit",
     "format": "biome format --write .",
-    "lint": "biome lint ."
+    "lint": "biome lint .",
+    "test": "bun test"
   },
   "dependencies": {
     "@workspace/schemas": "workspace:*",
+    "@workspace/utils": "workspace:*",
     "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.3"
   },
   "exports": {
     "./requests/*": "./src/requests/*.ts",
