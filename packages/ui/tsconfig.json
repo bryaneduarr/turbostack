@@ -1,27 +1,10 @@
 {
-  "extends": "@workspace/typescript/base",
-  "display": "React.js",
+  "extends": "@workspace/typescript/react-library",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "module": "esnext",
-    "moduleResolution": "bundler",
     "paths": {
-      "@workspace/ui/*": [
-        "./src/*"
-      ],
-      "@workspace/ui/components/*": [
-        "./src/components/*"
-      ],
-      "@workspace/ui/ui/*": [
-        "./src/components/ui/*"
-      ]
+      "@workspace/ui/*": ["./src/*"]
     }
   },
-  "include": [
-    "."
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
 }

@@ -6,7 +6,10 @@
     "clean": "rm -rf node_modules/ .turbo/"
   },
   "exports": {
-    "./base": "./base.json"
+    "./base": "./base.json",
+    "./bundler": "./bundler.json",
+    "./nextjs": "./nextjs.json",
+    "./react-library": "./react-library.json"
   },
   "devDependencies": {
     "typescript": "7.0.2"

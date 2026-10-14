@@ -1,10 +1,6 @@
 {
-  "extends": "@workspace/typescript/base",
+  "extends": "@workspace/typescript/bundler",
   "compilerOptions": {
-    "lib": ["es2022"],
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "noEmit": true,
     "paths": {
       "@/package.json": ["./package.json"],
       "@/*": ["./src/*"]

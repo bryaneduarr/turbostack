@@ -12,65 +12,31 @@ This package provides standardized TypeScript configurations used across all Typ
 |------------|
 | [TypeScript](https://www.typescriptlang.org/) |
 
-## Features
+## Presets
 
-- **Base Configuration** - Core TypeScript settings for all projects
-- **Modern JavaScript** - Targets ES2022 with latest features
-- **Strict Type Checking** - Enables TypeScript's strict mode for maximum type safety
-- **Path Resolution** - Consistent module resolution strategy
-- **NodeNext Module Resolution** - Modern ESM-compatible module handling
+| Preset | Extends | Use for |
+|---|---|---|
+| `@workspace/typescript/base` | none | Strict, runtime-neutral settings (ES2022, no DOM) |
+| `@workspace/typescript/bundler` | `base` | Packages and apps resolved by a bundler or Bun; no emit |
+| `@workspace/typescript/react-library` | `bundler` | React packages; adds DOM types and `react-jsx` |
+| `@workspace/typescript/nextjs` | `bundler` | Next.js apps; adds DOM types, `preserve` JSX, and the Next plugin |
 
-## Configuration Files
-
-### Base Configuration (`base.json`)
-
-The foundation for all TypeScript projects with:
-
-```json
-{
-  "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
-    "esModuleInterop": true,
-    "exactOptionalPropertyTypes": true,
-    "incremental": false,
-    "isolatedModules": true,
-    "lib": ["es2022", "DOM", "DOM.Iterable"],
-    "module": "NodeNext",
-    "moduleDetection": "force",
-    "moduleResolution": "NodeNext",
-    "noUncheckedIndexedAccess": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ES2022"
-  }
-}
-```
+`base` enables `strict`, `noUncheckedIndexedAccess`, and
+`exactOptionalPropertyTypes`. DOM types are only available through the React and
+Next.js presets, so runtime-neutral and server code cannot use browser globals by
+accident.
 
 ## Usage
 
-To use these configurations in your workspace package:
-
-### For Basic TypeScript Projects
-
-```json
-{
-  "extends": "@workspace/typescript/base",
-  "compilerOptions": {
-    // Project-specific options
-  }
-}
-```
-
-### With Path Aliases
+Extend the narrowest preset and add only package-specific options, such as path
+aliases:
 
 ```json
 {
-  "extends": "@workspace/typescript/base",
+  "extends": "@workspace/typescript/bundler",
   "compilerOptions": {
     "paths": {
-      "@/*": ["./src/*"]
+      "@workspace/example/*": ["./src/*"]
     }
   }
 }
@@ -79,4 +45,3 @@ To use these configurations in your workspace package:
 ## Scripts
 
 - **bun run clean** - Remove generated directories
-- **bun run update** - Update dependencies to latest versions

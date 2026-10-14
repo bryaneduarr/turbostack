@@ -1,19 +1,10 @@
 {
-  "extends": "@workspace/typescript/base",
+  "extends": "@workspace/typescript/bundler",
   "compilerOptions": {
-    "module": "esnext",
-    "moduleResolution": "bundler",
     "paths": {
-      "@workspace/schemas/*": [
-        "./src/*"
-      ]
+      "@workspace/schemas/*": ["./src/*"]
     }
   },
-  "include": [
-    "."
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
 }
