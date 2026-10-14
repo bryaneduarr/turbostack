@@ -14,6 +14,7 @@ src/
     ├── environment/      # Server environment composition
     ├── responses/        # Envelope, success, and error responsibilities
     └── routes/
+        ├── health/       # Liveness and readiness response contracts
         └── hello-world/  # Greeting response contract
 ```
 
