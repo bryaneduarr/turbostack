@@ -4,7 +4,7 @@ Read only what the task needs; these notes are evidence pointers, not replacemen
 
 - Purpose/scope: [current scope](product/current-scope.md).
 - Architecture/owners: [runtime boundaries](architecture/runtime-boundaries.md).
-- Implemented API features: [health and expected failures](features/health.md).
+- Implemented features: [health and expected failures](features/health.md), [user profiles](features/user-profiles.md).
 - Data/API contracts: [route definitions](contracts/route-definitions.md), [success responses](contracts/success-responses.md).
 - Toolchain/check/test commands: [development](development/commands.md).
 - Setup/database hazards: [pitfalls](development/setup-pitfalls.md).
