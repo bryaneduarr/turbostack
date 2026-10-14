@@ -1,8 +1,9 @@
 # Production-foundation handoff
 
-Evidence: 2026-10-14; branch `feat/production-foundation` at `ef7f1e0` (25 commits) plus unstaged follow-up changes.
+Evidence: 2026-10-14; branch `feat/production-foundation` at `dd078d8` plus uncommitted changes listed in `git status`.
 
-- Objective: starter foundation, then follow-up: comment rule, hello-world removal, validated test env, dev/start flows, scalability items, scope rename script.
-- Owner: coordinating agent. Status: follow-up implemented, unstaged for user review.
-- Checks: `bun run check`, `dev`, `start`, and a scope rename in a copy passed locally; workflows not run remotely.
-- Pending: push and PR only when the user asks. Open questions: domain-first layout, schema package split, Next agent rules.
+- Objective: deploy-ready template; user-confirmed scope excludes auth, rate limiting, security headers, OpenTelemetry, generators, and cloud deploy jobs.
+- Owner: coordinating agent. Status: implemented, uncommitted, awaiting user review.
+- Done: route definitions, own UI library, Bun tests, client Docker image, migration lock/checks, draining, toolchain command, rule updates.
+- Checks: Biome, boundaries, types, tests, builds, local and Compose runs, scratch type-misuse checks passed; GitHub workflows not run remotely.
+- Next: user review, then commit/PR only when asked.

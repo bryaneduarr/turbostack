@@ -56,7 +56,9 @@ context, before proceeding. Resolve links relative to this skill directory.
   stop with its URL and request direction rather than duplicating or overwriting
   it. If there are no changes or existing feature differences, report a no-op.
 - Perform useful factual context upkeep before finalizing the inventory and
-  plan. Include those edits in the plan; do not leave reporting edits for `main`
+  plan. Move durable facts from this task's handoff into topic notes, then
+  delete `project-context/tasks/<task-id>/` and its startup-index link so
+  completed handoffs do not go stale. Include those edits in the plan; do not leave reporting edits for `main`
   after cleanup. Never fabricate future publication or verification results.
 
 ## 2. Present one complete plan and wait
