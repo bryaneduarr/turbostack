@@ -7,8 +7,7 @@
     "clean": "rm -rf node_modules/ .turbo/",
     "check-types": "tsc --noEmit",
     "format": "biome format --write .",
-    "lint": "biome lint .",
-    "update": "bun update --latest"
+    "lint": "biome lint ."
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

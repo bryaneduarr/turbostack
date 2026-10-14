@@ -4,8 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "clean": "rm -rf node_modules/ .turbo/",
-    "update": "bun update --latest"
+    "clean": "rm -rf node_modules/ .turbo/"
   },
   "exports": {
     "./globals.css": "./globals.css",

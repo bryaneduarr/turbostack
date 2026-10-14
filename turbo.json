@@ -11,43 +11,31 @@
       "dependsOn": ["^check-types"]
     },
     "clean": {
-      "cache": false,
-      "persistent": true
+      "cache": false
     },
     "dev": {
       "cache": false,
       "persistent": true
     },
     "drizzle:generate": {
-      "cache": false,
-      "persistent": true
+      "cache": false
     },
     "drizzle:migrate": {
-      "cache": false,
-      "persistent": true
+      "cache": false
     },
     "drizzle:push": {
-      "cache": false,
-      "persistent": true
+      "cache": false
     },
     "drizzle:studio": {
       "cache": false,
       "persistent": true
     },
-    "format": {
-      "cache": false,
-      "persistent": true
-    },
-    "lint": {
-      "dependsOn": ["^lint"]
-    },
     "start": {
       "cache": false,
       "persistent": true
     },
-    "update": {
-      "cache": false,
-      "persistent": true
+    "test": {
+      "outputs": []
     }
   }
 }

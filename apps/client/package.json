@@ -10,8 +10,7 @@
     "dev": "next dev --turbopack",
     "format": "biome format --write .",
     "lint": "biome lint .",
-    "start": "next start",
-    "update": "bun update --latest"
+    "start": "next start"
   },
   "dependencies": {
     "@workspace/ui": "workspace:*",

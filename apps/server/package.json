@@ -8,17 +8,16 @@
     "check-types": "tsc --noEmit",
     "clean": "rm -rf ./dist ./node_modules/ ./.turbo/",
     "dev": "bun --watch src/index.ts",
-    "drizzle:generate": "bunx drizzle-kit generate --config ./drizzle.config.ts",
-    "drizzle:migrate": "bunx drizzle-kit migrate --config ./drizzle.config.ts",
-    "drizzle:push": "bunx drizzle-kit push --config ./drizzle.config.ts",
-    "drizzle:studio": "bunx drizzle-kit studio --config ./drizzle.config.ts",
+    "drizzle:generate": "drizzle-kit generate --config ./drizzle.config.ts",
+    "drizzle:migrate": "drizzle-kit migrate --config ./drizzle.config.ts",
+    "drizzle:push": "drizzle-kit push --config ./drizzle.config.ts",
+    "drizzle:studio": "drizzle-kit studio --config ./drizzle.config.ts",
     "format": "biome format --write .",
     "lint": "biome lint .",
     "start": "bun dist/index.js",
     "start:migrate": "bun dist/db/migrate/apply-migrations.script.js",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "update": "bun update --latest"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@elysia/openapi": "^1.4.16",
