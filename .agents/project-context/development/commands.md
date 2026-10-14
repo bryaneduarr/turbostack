@@ -1,9 +1,9 @@
 # Development commands
 
-Evidence: 2026-10-14; base `018c6c1` plus uncommitted production-foundation changes; `bun run check` passed locally.
+Evidence: 2026-10-14; base `ef7f1e0` plus uncommitted changes; `bun run check`, `dev`, and `start` run locally.
 
 - Toolchain: Bun `1.4.0` (`packageManager`), Node `>=20` for Next.js, Docker for PostgreSQL/images.
-- Root: `bun run setup`, `dev`, `check` (Biome CI, types, Vitest, builds), `test`, `db:up`.
-- Server: `bun run --cwd apps/server check-types|test|build|start|start:migrate`.
-- CI uses `turbo --affected`; images publish only for affected apps with a Dockerfile.
-- Sources: [root manifest](../../../package.json), [server scripts](../../../apps/server/package.json), [CI](../../../.github/workflows/ci.yml).
+- Root: `setup`, `dev` (starts PostgreSQL first), `start` (build, PostgreSQL, production servers), `start:docker`, `check` (Biome, boundaries, types, Vitest, builds), `rename-scope`.
+- Apps: `api-server` (`apps/server`), `web-client` (`apps/client`).
+- CI uses `turbo --affected`; images publish for affected apps with a Dockerfile.
+- Sources: [root manifest](../../../package.json), [turbo](../../../turbo.json), [CI](../../../.github/workflows/ci.yml).

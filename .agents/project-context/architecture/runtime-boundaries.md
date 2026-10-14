@@ -1,8 +1,8 @@
 # Runtime and ownership
 
-Evidence: 2026-10-14; base `018c6c1` plus uncommitted changes; source-inspected; container runtime checked locally.
+Evidence: 2026-10-14; base `ef7f1e0` plus uncommitted changes; source-inspected; boundaries and builds checked.
 
-- UI: Next/React [client](../../../apps/client/package.json).
-- API: Bun/Elysia [server](../../../apps/server/package.json), bundled by `bun build` into `dist/` (no tsc emit). [Bootstrap](../../../apps/server/src/index.ts) connects the database, then listens with the body limit.
-- [Composition](../../../apps/server/src/application.module.ts) mounts optional OpenAPI, root-level health probes, and `/api/v1` routers.
-- Contracts live in [schemas](../../../packages/schemas/src/server/); statuses in the [catalog](../../../packages/utils/src/http/status-codes/http-status-code.constant.ts).
+- `web-client`: Next/React [client](../../../apps/client/package.json). `api-server`: Bun/Elysia [server](../../../apps/server/package.json), bundled by `bun build`.
+- [Composition](../../../apps/server/src/application.module.ts) mounts optional OpenAPI and health probes; versioned routers use `API_VX_PREFIX`.
+- [Boundary tags](../../../turbo.json) restrict app, runtime-neutral, server, and config dependencies.
+- TypeScript presets live in [config/typescript](../../../config/typescript/package.json); [api-client](../../../packages/api-client/src/requests/send-api-request.service.ts) validates responses.
