@@ -7,7 +7,6 @@ import {
   UNAUTHORIZED,
 } from "@workspace/utils/http/status-codes/http-status-code.constant";
 
-// Each code that route logic may raise deliberately maps to exactly one status.
 export const expectedFailureStatuses = {
   UNAUTHORIZED,
   FORBIDDEN,

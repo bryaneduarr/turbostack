@@ -38,7 +38,6 @@ async function startServer(): Promise<void> {
     await connectToDatabase();
     if (stopping) return;
 
-    // Bun rejects larger bodies with a bodyless REQUEST_TOO_LONG response before routing.
     app.listen({
       port: env.PORT,
       maxRequestBodySize: env.MAX_REQUEST_BODY_BYTES,

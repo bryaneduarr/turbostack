@@ -10,58 +10,51 @@ export function createApp() {
   const app = createRouter();
   const favicon = serveEmojiFavicon("📦");
 
-  return (
-    app
-      .use(requestLogger)
-      .onRequest(setSecurityHeaders)
-      .onRequest((context) => {
-        const response = cors(context);
-        if (response) {
-          completeRequestLog({
-            request: context.request,
-            status: response.status,
-            route: "<preflight>",
-          });
+  return app
+    .use(requestLogger)
+    .onRequest(setSecurityHeaders)
+    .onRequest((context) => {
+      const response = cors(context);
+      if (response) {
+        completeRequestLog({
+          request: context.request,
+          status: response.status,
+          route: "<preflight>",
+        });
+      }
+      return response;
+    })
+    .onRequest((context) => {
+      const response = favicon(context);
+      if (response) {
+        completeRequestLog({
+          request: context.request,
+          status: response.status,
+          route: "/favicon.ico",
+        });
+      }
+      return response;
+    })
+    .mapResponse({ as: "global" }, ({ responseValue, set }) => {
+      const contentType =
+        responseValue instanceof Response
+          ? (responseValue.headers.get("content-type") ??
+            set.headers["content-type"])
+          : set.headers["content-type"];
+      if (typeof contentType === "string") {
+        const normalized = contentType.startsWith("application/json")
+          ? "application/json"
+          : contentType.startsWith("text/html")
+            ? "text/html; charset=UTF-8"
+            : contentType;
+        if (responseValue instanceof Response) {
+          responseValue.headers.set("content-type", normalized);
+        } else {
+          set.headers["content-type"] = normalized;
         }
-        return response;
-      })
-      .onRequest((context) => {
-        const response = favicon(context);
-        if (response) {
-          completeRequestLog({
-            request: context.request,
-            status: response.status,
-            route: "/favicon.ico",
-          });
-        }
-        return response;
-      })
-      // Runtime variants such as "application/json;charset=utf-8" are normalized
-      // to the media types published in the OpenAPI document.
-      .mapResponse({ as: "global" }, ({ responseValue, set }) => {
-        const contentType =
-          responseValue instanceof Response
-            ? (responseValue.headers.get("content-type") ??
-              set.headers["content-type"])
-            : set.headers["content-type"];
-        if (typeof contentType === "string") {
-          const normalized = contentType.startsWith("application/json")
-            ? "application/json"
-            : contentType.startsWith("text/html")
-              ? "text/html; charset=UTF-8"
-              : contentType;
-          if (responseValue instanceof Response) {
-            responseValue.headers.set("content-type", normalized);
-          } else {
-            set.headers["content-type"] = normalized;
-          }
-        } else if (
-          responseValue !== null &&
-          typeof responseValue === "object"
-        ) {
-          set.headers["content-type"] = "application/json";
-        }
-      })
-      .onError(onError)
-  );
+      } else if (responseValue !== null && typeof responseValue === "object") {
+        set.headers["content-type"] = "application/json";
+      }
+    })
+    .onError(onError);
 }

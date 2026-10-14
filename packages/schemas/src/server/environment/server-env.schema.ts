@@ -1,7 +1,6 @@
 import { databaseEnvSchema } from "@workspace/schemas/database/environment/database-env.schema";
 import { z } from "zod";
 
-// Tests stay quiet unless a run explicitly overrides LOG_LEVEL.
 const defaultLogLevels = {
   development: "debug",
   test: "silent",

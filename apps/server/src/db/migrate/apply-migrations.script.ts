@@ -4,9 +4,7 @@ import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 import { databaseCredentials } from "@/db/config/environment/database-credentials.config";
 
-// Applies committed migrations as a deliberate deployment step, without drizzle-kit.
-// The build copies src/db/migrations next to this bundle, so the relative folder
-// resolves in both source and dist.
+// The build copies src/db/migrations into dist, so this path resolves in both.
 const migrationsFolder = fileURLToPath(
   new URL("../migrations", import.meta.url),
 );

@@ -19,7 +19,6 @@ export function createErrorResponse({
     requestId,
   });
   entry.outcome = { kind: "failed", code: body.error.code };
-  // Error responses bypass response mapping, so the documented type is set here.
   return Response.json(body, {
     status: body.status,
     headers: {

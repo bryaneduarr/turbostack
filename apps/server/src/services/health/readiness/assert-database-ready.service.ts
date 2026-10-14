@@ -6,7 +6,6 @@ export async function assertDatabaseReady(logger: Logger): Promise<void> {
   try {
     await client`SELECT 1`;
   } catch (error) {
-    // The response stays generic; the private cause is logged for operators.
     logger.warn(
       { event: "health.database_unavailable", err: error },
       "Database readiness check failed",
