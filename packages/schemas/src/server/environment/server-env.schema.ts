@@ -23,6 +23,22 @@ export const serverEnvSchema = z
       .describe("The port the server runs on."),
     /* Limits how long active HTTP requests may drain before forced shutdown. */
     SHUTDOWN_TIMEOUT_SECONDS: z.coerce.number().int().positive().default(30),
+    /* Keeps serving while readiness fails during shutdown so load balancers stop routing first. */
+    SHUTDOWN_DRAIN_DELAY_SECONDS: z.coerce
+      .number()
+      .int()
+      .nonnegative()
+      .default(0),
+    /* Closes idle keep-alive connections after this many seconds; Bun allows at most 255. */
+    HTTP_IDLE_TIMEOUT_SECONDS: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(255)
+      .default(75)
+      .describe(
+        "Idle keep-alive timeout in seconds. Keep it above the load balancer's idle timeout.",
+      ),
     /* Rejects request bodies larger than this many bytes, defaulting to 1 MiB. */
     MAX_REQUEST_BODY_BYTES: z.coerce
       .number()
