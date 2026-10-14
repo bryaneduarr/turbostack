@@ -79,6 +79,13 @@ This is an acceptance condition for all project-owned frontend, backend, schema,
 - Import cross-package utilities directly from exported `@workspace/utils/...` modules. Declare `@workspace/utils: workspace:*` in every importing package's dependencies; do not bypass workspace boundaries with relative filesystem imports or consumer-side path mappings.
 - Do not add utility barrels, forwarding modules, aggregate registries, speculative scaffolding, or dependencies on consuming applications or schemas that create a dependency cycle. Add new capabilities only for actual use cases.
 
+## Growth by business area
+
+- Turborepo decides affected builds, tests, and deployments per package, so a change anywhere in a shared package affects every app that depends on it.
+- Keep `packages/schemas` as one package while it serves one business area or a few closely related apps. Organize it by business area inside the package so a later split is a move, not a rewrite.
+- When unrelated business areas share it and changes to one area routinely rebuild or redeploy apps that do not use that area, propose splitting it into one contract package per business area plus a small core package for shared response envelopes and environment contracts.
+- A split is an architectural decision. Get user approval, then update this file, `types-and-validation.md`, package exports, dependencies, boundary tags, and imports together. Do not split speculatively or create empty packages ahead of real business areas.
+
 ## Mandatory module import aliases
 
 - Use aliases for every project-owned module import, including type-only imports, side-effect imports, dynamic imports, and `require` calls. Do not use relative or absolute filesystem paths such as `./file`, `../file`, or paths into another workspace's source directory.

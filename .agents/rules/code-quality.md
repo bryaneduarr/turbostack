@@ -37,7 +37,8 @@ These rules are mandatory for code and refactors.
 ## Comments
 
 - Document each responsibility-specific interface, its explicitly declared members, and schema fields as required by `types-and-validation.md`, using brief `/* ... */` comments that explain purpose without file paths.
-- Code must read without comments. Outside the required contract documentation, do not add explanatory, narrative, summary, or usage comments to source code, configuration, scripts, or workflow files.
+- Write code that is readable and understandable without explanation: descriptive names, focused functions, and a straightforward flow. This rule targets code quality, not comments themselves; contract documentation remains required.
+- Outside the required contract documentation, do not add comments that explain what the code, configuration, scripts, or workflow files already show, such as narrative, summary, or usage comments.
 - Add another comment only when it records something the code cannot express and a future maintainer needs, such as a non-obvious external constraint, a value that must stay in sync elsewhere, or a reason an apparently simpler change would break behavior. Keep it to one short line when possible.
 - Simplify unclear code instead of explaining it. Comments must not substitute for a clearer implementation.
 - Do not prefix comments with `Why:` or `What:`.
