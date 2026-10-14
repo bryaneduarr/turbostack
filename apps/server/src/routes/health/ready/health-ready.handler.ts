@@ -1,4 +1,4 @@
-import { healthReadyResponseSchema } from "@workspace/schemas/server/routes/health/ready/health-ready-response.schema";
+import { healthReadyRoute } from "@workspace/schemas/server/routes/health/ready/health-ready.route";
 import { OK } from "@workspace/utils/http/status-codes/http-status-code.constant";
 import type { Context } from "elysia";
 import { assertDatabaseReady } from "@/services/health/readiness/assert-database-ready.service";
@@ -11,7 +11,7 @@ export const healthReadyHandler = async ({
   await assertDatabaseReady(getRequestLog(request).logger);
   return createSuccessResponse({
     request,
-    schema: healthReadyResponseSchema,
+    schema: healthReadyRoute.response,
     data: { status: "ready", database: "up" },
     message: "Server is ready.",
     status: OK,

@@ -8,13 +8,17 @@ is needed.
 
 ```text
 src/
+├── client/
+│   └── environment/      # Web client runtime settings
 ├── database/
 │   └── environment/      # PostgreSQL environment settings
 └── server/
     ├── environment/      # Server environment composition
     ├── responses/        # Envelope, success, and error responsibilities
     └── routes/
-        └── health/       # Liveness and readiness response contracts
+        ├── definition/   # RouteDefinition contract shared by server and clients
+        ├── versioning/   # API version path prefix
+        └── health/       # Liveness and readiness routes and responses
 ```
 
 Directory placement communicates intended use; it is not a security boundary.
@@ -73,34 +77,52 @@ document legitimate absence. Do not
 substitute arbitrary empty objects for these protocol states.
 See [API response conventions](../../apps/server/README.md#required-values-and-explicit-absence).
 
+## Route Definitions
+
+Each endpoint has one `<operation>.route.ts` next to its schemas. It declares every
+`RouteDefinition` member, using `null` for inputs the route does not consume:
+
+```typescript
+import { API_V1_PREFIX } from "@workspace/schemas/server/routes/versioning/api-version-prefix.constant";
+
+export const getUserProfileRoute = {
+  method: "GET",
+  path: `${API_V1_PREFIX}/users/:userId/profile`,
+  params: getUserProfileParamsSchema,
+  query: null,
+  body: null,
+  response: getUserProfileResponseSchema,
+} as const satisfies RouteDefinition;
+```
+
+The server registers it with `.route(route.method, route.path, handler, contract)`
+and clients call it with `sendApiRequest` from `@workspace/api-client`, so both
+sides share one typed contract. See the
+[server README](../../apps/server/README.md#adding-a-route) for the server side.
+
 ## Elysia OpenAPI Integration
 
 The server uses Elysia 1.4.30 and `@elysia/openapi` 1.4.16. Its `jsonContent`
-configuration function converts Zod schemas to JSON Schema for documentation.
-Route metadata belongs in the options' `detail` object:
+configuration function converts Zod schemas to JSON Schema for response
+documentation, and the OpenAPI plugin maps Zod input schemas automatically. Route
+metadata belongs in the contract's `detail` object, which the server checks with
+`satisfies RouteContract<typeof route>`:
 
 ```typescript
-import { healthLiveResponseSchema } from "@workspace/schemas/server/routes/health/live/health-live-response.schema";
+import { healthLiveRoute } from "@workspace/schemas/server/routes/health/live/health-live.route";
 import { OK } from "@workspace/utils/http/status-codes/http-status-code.constant";
-import { createRouter } from "@/config/http/routing/http-router.config";
 import { jsonContent } from "@/config/openapi/responses/content/json-response-content.config";
-import { healthLiveHandler } from "@/routes/health/live/health-live.handler";
+import type { RouteContract } from "@/types/http/routes/route-contract.interface";
 
-const routeOptions = {
+export const healthLiveContract = {
   detail: {
     tags: ["Health"],
     summary: "Liveness probe",
     responses: {
-      [OK]: jsonContent(healthLiveResponseSchema, "The process is alive."),
+      [OK]: jsonContent(healthLiveRoute.response, "The process is alive."),
     },
   },
-};
-
-const router = createRouter().get(
-  "/health/live",
-  healthLiveHandler,
-  routeOptions,
-);
+} satisfies RouteContract<typeof healthLiveRoute>;
 ```
 
 The `@/` imports belong in server code, not in this package. Documentation

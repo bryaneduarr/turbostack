@@ -168,18 +168,26 @@ is disabled.
 Routes separate handlers, contracts, and routers within a feature folder.
 Follow the [required-value conventions](#required-values-and-explicit-absence) below.
 
-JSON endpoints use `{ success, message, data, error, status, requestId }`.
-Define only the route-specific data schema, compose it with
-`createSuccessResponseSchema`, return it through `createSuccessResponse`, and
-reference the same schema in `detail.responses` through `jsonContent`.
-Routers created with `createRouter()` inherit standard error documentation.
+1. In `packages/schemas/src/server/routes/<domain>/<operation>/`, define the
+   request schemas, the response schema composed with
+   `createSuccessResponseSchema`, and `<operation>.route.ts` declaring `method`,
+   the full `path` (prefixed with `API_V1_PREFIX` for versioned routes),
+   `params`, `query`, `body`, and `response`. Use `null` for inputs the route does
+   not consume.
+2. In the server's `src/routes/<domain>/<operation>/`, write the contract with
+   `detail` documentation and every non-null input schema from the route, checked
+   with `satisfies RouteContract<typeof route>`. TypeScript rejects a contract that
+   misses a declared input or adds an undeclared one. Elysia validates the inputs
+   and returns a `VALIDATION` error envelope when they fail.
+3. Write the handler. It receives typed inputs and returns
+   `createSuccessResponse` with `schema: route.response`.
+4. Register it in the feature router with
+   `.route(route.method, route.path, handler, contract)` and mount the router in
+   [src/application.module.ts](./src/application.module.ts).
 
-Request schemas and their dedicated schema-derived interfaces belong under their
-operation owners in `packages/schemas/src/`. Attach request schemas to route
-options as `body`, `query`, `params`, or `headers`. Mount versioned feature
-routers in [src/application.module.ts](./src/application.module.ts) with
-`.group(API_VX_PREFIX, (app) => app.use(featureRouter))`, which serves them under
-`/api/v1`.
+JSON endpoints use `{ success, message, data, error, status, requestId }`.
+Reference the response schema in `detail.responses` through `jsonContent`.
+Routers created with `createRouter()` inherit standard error documentation.
 
 HTTP application hooks and content-type normalization live in
 [src/config/http/application/http-application.config.ts](./src/config/http/application/http-application.config.ts).
