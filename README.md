@@ -343,6 +343,14 @@ All scripts are run from the project root using [Bun](https://bun.sh/) and [Turb
   bun run start:docker
   ```
 
+- **bun run rename-scope**: Rename the internal package scope in every tracked file, reinstall, and
+  reformat. Set `NEW_SCOPE` in
+  [`scripts/rename-workspace-scope.script.ts`](./scripts/rename-workspace-scope.script.ts) first.
+
+  ```sh
+  bun run rename-scope
+  ```
+
 ---
 
 ## License
