@@ -8,6 +8,7 @@ Read only what the task needs; these notes are evidence pointers, not replacemen
 - Data/API contracts: [success responses](contracts/success-responses.md).
 - Toolchain/check commands: [development](development/commands.md).
 - Setup/database hazards: [pitfalls](development/setup-pitfalls.md).
+- Pi/Claude Code wiring: [agent harnesses](development/agent-harnesses.md).
 - Recent context work, not a new assignment: [handoff](tasks/context-maintenance/handoff.md).
 - PR writing guidance: [skill](../skills/pr/SKILL.md), [completed rewrite](tasks/pr-skill-rewrite/handoff.md).
 - Feature-completion workflow: [skill](../skills/finish-feature/SKILL.md), [implementation handoff](tasks/feature-completion-skill/handoff.md), [publication handoff](tasks/finish-agent-workflows/handoff.md).
