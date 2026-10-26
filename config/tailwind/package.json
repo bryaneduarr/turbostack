@@ -11,6 +11,8 @@
     "./postcss.config": "./postcss.config.ts"
   },
   "devDependencies": {
+    "@iconify-json/lucide": "^1.2.144",
+    "@iconify/tailwind4": "^1.2.3",
     "@tailwindcss/postcss": "^4.3.3",
     "tailwindcss": "^4.3.3"
   }
