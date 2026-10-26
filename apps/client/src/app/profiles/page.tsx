@@ -1,10 +1,18 @@
 import { listUserProfilesRoute } from "@workspace/schemas/server/routes/users/profiles/list/list-user-profiles.route";
-import Link from "next/link";
+import {
+  DividedList,
+  DividedListItem,
+} from "@workspace/ui/components/data-display/divided-list/divided-list.component";
+import { ApiFailureAlert } from "@workspace/ui/components/feedback/api-failure-alert/api-failure-alert.component";
+import { Page } from "@workspace/ui/components/layout/page/page.component";
+import { Section } from "@workspace/ui/components/layout/section/section.component";
+import { TextLink } from "@workspace/ui/components/link/text-link/text-link.component";
+import { Heading } from "@workspace/ui/components/typography/heading/heading.component";
+import { Text } from "@workspace/ui/components/typography/text/text.component";
 import { connection } from "next/server";
 import { createUserProfileAction } from "@/actions/users/profiles/create/create-user-profile.action";
 import { UserProfileForm } from "@/components/users/profiles/form/user-profile-form.component";
 import { requestApi } from "@/services/api/requests/request-api.service";
-import { describeApiFailure } from "@/services/api/results/describe-api-failure.service";
 
 export default async function ProfilesPage() {
   await connection();
@@ -16,13 +24,11 @@ export default async function ProfilesPage() {
   });
 
   return (
-    <main className="mx-auto flex min-h-svh max-w-2xl flex-col gap-8 p-6">
-      <Link href="/" className="text-sm text-muted-foreground hover:underline">
-        Home
-      </Link>
-      <h1 className="text-2xl font-bold">User profiles</h1>
-      <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold">New profile</h2>
+    <Page width="app" align="start">
+      <Heading level={1} size="page">
+        User profiles
+      </Heading>
+      <Section title="New profile">
         <UserProfileForm
           action={createUserProfileAction}
           initialState={{
@@ -31,28 +37,26 @@ export default async function ProfilesPage() {
           }}
           submitLabel="Create profile"
         />
-      </section>
-      <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold">Newest profiles</h2>
+      </Section>
+      <Section title="Newest profiles">
         {result.kind !== "success" ? (
-          <p className="text-destructive">{describeApiFailure(result)}</p>
+          <ApiFailureAlert result={result} />
         ) : result.response.data.profiles.length === 0 ? (
-          <p className="text-muted-foreground">No profiles yet.</p>
+          <Text as="p" size="small" tone="muted" weight="regular">
+            No profiles yet.
+          </Text>
         ) : (
-          <ul className="flex flex-col divide-y divide-border">
+          <DividedList as="ul">
             {result.response.data.profiles.map((profile) => (
-              <li key={profile.id}>
-                <Link
-                  href={`/profiles/${profile.id}`}
-                  className="block py-2 hover:underline"
-                >
+              <DividedListItem key={profile.id}>
+                <TextLink href={`/profiles/${profile.id}`} tone="primary">
                   {profile.firstName} {profile.lastName}
-                </Link>
-              </li>
+                </TextLink>
+              </DividedListItem>
             ))}
-          </ul>
+          </DividedList>
         )}
-      </section>
-    </main>
+      </Section>
+    </Page>
   );
 }

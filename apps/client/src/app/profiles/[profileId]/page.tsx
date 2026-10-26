@@ -1,12 +1,17 @@
 import { getUserProfileRoute } from "@workspace/schemas/server/routes/users/profiles/get/get-user-profile.route";
 import { userProfileParamsSchema } from "@workspace/schemas/server/routes/users/profiles/user-profile.schema";
-import Link from "next/link";
+import { DescriptionList } from "@workspace/ui/components/data-display/description-list/description-list.component";
+import { ApiFailureAlert } from "@workspace/ui/components/feedback/api-failure-alert/api-failure-alert.component";
+import { Page } from "@workspace/ui/components/layout/page/page.component";
+import { Section } from "@workspace/ui/components/layout/section/section.component";
+import { BackLink } from "@workspace/ui/components/link/back-link/back-link.component";
+import { Heading } from "@workspace/ui/components/typography/heading/heading.component";
+import { formatTimestamp } from "@workspace/utils/time/format-timestamp.service";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { updateUserProfileAction } from "@/actions/users/profiles/update/update-user-profile.action";
 import { UserProfileForm } from "@/components/users/profiles/form/user-profile-form.component";
 import { requestApi } from "@/services/api/requests/request-api.service";
-import { describeApiFailure } from "@/services/api/results/describe-api-failure.service";
 import type { ProfilePageProps } from "@/types/app/profiles/profile-page-props.interface";
 
 export default async function ProfilePage({ params }: ProfilePageProps) {
@@ -25,40 +30,55 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   }
 
   return (
-    <main className="mx-auto flex min-h-svh max-w-2xl flex-col gap-6 p-6">
-      <Link
-        href="/profiles"
-        className="text-sm text-muted-foreground hover:underline"
-      >
-        All profiles
-      </Link>
+    <Page width="app" align="start">
+      <BackLink href="/profiles" label="All profiles" />
       {result.kind !== "success" ? (
-        <p className="text-destructive">{describeApiFailure(result)}</p>
+        <>
+          <Heading level={1} size="page">
+            Profile
+          </Heading>
+          <ApiFailureAlert result={result} />
+        </>
       ) : (
         <>
-          <h1 className="text-2xl font-bold">
+          <Heading level={1} size="page">
             {result.response.data.profile.firstName}{" "}
             {result.response.data.profile.lastName}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Updated {result.response.data.profile.updatedAt}
-          </p>
-          <UserProfileForm
-            action={updateUserProfileAction.bind(
-              null,
-              result.response.data.profile.id,
-            )}
-            initialState={{
-              kind: "editing",
-              values: {
-                firstName: result.response.data.profile.firstName,
-                lastName: result.response.data.profile.lastName,
+          </Heading>
+          <DescriptionList
+            entries={[
+              {
+                term: "Created",
+                description: formatTimestamp(
+                  result.response.data.profile.createdAt,
+                ),
               },
-            }}
-            submitLabel="Save changes"
+              {
+                term: "Updated",
+                description: formatTimestamp(
+                  result.response.data.profile.updatedAt,
+                ),
+              },
+            ]}
           />
+          <Section title="Rename">
+            <UserProfileForm
+              action={updateUserProfileAction.bind(
+                null,
+                result.response.data.profile.id,
+              )}
+              initialState={{
+                kind: "editing",
+                values: {
+                  firstName: result.response.data.profile.firstName,
+                  lastName: result.response.data.profile.lastName,
+                },
+              }}
+              submitLabel="Save changes"
+            />
+          </Section>
         </>
       )}
-    </main>
+    </Page>
   );
 }

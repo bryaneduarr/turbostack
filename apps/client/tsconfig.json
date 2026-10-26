@@ -2,8 +2,13 @@
   "extends": "@workspace/typescript/nextjs",
   "compilerOptions": {
     "paths": {
-      "@/*": ["./src/*"]
-    }
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "types": [
+      "node"
+    ]
   },
   "include": [
     "next-env.d.ts",
@@ -12,5 +17,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts"
+  ]
 }

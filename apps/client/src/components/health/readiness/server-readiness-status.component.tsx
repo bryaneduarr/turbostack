@@ -1,4 +1,5 @@
-import { describeApiFailure } from "@/services/api/results/describe-api-failure.service";
+import { Alert } from "@workspace/ui/components/feedback/alert/alert.component";
+import { ApiFailureAlert } from "@workspace/ui/components/feedback/api-failure-alert/api-failure-alert.component";
 import type { ServerReadinessStatusProps } from "@/types/health/readiness/server-readiness-status-props.interface";
 
 export function ServerReadinessStatus({
@@ -6,16 +7,12 @@ export function ServerReadinessStatus({
 }: ServerReadinessStatusProps) {
   if (readiness.kind === "success") {
     return (
-      <p className="text-success">
+      <Alert tone="success">
         API ready: {readiness.response.message} Database{" "}
         {readiness.response.data.database}.
-      </p>
+      </Alert>
     );
   }
 
-  return (
-    <p className="text-destructive">
-      API not ready: {describeApiFailure(readiness)}
-    </p>
-  );
+  return <ApiFailureAlert result={readiness} />;
 }

@@ -1,6 +1,8 @@
+import { Toaster } from "@workspace/ui/components/toast/toaster.component";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "@/app/globals.css";
+import { APP_NAME } from "@/config/branding/app-name.config";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -8,7 +10,7 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Web Client",
+  title: APP_NAME,
   description: "Full-stack starter web client.",
 };
 
@@ -19,7 +21,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={geistSans.variable}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Toaster position="top-center" />
+      </body>
     </html>
   );
 }

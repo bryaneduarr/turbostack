@@ -1,4 +1,5 @@
 import type { UserProfileNamesInput } from "@workspace/schemas/server/routes/users/profiles/user-profile.interface";
+import type { SupportReference } from "@workspace/schemas/support/errors/codes/support-reference.interface";
 
 /** Lists validation messages per profile field; an empty list means the field is valid. */
 export interface UserProfileFormFieldErrors {
@@ -16,7 +17,12 @@ export type UserProfileFormState =
       values: UserProfileNamesInput;
       fieldErrors: UserProfileFormFieldErrors;
     }
-  | { kind: "failed"; values: UserProfileNamesInput; message: string }
+  | {
+      kind: "failed";
+      values: UserProfileNamesInput;
+      message: string;
+      reference: SupportReference;
+    }
   | { kind: "saved"; values: UserProfileNamesInput; message: string };
 
 /** Handles one profile form submission and returns the next form state. */
