@@ -1,3 +1,10 @@
+import { fieldControlClassName } from "@workspace/ui/config/forms/fields/field-control.config";
+import {
+  fieldDescriptionClassName,
+  fieldErrorsClassName,
+  fieldFrameClassName,
+  fieldLabelClassName,
+} from "@workspace/ui/config/forms/fields/field-frame.config";
 import type { TextFieldProps } from "@workspace/ui/types/components/text-field/text-field-props.interface";
 import { useId } from "react";
 
@@ -6,18 +13,22 @@ export function TextField({
   name,
   type,
   errors,
+  description,
   className,
   ...props
 }: TextFieldProps) {
   const id = useId();
+  const descriptionId = `${id}-description`;
   const errorsId = `${id}-errors`;
   const invalid = errors.length > 0;
-  const inputClassName =
-    "h-9 w-full rounded-md border border-border bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 aria-invalid:border-destructive";
+  const describingIds: string[] = [];
+  if (description !== undefined) describingIds.push(descriptionId);
+  if (invalid) describingIds.push(errorsId);
+  const inputClassName = `h-9 ${fieldControlClassName}`;
 
   return (
-    <div className="flex flex-col gap-1.5 text-left">
-      <label htmlFor={id} className="text-sm font-medium">
+    <div className={fieldFrameClassName}>
+      <label htmlFor={id} className={fieldLabelClassName}>
         {label}
       </label>
       <input
@@ -25,7 +36,9 @@ export function TextField({
         name={name}
         type={type}
         aria-invalid={invalid}
-        aria-describedby={invalid ? errorsId : undefined}
+        aria-describedby={
+          describingIds.length > 0 ? describingIds.join(" ") : undefined
+        }
         className={
           className === undefined
             ? inputClassName
@@ -33,8 +46,13 @@ export function TextField({
         }
         {...props}
       />
+      {description === undefined ? null : (
+        <p id={descriptionId} className={fieldDescriptionClassName}>
+          {description}
+        </p>
+      )}
       {invalid ? (
-        <ul id={errorsId} className="text-xs text-destructive">
+        <ul id={errorsId} className={fieldErrorsClassName}>
           {errors.map((error) => (
             <li key={error}>{error}</li>
           ))}

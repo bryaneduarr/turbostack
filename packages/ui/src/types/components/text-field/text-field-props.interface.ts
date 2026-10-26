@@ -7,7 +7,9 @@ export interface TextFieldProps extends ComponentProps<"input"> {
   /** Identifies the submitted form value. */
   name: string;
   /** Selects the native input type, which controls keyboards and browser validation. */
-  type: "text" | "email" | "password" | "search" | "tel" | "url";
+  type: "text" | "email" | "password" | "search" | "tel" | "url" | "date";
   /** Contains the validation messages to show; an empty list means the value is valid. */
   errors: string[];
+  /** Explains what the field expects, announced together with the input. */
+  description?: string;
 }

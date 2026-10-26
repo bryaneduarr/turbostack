@@ -4,8 +4,8 @@ import type { ComponentProps } from "react";
 export interface ButtonProps extends ComponentProps<"button"> {
   /** Selects the visual emphasis, from the main call to action to a quiet text button. */
   variant: "primary" | "secondary" | "outline" | "ghost" | "destructive";
-  /** Selects the button's height, horizontal padding, and text size. */
-  size: "small" | "medium" | "large";
+  /** Selects the button's height, horizontal padding, and text size; `icon` makes a square icon-only button that needs an `aria-label`. */
+  size: "small" | "medium" | "large" | "icon";
   /** Declares the native behavior, because browsers submit forms by default. */
   type: "button" | "submit" | "reset";
 }
