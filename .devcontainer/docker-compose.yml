@@ -1,0 +1,54 @@
+name: app-devcontainer
+
+services:
+  workspace:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    # The host user owns every file the container writes; scripts/dc exports HOST_UID and HOST_GID.
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    init: true
+    command: ["sh", ".devcontainer/start-workspace.sh"]
+    healthcheck:
+      test: ["CMD", "test", "-f", "/tmp/workspace-ready"]
+      interval: 2s
+      retries: 150
+    ports:
+      - "127.0.0.1:${DEVCONTAINER_CLIENT_PORT:-3000}:3000"
+      - "127.0.0.1:${DEVCONTAINER_API_PORT:-3001}:3001"
+    # Service hostnames replace the localhost values in apps/*/.env; process values win over .env files.
+    environment:
+      DEVCONTAINER: "true"
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      CLIENT_URL: http://localhost:${DEVCONTAINER_CLIENT_PORT:-3000}
+      SERVER_URL: http://localhost:3001
+    volumes:
+      - ..:/workspace
+      - workspace-bun-cache:/home/dev/.bun-cache
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: ${DB_ADMIN_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_ADMIN_PASSWORD:-example-admin-password}
+      POSTGRES_DB: ${DB_NAME:-postgres}
+      # The init scripts set these role passwords on the volume's first start.
+      DB_MIGRATOR_PASSWORD: ${DB_MIGRATOR_PASSWORD:-example-migrator-password}
+      DB_PASSWORD: ${DB_PASSWORD:-example-runtime-password}
+      DB_CLI_PASSWORD: ${DB_CLI_PASSWORD:-example-cli-password}
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - ../apps/server/src/db/provision/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:
+  workspace-bun-cache:

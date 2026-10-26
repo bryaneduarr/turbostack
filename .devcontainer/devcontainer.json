@@ -1,0 +1,20 @@
+{
+  "name": "App",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "workspace",
+  "workspaceFolder": "/workspace",
+  "postCreateCommand": "until test -f /tmp/workspace-ready; do sleep 1; done",
+  "portsAttributes": {
+    "3000": { "label": "Web" },
+    "3001": { "label": "API" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "biomejs.biome",
+        "davidanson.vscode-markdownlint",
+        "bradlc.vscode-tailwindcss"
+      ]
+    }
+  }
+}
