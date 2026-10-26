@@ -19,14 +19,14 @@ A type-safe **backend** built with [Elysia](https://elysiajs.com/), TypeScript, 
 The package is named `api-server`. From the repository root:
 
 ```sh
-cp apps/server/.env.example apps/server/.env
-bun run setup
 bun run dev
 ```
 
-`bun run dev` starts PostgreSQL through Turborepo, then runs
-`bun --watch src/index.ts`. Bun loads `.env` automatically, and
-Drizzle Kit loads it for its own commands, so no `dotenv` package is needed. The
+`bun run dev` writes `.env` from `.env.example` when it is missing, starts
+PostgreSQL, creates the database roles, applies migrations, and seeds example
+profiles through Turborepo, then runs `bun --watch src/index.ts`. Bun loads `.env`
+automatically, and Drizzle Kit loads it for its own commands, so no `dotenv`
+package is needed. The
 default server URL is [http://localhost:3001](http://localhost:3001).
 
 ## Production
@@ -36,7 +36,8 @@ default server URL is [http://localhost:3001](http://localhost:3001).
 `bun run start` runs that bundle with `NODE_ENV=production`; from the repository
 root it also builds first and starts PostgreSQL. The build also emits
 `dist/db/migrate/apply-migrations.script.js` and copies the committed migrations
-next to it; `bun run start:migrate` applies them without Drizzle Kit. Run
+next to it; `bun run start:migrate` applies them without Drizzle Kit, and
+`bun run start:provision` creates the database roles once per database. Run
 migrations as a deliberate deployment step before starting new server versions.
 
 The [Dockerfile](./Dockerfile) builds the same bundle from the repository root and
@@ -44,6 +45,7 @@ ships only `dist/` on Bun's slim image, running as the unprivileged `bun` user:
 
 ```sh
 docker build -f apps/server/Dockerfile -t api-server .
+docker run --rm --env-file apps/server/.env api-server bun db/provision/provision-database.script.js
 docker run --rm --env-file apps/server/.env api-server bun db/migrate/apply-migrations.script.js
 docker run --rm --env-file apps/server/.env -p 3001:3001 api-server
 ```
@@ -103,21 +105,23 @@ message.
 
 ## Available Scripts
 
-- **bun run build**: Bundle the server and migration runner into `dist/`
+- **bun run build**: Bundle the server, the migration runner, and the provisioning script into `dist/`
 - **bun run check-types**: Type-check without emitting files
 - **bun run clean**: Remove dist, node_modules, and .turbo
+- **bun run db:provision**: Create the database roles with the admin credentials
+- **bun run db:test:prepare**: Recreate the test database with its roles and migrations
 - **bun run dev**: Watch and run the server with Bun
 - **bun run format**: Format with Biome
 - **bun run lint**: Lint with Biome
+- **bun run seed:dev**: Add example profiles to an empty development database
 - **bun run start**: Run the bundled server
 - **bun run start:migrate**: Apply committed migrations using the bundled runner
+- **bun run start:provision**: Create the database roles using the bundled script
 - **bun run test**: Run the Bun tests once
 - **bun run test:watch**: Run the Bun tests in watch mode
-- **bun run drizzle:check**: Check that committed migrations do not collide
-- **bun run drizzle:generate**: Generate database migrations
-- **bun run drizzle:migrate**: Apply database migrations with Drizzle Kit
-- **bun run drizzle:push**: Push the database schema
-- **bun run drizzle:studio**: Open Drizzle Studio
+
+Drizzle Kit commands (`drizzle:generate`, `drizzle:migrate`, `drizzle:check`,
+`drizzle:studio`) live in the [database package](../../packages/database/README.md).
 
 ## Testing
 
@@ -126,12 +130,11 @@ and live next to the code they cover as `<responsibility>.test.ts`. Bun resolves
 the `@/` aliases and loads `apps/server/.env`; the `test` script sets
 `NODE_ENV=test`, and importing the app validates the environment, so a missing or
 invalid variable fails immediately. Leave `LOG_LEVEL` unset to keep test logs
-silent. CI copies `.env.example` to provide the values. Send requests with
-`app.handle(new Request(...))`; no port is opened. The `test` task in
-[`turbo.json`](./turbo.json) depends on `drizzle:migrate`, which depends on the
-root `db:up`, so `bun run test` starts PostgreSQL and applies migrations before
-running tests, locally and in CI. Tests that write data delete their rows
-afterwards, as
+silent. Send requests with `app.handle(new Request(...))`; no port is opened.
+The `test` task in [`turbo.json`](./turbo.json) depends on `db:test:prepare`,
+which starts PostgreSQL and recreates `<DB_NAME>_test` with the roles and
+migrations, and [`bunfig.toml`](./bunfig.toml) points every test at that
+database. Tests that write data delete their rows afterwards, as
 [`user-profiles.test.ts`](./src/routes/users/profiles/user-profiles.test.ts) does.
 Test files share one process, so state such as server draining persists between
 tests in a run.
