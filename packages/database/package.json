@@ -1,0 +1,31 @@
+{
+  "name": "@workspace/database",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "clean": "rm -rf node_modules/ .turbo/",
+    "drizzle:check": "bun --env-file=../../apps/server/.env drizzle-kit check --config ./drizzle.config.ts",
+    "drizzle:generate": "bun --env-file=../../apps/server/.env drizzle-kit generate --config ./drizzle.config.ts",
+    "drizzle:migrate": "bun --env-file=../../apps/server/.env drizzle-kit migrate --config ./drizzle.config.ts",
+    "drizzle:push": "bun --env-file=../../apps/server/.env drizzle-kit push --config ./drizzle.config.ts",
+    "drizzle:studio": "bun --env-file=../../apps/server/.env drizzle-kit studio --config ./drizzle.config.ts",
+    "format": "biome format --write .",
+    "lint": "biome lint ."
+  },
+  "dependencies": {
+    "@workspace/schemas": "workspace:*",
+    "drizzle-orm": "^0.45.4",
+    "postgres": "^3.4.9"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "drizzle-kit": "^0.31.11"
+  },
+  "exports": {
+    "./config/*": "./src/config/*.ts",
+    "./tables/*": "./src/tables/*.ts",
+    "./types/*": "./src/types/*.ts"
+  }
+}

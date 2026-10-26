@@ -1,5 +1,5 @@
+import type { UserProfileRecord } from "@workspace/database/types/users/profile/user-profile-record.interface";
 import type { UserProfile } from "@workspace/schemas/server/routes/users/profiles/user-profile.interface";
-import type { UserProfileRecord } from "@/db/tables/users/profile/user-profile.table";
 
 export function serializeUserProfile(record: UserProfileRecord): UserProfile {
   return {

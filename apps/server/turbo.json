@@ -2,8 +2,12 @@
   "extends": ["//"],
   "tags": ["app", "server"],
   "tasks": {
+    "db:test:prepare": {
+      "cache": false,
+      "dependsOn": ["//#db:up"]
+    },
     "test": {
-      "dependsOn": ["drizzle:migrate"]
+      "dependsOn": ["db:test:prepare"]
     }
   }
 }

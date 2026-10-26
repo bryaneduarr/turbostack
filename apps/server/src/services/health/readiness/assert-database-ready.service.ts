@@ -1,5 +1,5 @@
 import type { Logger } from "pino";
-import { client } from "@/db/config/connection/database-connection.config";
+import { client } from "@/config/database/database-connection.config";
 import { ExpectedFailure } from "@/services/responses/errors/expected-failure.error";
 
 export async function assertDatabaseReady(logger: Logger): Promise<void> {

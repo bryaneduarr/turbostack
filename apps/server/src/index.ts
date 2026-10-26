@@ -1,6 +1,6 @@
 import app from "@/application.module";
+import { connectToDatabase } from "@/config/database/database-connection.config";
 import env from "@/config/environment/server-env.config";
-import { connectToDatabase } from "@/db/config/connection/database-connection.config";
 import { flushLogger } from "@/services/logging/output/flush-logger.service";
 import logger from "@/services/logging/output/logger.config";
 import { shutdownServer } from "@/services/server/shutdown/shutdown-server.service";

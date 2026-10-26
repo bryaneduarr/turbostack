@@ -1,8 +1,7 @@
 # Database configuration
 
-The server uses one Postgres.js pool per process and a Drizzle instance registered
-with the table schema. Import `db` directly from
-`@/db/config/connection/database-connection.config`; do not create clients inside
+The server uses one Postgres.js pool per process and one Drizzle instance. Import `db` directly from
+`@/config/database/database-connection.config`; do not create clients inside
 request handlers.
 
 ## Startup and shutdown
@@ -18,21 +17,42 @@ close the pool. Shutdown is handled once, including signals received during star
 The implementation lives in
 [`shutdown-server.service.ts`](../services/server/shutdown/shutdown-server.service.ts).
 
+## Database roles
+
+Each process connects as its own least-privilege role: migrations and Drizzle
+Kit as `app_migrator` (`DB_MIGRATOR_*`), which owns the schema; the API as
+`app_runtime` (`DB_USER`/`DB_PASSWORD`); and manual read-only inspection, such
+as `psql`, as `app_cli`. Migrations grant each role exactly the tables and
+columns it needs, so the role names are fixed and the environment schemas reject
+others.
+
+`bun run db:provision` connects as `DB_ADMIN_*`, creates the roles with their
+configured passwords, makes `app_migrator` the owner of the `public` schema and
+of existing objects, and revokes default `PUBLIC` privileges. It is safe to run
+repeatedly; run it once with the provider's admin user before the first
+migration. The local PostgreSQL container runs the same
+[SQL](./provision/initdb/01-provision-database-roles.sql) on its volume's first
+start. Inside the production image, run `bun db/provision/provision-database.script.js`.
+
 ## Validated settings
 
 The database schema and its `ValidatedDatabaseEnvironment` interface live in
-`packages/schemas/src/database/environment/`.
-[`database-credentials.config.ts`](./config/environment/database-credentials.config.ts)
-validates that schema directly without requiring HTTP or logging variables, so
-Drizzle Kit does not depend on unrelated server configuration.
-[`database-connection.config.ts`](./config/connection/database-connection.config.ts)
+`packages/schemas/src/database/environment/`. The
+[database package](../../../../packages/database/README.md) validates the
+credentials directly without requiring HTTP or logging variables, so Drizzle Kit
+does not depend on unrelated server configuration.
+[`database-connection.config.ts`](../config/database/database-connection.config.ts)
 separately validates pool settings and initializes the runtime client. Runtime
 and Drizzle Kit use the same structured credentials and TLS policy.
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `DB_HOST`, `DB_USER`, `DB_NAME` | Required | Nonempty connection identifiers |
+| `DB_HOST`, `DB_NAME` | Required | Nonempty connection identifiers |
+| `DB_USER` | Required | The API's role, `app_runtime` |
 | `DB_PASSWORD` | Required | Nonempty password, preserved without trimming |
+| `DB_MIGRATOR_USER`, `DB_MIGRATOR_PASSWORD` | Required for migrations | The schema owner, `app_migrator` |
+| `DB_ADMIN_USER`, `DB_ADMIN_PASSWORD` | Required for provisioning | An administrative role that can create roles |
+| `DB_CLI_USER`, `DB_CLI_PASSWORD` | Required for provisioning | The read-only operator role, `app_cli` |
 | `DB_PORT` | Required | Integer from 1 to 65535 |
 | `DB_SSL_MODE` | `verify-full` | Verified TLS; `disable` is available for trusted local databases |
 | `DB_POOL_MAX` | `10` | Maximum connections per process |
@@ -56,59 +76,7 @@ statements enabled unless the provider's pooler configuration requires otherwise
 The statement timeout is sent as a connection startup parameter; PgBouncer must
 list `statement_timeout` in `ignore_startup_parameters` or set it on the role.
 
-## Table behavior
-
-The user-profile table belongs to
-[`tables/users/profile/user-profile.table.ts`](./tables/users/profile/user-profile.table.ts).
-`drizzle.config.ts` discovers every `*.table.ts` file under `src/db/tables/`, so new
-tables need no Drizzle Kit configuration change. Add a table to the `schema` map in
-[`database-connection.config.ts`](./config/connection/database-connection.config.ts)
-only when it is used through Drizzle's relational query API. Migration SQL and
-snapshots remain in `src/db/migrations/`.
-
-`updatedAt` uses PostgreSQL `now()` for Drizzle updates when no explicit update
-value is supplied. This is a Drizzle runtime hook, not a database trigger. Raw SQL
-or other applications must set the field explicitly or use a reviewed trigger
-migration. `now()` uses the current transaction's start time.
-
-## Migrations
-
-Run commands from `apps/server`:
-
-```sh
-bun run drizzle:generate
-bun run drizzle:migrate
-```
-
-Review and commit generated SQL and snapshots before applying migrations in a
-controlled deployment step. Production images do not include Drizzle Kit; the
-build bundles [`apply-migrations.script.ts`](./migrate/apply-migrations.script.ts)
-with the committed migrations, and `bun run start:migrate` (or
-`bun db/migrate/apply-migrations.script.js` inside the image) applies them using
-only the `DB_*` variables. The runner holds a PostgreSQL advisory lock, so
-concurrent deployments wait instead of applying the same migrations twice, and
-sets `lock_timeout` so a migration cannot queue behind a long query and block
-traffic to that table. Do not automatically run migrations on every server
-startup.
-
-Drizzle applies migrations newer than the last applied one, so a migration
-generated on an older branch is skipped silently if a newer one was applied first.
-CI runs `drizzle-kit check`, which rejects two migrations generated from the same
-parent, and fails when `drizzle:generate` would create a migration that is not
-committed. After merging a branch that also changed tables, delete your
-unapplied migration and run `bun run drizzle:generate` again.
-
-Old and new server versions run together during a deploy, so keep each migration
-compatible with the previous release: add columns and tables first, and remove or
-rename them in a later release once no deployed code uses them. Keep `drizzle:push` for deliberate development workflows rather than
-unreviewed production schema changes.
-
-For another database that already has tables, reconcile its live schema and
-migration history before applying this initial create-table migration. Existing
-`timestamp without time zone` data requires a separately reviewed conversion
-using the timezone represented by those values; the session timezone alone does
-not establish historical intent. The runtime update hook is not a database trigger.
-
-Type checks and builds do not verify connection startup, CRUD, defaults, update
-timestamps, or timezone round-tripping. Validate those behaviors separately in a
-controlled environment before deployment.
+Tables, migrations, and Drizzle Kit commands live in the
+[database package](../../../../packages/database/README.md). The build copies its
+committed migrations into `dist/db/migrations` for the bundled
+[migration runner](./migrate/apply-migrations.script.ts).

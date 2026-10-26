@@ -1,0 +1,21 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Local environment files
+.env
+.env.local
+.env.development.local
+.env.production.local
+
+# Task cache and build outputs
+.turbo
+dist
+build
+out
+
+# Debug and local files
+npm-debug.log*
+.DS_Store
+*.pem
