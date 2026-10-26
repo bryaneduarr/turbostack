@@ -10,22 +10,27 @@ for the workspace.
 
 ## Theme Tokens
 
-`globals.css` defines CSS variables for light mode in `:root` and dark mode in
-`.dark`, and maps them to Tailwind colors:
+`globals.css` defines neutral CSS variables for light mode in `:root` and dark
+mode under `prefers-color-scheme: dark`, and maps them to Tailwind colors. A
+project sets its own look by changing these values:
 
 | Token | Utilities |
 |---|---|
 | `background`, `foreground` | `bg-background`, `text-foreground` |
+| `surface`, `accent` | `bg-surface`, `text-accent` |
 | `primary`, `primary-foreground` | `bg-primary`, `text-primary-foreground` |
 | `secondary`, `secondary-foreground` | `bg-secondary`, `text-secondary-foreground` |
 | `muted`, `muted-foreground` | `bg-muted`, `text-muted-foreground` |
 | `destructive`, `destructive-foreground` | `bg-destructive`, `text-destructive` |
-| `success` | `text-success` |
-| `border`, `ring` | `border-border`, `ring-ring` |
-| `radius` | `rounded-sm`, `rounded-md`, `rounded-lg` |
+| `success`, `warning`, `info` | `text-success`, `text-warning`, `text-info` |
+| `border`, `border-strong`, `ring` | `border-border`, `border-border-strong`, `ring-ring` |
+| `radius` | `rounded-sm` to `rounded-2xl` |
+| `elevation-*` | `shadow-xs` to `shadow-lg` |
+| motion | `pressable`, `lift`, `animate-fade-in`, `animate-rise-in`, `ease-smooth`, `ease-spring` |
 
-`font-sans` uses the `--font-sans` variable the app sets with `next/font`. Add a
-`dark` class to an ancestor element to switch to dark mode.
+`font-sans` uses the `--font-sans` variable the app sets with `next/font`. Dark
+mode follows the operating system. Lucide icons come from the Iconify plugin as
+`icon-[lucide--name]` classes.
 
 ## Usage
 
