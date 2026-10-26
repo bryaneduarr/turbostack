@@ -1,6 +1,6 @@
 # Capability map
 
-Evidence: 2026-10-26 UTC; `31c5212` plus step 1 of the [template port](../plans/template-port/plan.md) (instructions only). Paths source-inspected; no runtime checks for this map.
+Evidence: 2026-10-26 UTC; `31c5212` plus steps 1 and 2 of the [template port](../plans/template-port/plan.md) (instructions, rule enforcement, design tokens). Paths source-inspected; no runtime checks for this map.
 
 Planner use: reuse what Features lists, build what Known gaps names, then open the linked topic notes. Owners are the paths to recheck when a line looks stale.
 
@@ -10,6 +10,9 @@ Planner use: reuse what Features lists, build what Known gaps names, then open t
 - **User profiles** (reference feature): list, create, get, rename. Owners: `apps/server/src/routes/users/profiles/`, `apps/server/src/services/users/profiles/`, `apps/client/src/app/profiles/`. Note: [user profiles](features/user-profiles.md).
 - **Typed API contracts**: route definitions, `sendApiRequest`, concrete envelopes. Owners: `packages/schemas/src/server/routes/`, `packages/api-client/src/requests/`. Notes: [routes](contracts/route-definitions.md), [responses](contracts/success-responses.md).
 - **Status codes**: `packages/utils/src/http/status-codes/http-status-code.constant.ts`.
+- **Rule enforcement**: `config/rules/`, `config/biome/plugins/`. Note: [rule enforcement](development/rule-enforcement.md).
+- **Design tokens**: neutral light and dark tokens, motion utilities, Lucide icons. Owner: `config/tailwind/globals.css`.
+- **Detached dev stack**: `bun run dev:start`, `dev:status`, `dev:stop`. Owner: `scripts/dev-stack.script.ts`.
 
 ## Feature slice
 
@@ -24,5 +27,6 @@ User profiles is the example. Add files in each layer, reading only the named ex
 
 ## Known gaps
 
-- Rules and skills now describe tooling that steps 2 to 5 of the [template port](../plans/template-port/plan.md) still add: `check:rules`, Grit plugins, `config/setup`, `packages/database`, the devcontainer and `scripts/dc`, `dev:start`, `verify`, Playwright, `useClientFormValidation`, base components, support error codes, and `docs/`.
+- Rules and skills now describe tooling that steps 3 to 5 of the [template port](../plans/template-port/plan.md) still add: `config/setup` and one-command `bun run dev` (moved from step 2 because it needs the database roles), `packages/database`, the devcontainer and `scripts/dc`, `verify`, Playwright, `useClientFormValidation`, base components, support error codes, and `docs/`.
+- Temporary rule exceptions for `apps/server/src/db/tables/users/profile/user-profile.table.ts` until it moves in step 3.
 - Product domain is not chosen: [current scope](product/current-scope.md).
