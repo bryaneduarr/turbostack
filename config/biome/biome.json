@@ -18,6 +18,9 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "complexity": {
+        "useOptionalChain": "off"
+      },
       "style": {
         "noNonNullAssertion": "error",
         "noRestrictedImports": {
@@ -25,7 +28,9 @@
           "options": {
             "patterns": [
               {
-                "group": [":PATH:"],
+                "group": [
+                  ":PATH:"
+                ],
                 "message": "Use @workspace/<package>/... for package modules or @/... for app-local modules instead of filesystem imports."
               },
               {
@@ -52,10 +57,33 @@
             ]
           }
         },
-        "useConst": "warn"
+        "useConst": "warn",
+        "noExportedImports": "error",
+        "useImportType": "error",
+        "useExportType": "error",
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": {
+            "strictCase": true,
+            "requireAscii": true,
+            "filenameCases": [
+              "kebab-case"
+            ]
+          }
+        }
+      },
+      "suspicious": {
+        "noDeprecatedImports": "error",
+        "noExplicitAny": "error",
+        "noTsIgnore": "error"
+      },
+      "performance": {
+        "noBarrelFile": "error",
+        "noReExportAll": "error"
       },
       "correctness": {
         "noUnusedVariables": "error",
+        "noUnusedImports": "error",
         "useImportExtensions": "off"
       }
     }
@@ -87,6 +115,18 @@
       "!**/node_modules/**"
     ]
   },
+  "overrides": [
+    {
+      "includes": ["**/postcss.config.ts"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off"
+          }
+        }
+      }
+    }
+  ],
   "vcs": {
     "enabled": true,
     "clientKind": "git",

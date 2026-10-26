@@ -1,0 +1,8 @@
+language js
+
+or { `$_ as unknown as $_`, `$_ as any as $_` } as $assertion where {
+  register_diagnostic(
+    span = $assertion,
+    message = "Do not force a type through unknown; validate or narrow the value, or correct the source type."
+  )
+}

@@ -1,0 +1,19 @@
+language js
+
+// Two or more arguments separate Elysia route registration from Map or Headers reads.
+or {
+  `$app.get($path, $handler, $...)`,
+  `$app.post($path, $handler, $...)`,
+  `$app.put($path, $handler, $...)`,
+  `$app.patch($path, $handler, $...)`,
+  `$app.delete($path, $handler, $...)`,
+  `$app.all($path, $handler, $...)`
+} where {
+  $path <: r"^[\"'`].*",
+  $filename <: r".*/apps/server/src/.*",
+  $filename <: not r".*\.test\.ts$",
+  register_diagnostic(
+    span = $path,
+    message = "Register server routes with .route(route.method, route.path, handler, contract) from their route definition."
+  )
+}

@@ -1,0 +1,15 @@
+language js
+
+// Web apps reach the API only through sendApiRequest and a route definition.
+or {
+  `fetch($...)`,
+  JsStringLiteralExpression() as $literal where { $literal <: r"^[\"']/api/.*" }
+} as $match where {
+  $filename <: r".*/apps/client/src/.*",
+  $filename <: not r".*/apps/client/src/e2e/.*",
+  $filename <: not r".*\.test\.tsx?$",
+  register_diagnostic(
+    span = $match,
+    message = "Call the API through sendApiRequest with its route definition; do not hand-write requests or API paths."
+  )
+}

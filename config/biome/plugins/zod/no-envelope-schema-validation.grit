@@ -1,0 +1,11 @@
+language js
+
+// Broad envelopes are composition bases and generic documentation only.
+or { `successResponseSchema`, `responseEnvelopeSchema` } as $schema where {
+  $filename <: not r".*/packages/schemas/src/server/responses/.*",
+  $filename <: not r".*/apps/server/src/config/openapi/openapi\.config\.ts$",
+  register_diagnostic(
+    span = $schema,
+    message = "Validate domain payloads with a concrete schema composed through createSuccessResponseSchema, not the broad envelope."
+  )
+}

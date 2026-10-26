@@ -1,0 +1,13 @@
+language js
+
+// Environment variables are a trust boundary parsed once by a config file.
+`process.env` as $access where {
+  $filename <: not r".*/config/.*",
+  $filename <: not r".*\.config\.ts$",
+  $filename <: not r".*\.script\.ts$",
+  $filename <: not r".*\.test\.ts$",
+  register_diagnostic(
+    span = $access,
+    message = "Read environment variables only in a config file that parses them with their schema; import the parsed config instead."
+  )
+}
