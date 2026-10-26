@@ -1,4 +1,18 @@
 {
-  "extends": ["//"],
-  "tags": ["app", "browser"]
+  "extends": [
+    "//"
+  ],
+  "tags": [
+    "app",
+    "browser"
+  ],
+  "tasks": {
+    "test:e2e": {
+      "dependsOn": [
+        "build",
+        "api-server#build",
+        "api-server#db:test:prepare"
+      ]
+    }
+  }
 }

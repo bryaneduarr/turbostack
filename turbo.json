@@ -139,6 +139,19 @@
         ".env*"
       ],
       "outputs": []
+    },
+    "test:e2e": {
+      "cache": false,
+      "dependsOn": [
+        "build",
+        "^drizzle:migrate",
+        "api-server#build"
+      ],
+      "passThroughEnv": [
+        "CI",
+        "PLAYWRIGHT_*",
+        "NIX_LD*"
+      ]
     }
   }
 }

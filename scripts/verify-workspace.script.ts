@@ -66,6 +66,19 @@ const steps: VerificationStep[] = [
     run: () =>
       runCommand(["bunx", "turbo", "run", "check-types", "test", "build"]),
   },
+  {
+    name: "End-to-end tests (Playwright, API and Chromium)",
+    run: () =>
+      runCommand([
+        "bunx",
+        "turbo",
+        "run",
+        "test:e2e",
+        "--",
+        "--project=api",
+        "--project=chromium",
+      ]),
+  },
 ];
 
 const results: { name: string; passed: boolean; seconds: number }[] = [];
