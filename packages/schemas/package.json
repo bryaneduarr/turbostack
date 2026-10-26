@@ -7,7 +7,8 @@
     "clean": "rm -rf node_modules/ .turbo/",
     "check-types": "tsc --noEmit",
     "format": "biome format --write .",
-    "lint": "biome lint ."
+    "lint": "biome lint .",
+    "test": "bun test"
   },
   "dependencies": {
     "@workspace/utils": "workspace:*",
@@ -16,6 +17,10 @@
   "exports": {
     "./database/*": "./src/database/*.ts",
     "./server/*": "./src/server/*.ts",
-    "./client/*": "./src/client/*.ts"
+    "./client/*": "./src/client/*.ts",
+    "./support/*": "./src/support/*.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.3"
   }
 }

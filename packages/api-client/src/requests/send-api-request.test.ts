@@ -65,7 +65,12 @@ const server = Bun.serve({
       return Response.json(errorEnvelope("NEW_CODE"), { status: NOT_FOUND });
     }
     if (scenario === "proxy-error") {
-      return new Response("<html>Bad gateway</html>", { status: BAD_GATEWAY });
+      const echoedRequestId = request.headers.get("x-echo-request-id");
+      return new Response("<html>Bad gateway</html>", {
+        status: BAD_GATEWAY,
+        headers:
+          echoedRequestId === null ? {} : { "x-request-id": echoedRequestId },
+      });
     }
     return Response.json({ success: true, data: { status: "unexpected" } });
   },
@@ -74,14 +79,17 @@ const baseUrl = server.url.toString();
 
 afterAll(() => server.stop(true));
 
-function sendStatusRequest(scenario: string) {
+function sendStatusRequest(
+  scenario: string,
+  headers: Record<string, string> = {},
+) {
   return sendApiRequest({
     baseUrl,
     route: statusRoute,
     params: null,
     query: null,
     body: null,
-    init: { headers: { "x-scenario": scenario } },
+    init: { headers: { "x-scenario": scenario, ...headers } },
   });
 }
 
@@ -118,10 +126,36 @@ describe("sendApiRequest", () => {
     expect(await sendStatusRequest("proxy-error")).toEqual({
       kind: "unexpected-response",
       status: BAD_GATEWAY,
+      requestId: null,
     });
     expect(await sendStatusRequest("unknown-code")).toEqual({
       kind: "unexpected-response",
       status: NOT_FOUND,
+      requestId: null,
+    });
+  });
+
+  it("keeps the request ID of an unexpected response when it is a UUID", async () => {
+    const result = await sendStatusRequest("proxy-error", {
+      "x-echo-request-id": requestId,
+    });
+
+    expect(result).toEqual({
+      kind: "unexpected-response",
+      status: BAD_GATEWAY,
+      requestId,
+    });
+  });
+
+  it("drops the request ID of an unexpected response when it is not a UUID", async () => {
+    const result = await sendStatusRequest("proxy-error", {
+      "x-echo-request-id": "not-a-uuid",
+    });
+
+    expect(result).toEqual({
+      kind: "unexpected-response",
+      status: BAD_GATEWAY,
+      requestId: null,
     });
   });
 

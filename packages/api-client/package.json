@@ -20,6 +20,7 @@
   },
   "exports": {
     "./requests/*": "./src/requests/*.ts",
+    "./results/*": "./src/results/*.ts",
     "./types/*": "./src/types/*.ts"
   }
 }
