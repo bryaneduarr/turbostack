@@ -6,13 +6,13 @@ import {
 import { z } from "zod";
 
 export const errorResponseSchema = responseEnvelopeSchema.extend({
-  /* Discriminates failures from success responses. */
+  /** Discriminates failures from success responses. */
   success: z.literal(false),
-  /* Explicitly marks the absence of success data in the published envelope. */
+  /** Explicitly marks the absence of success data in the published envelope. */
   data: z.null(),
-  /* Contains only the safe classification, never raw exception details. */
+  /** Contains only the safe classification, never raw exception details. */
   error: z.object({
-    /* Classifies the failure for client branching without message matching. */
+    /** Classifies the failure for client branching without message matching. */
     code: z.enum([
       "NOT_FOUND",
       "VALIDATION",
@@ -25,6 +25,6 @@ export const errorResponseSchema = responseEnvelopeSchema.extend({
       "INTERNAL_SERVER_ERROR",
     ]),
   }),
-  /* Requires an HTTP error status rather than a success or redirect status. */
+  /** Requires an HTTP error status rather than a success or redirect status. */
   status: z.number().int().min(BAD_REQUEST).max(MAX_HTTP_STATUS),
 });

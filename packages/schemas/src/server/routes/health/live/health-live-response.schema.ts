@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const healthLiveResponseSchema = createSuccessResponseSchema(
   z.object({
-    /* Confirms the process is running and able to serve HTTP requests. */
+    /** Confirms the process is running and able to serve HTTP requests. */
     status: z.literal("alive"),
   }),
 );
