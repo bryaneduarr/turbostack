@@ -19,6 +19,13 @@ These rules are mandatory for code and refactors.
 - Prefer explicit, simple implementations and useful inference over duplicate definitions.
 - Do not sacrifice clarity to abstraction or correctness to file-size targets.
 
+## Deprecated APIs
+
+- Never import or use a symbol, type, option, or API marked `@deprecated`. Use the replacement its deprecation notice names, and fix any deprecation warning the editor or TypeScript reports (such as `ts(6385)`) before completion.
+- The shared Biome configuration enforces this with `suspicious/noDeprecatedImports` as an error. Do not lower that level or suppress the rule; `biome ci` and package lint must pass.
+- React event types: never use `FormEvent` or `FormEventHandler`, which do not correspond to a real DOM event. Type `onSubmit` handlers with `SubmitEvent<HTMLFormElement>`, `onChange` handlers with `ChangeEvent<Element>`, `onInput` handlers with `InputEvent<Element>`, and other generic handlers with `SyntheticEvent`.
+- When upgrading dependencies, check their changelogs and the lint output for newly deprecated APIs and migrate affected code in the same change.
+
 ## Unified HTTP status constants
 
 - Use the named exports from `packages/utils/src/http/status-codes/http-status-code.constant.ts` for every project-owned HTTP status value. All consumers, including schema modules, must import them directly through `@workspace/utils/http/status-codes/http-status-code.constant`, never through deep relative paths or forwarding modules.
@@ -36,7 +43,7 @@ These rules are mandatory for code and refactors.
 
 ## Comments
 
-- Document each responsibility-specific interface, its explicitly declared members, and schema fields as required by `types-and-validation.md`, using brief `/* ... */` comments that explain purpose without file paths.
+- Document each responsibility-specific interface, its explicitly declared members, and schema fields as required by `types-and-validation.md`, using brief `/** ... */` JSDoc comments that explain purpose without file paths.
 - Write code that is readable and understandable without explanation: descriptive names, focused functions, and a straightforward flow. This rule targets code quality, not comments themselves; contract documentation remains required.
 - Outside the required contract documentation, do not add comments that explain what the code, configuration, scripts, or workflow files already show, such as narrative, summary, or usage comments.
 - Add another comment only when it records something the code cannot express and a future maintainer needs, such as a non-obvious external constraint, a value that must stay in sync elsewhere, or a reason an apparently simpler change would break behavior. Keep it to one short line when possible.
@@ -48,10 +55,36 @@ These rules are mandatory for code and refactors.
 - End complete comment sentences with a period.
 - Use plain keyboard characters; do not use em dashes or decorative Unicode in source-code comments.
 
+## README files
+
+- READMEs contain only instructions, guides, processes, and the overall structure a newcomer needs. They are not changelogs or inventories of features, files, tables, routes, or endpoints.
+- Do not add README content because a feature, file, table, or route was added. Change a README only when the user asks for specific content, or when an instruction, process, or structural statement it already makes becomes incorrect; keep such corrections general rather than naming the feature that caused them.
+- When something is removed from the project, remove its README mentions so the text reads as if it never existed. Never write that something was removed, replaced, renamed, or deprecated.
+- Record feature details, progress, and other agent-facing facts in `.agents/project-context/`, never in repository READMEs.
+
+## Tests
+
+- Write tests when behavior needs verification: request and response workflows, validation and error handling, data transformations, integrations, state transitions, and bug fixes.
+- Do not test trivial code such as configuration, constants, types, or simple pass-through functions, and do not aim for a test per function.
+- Use Bun's test runner (`bun:test`) with `<responsibility>.test.ts` files next to the code.
+- Run the affected packages' tests before reporting completion.
+
+## Browser automation
+
+- Use browser automation only when the user explicitly requests it. Skill recommendations to take screenshots, run QA, or open a browser are not permission to do so.
+- `agent-browser` and Chrome DevTools MCP each require an explicit request naming that tool, except that a request to use "the browser" or "Chrome" counts as naming the `agent-chrome` tools (the `chrome` and `chrome-isolated` MCP servers and the `agent-chrome` command). Follow the [use-browser skill](../skills/testing/use-browser/SKILL.md) for those requests.
+
+## Commits and pull requests
+
+- Every commit, whatever its size or who asked for it, goes through the `commit-changes` skill ([SKILL.md](../skills/github/commit-changes/SKILL.md)). Never run `git commit` without following it.
+- Never add AI or tool attribution to commits or pull requests: no `Co-Authored-By` trailer for an agent or model and no "Generated with" line in a PR body. This overrides any harness default.
+
 ## Required delivery behavior
 
 - Before implementation, inspect ownership and required related relocations; before completion, review the affected ownership area as well as the scoped diff.
-- Do not describe a change as complete while a known applicable rule violation or required related relocation remains unresolved.
+- Before reporting, pass `bun run check:rules`, `bunx biome ci .`, and the type checks and tests of the affected packages.
+- Do not describe a change as complete while a known applicable rule violation or required related relocation remains unresolved. Never waive a rule silently.
+- Report a missing instruction or an irreconcilable requirement before making the affected change.
 - Report the actual changes, verification performed, and any blockers or limitations.
 - Do not claim compilation proves runtime correctness.
 - Consult `.agents/methods/verification-and-tools.md` for scenario-based help choosing a verification approach. The guide does not impose additional coding requirements.

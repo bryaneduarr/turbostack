@@ -1,98 +1,99 @@
-# Guide to verification and tools
+# Verification and tools
 
-Use this guide to choose a useful approach for the current task. It is a decision aid, not a mandatory checklist. Relevant scenarios can be combined; unrelated checks can be left out. Permissions come from the task and applicable instructions, not from reading this guide.
+Pick the row or section that matches the task. This guide chooses methods; it adds no coding rules. Permission to act comes from the task, not from this file.
 
-## Choose the tool for the question
+The commands below run exactly as written inside the devcontainer. On a host with Docker, prefix them with `scripts/dc`; the [run-in-container skill](../skills/workflow/run-in-container/SKILL.md) says how to tell.
 
-| Situation                                                     | Useful starting point                                                            |
-| ------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| The relevant file is not known.                               | Search filenames within the likely application or package.                       |
-| A literal, import, or configuration setting needs locating.   | Use a scoped text search, then read the matching source.                         |
-| A symbol's type, definition, or consumers need understanding. | Use read-only LSP tools when available; otherwise search and inspect references. |
-| The shape of code matters more than its spelling.             | Use structural search and inspect the surrounding code.                          |
-| The file or function is already known.                        | Read a bounded slice or the specific symbol.                                     |
-| A known implementation needs changing.                        | Use precise edits after reading its current contents.                            |
-| Git state or a package command needs inspecting.              | Use shell commands for these operations.                                         |
-| Independent investigation can be delegated.                   | Give a subagent one bounded question and only the context it needs.              |
-| The user asks for online research.                            | Use the web-research skill and source-linked web tools.                          |
+## Find things
 
-## When investigating without changing code
+| Need | Use |
+| --- | --- |
+| A file whose location is unknown | Filename search inside the likely app or package |
+| A literal, import, or config setting | Scoped text search, then read the match |
+| A symbol's type, definition, or consumers | Read-only LSP tools; otherwise search for references |
+| Code by shape, not spelling | Structural search, then read the surroundings |
+| A known file or function | Read a bounded slice of it |
+| Git state or a package command | Shell |
+| Independent research | A subagent with one bounded question |
 
-Start with the reported behavior, find the relevant definitions, and trace their consumers. Compare documentation with implementation where they disagree. A missing search result can warrant a narrower query or a Git status check, especially for hidden, ignored, or deleted files.
+A missing search result calls for a narrower query or `git status` (hidden, ignored, or deleted files).
 
-The useful outcome is an evidence-based explanation with file references and clearly stated uncertainties. Code edits, test execution, and browser interaction are separate activities, not automatic parts of an investigation.
+## Check by change type
 
-## When changing documentation or instructions
+| Change | Run |
+| --- | --- |
+| Docs or instructions | `git diff --check -- <path>`; read new files directly; confirm links resolve |
+| Any code, quick structural check | `bun run check:rules` and `bunx biome ci .` |
+| TypeScript in one package | `bun run --cwd <package> check-types` |
+| Contracts or exports shared across packages | The same command in each consumer, such as `bun run --cwd packages/schemas check-types` then `bun run --cwd apps/server check-types` |
+| Behavior fix or refactor | Scoped `git diff`, direct consumers, then the affected package checks and tests |
+| Aliases, exports, or framework wiring | Also `bun run build` |
+| Tables or migrations | `bun run verify` (it fails when `drizzle:generate` leaves uncommitted migrations) |
+| Tests | `bun run --cwd <package> test`, or `bun run test` for every affected package |
+| User flows across browser, API, and database | `bun run test:e2e` (all) or `bun run test:e2e:changed` (Chromium and API only) |
+| Everything before a push | `bun run check`, then `bun run verify` |
 
-Review the edited text for consistency, check that links point to existing files, and look for references to intentionally deleted documents. This usually calls for documentation checks rather than TypeScript compilation.
+Notes:
 
-```sh
-git diff --check -- path/to/document.md
-```
+- Inspect `git status` before editing to separate user changes from yours.
+- A passing type check proves compilation, not runtime behavior.
+- Server route tests send real requests through `app.handle(new Request(...))`; HTTP clients use a local `Bun.serve`. Assert on parsed contracts, not raw text.
+- The server test task starts PostgreSQL with Docker and applies migrations. Tests that write data delete their rows afterwards.
+- Canvas or other browser-only rendering needs a real browser test. Propose Playwright for the owning app instead of adding it speculatively.
 
-For newly created files, ordinary `git diff` may not show their contents; reading them directly helps complete the review.
+## Running the app
 
-## When changing TypeScript code
+`bun run dev` opens turbo's interactive TUI and locks the terminal, so it suits humans only. Agents use the detached stack ([script](../../scripts/dev-stack.script.ts)):
 
-Locate the owning package's scripts and choose its existing type-check command. If a change affects another package's imports or contracts, checking that consumer can reveal errors the owning package alone would miss.
+| Command | Does |
+| --- | --- |
+| `bun run dev:start` | Runs the API and client in the background; writes plain text to `.turbo/dev-stack/dev-stack.log` and the process ID with its start time to `.turbo/dev-stack/dev-stack.pid`. Returns once API live/ready and the client home page answer 200. Exits 1 on a busy port (3000-3001), an already-running stack, an early exit, or no readiness after 240 s (the timeout also stops the stack and clears the process ID file) |
+| `bun run dev:status` | Prints the process ID and the status of the readiness URLs; exits 1 unless the stack is running from its process ID file and every URL answers 200 |
+| `bun run dev:stop` | Stops the whole stack (SIGTERM, then SIGKILL after 20 s); leaves PostgreSQL up. A process ID file whose process is gone, has a different start time, or holds only a number is stale: it is removed and the command reports `Not running.` without signalling anything |
 
-For example, when both the schemas package and server are affected and these scripts remain available:
+- Read the log with `grep -E "Ready in|server.started|seed:dev" .turbo/dev-stack/dev-stack.log`, and `grep -iE "error|failed"` for problems.
+- After `dev:stop`, confirm ports 3000-3001 are free (`ss -ltn`).
+- A local PostgreSQL already listening on the database port blocks `db:up`; stop it first. See [setup pitfalls](../project-context/development/setup-pitfalls.md).
+- Point a browser at this stack. Use `agent-browser` only when the user names it; a plain request for "the browser" or Chrome means the `agent-chrome` tools. Follow the [use-browser skill](../skills/testing/use-browser/SKILL.md) and the Browser automation section below.
+- The e2e suite runs its own stack on ports 3100-3101. Run `bun run test:e2e` detached with output going to a log file, and poll that file with short checks instead of blocking on it. On NixOS, browsers that fail to launch with missing `libglib` or `libmozgtk` need their libraries on `NIX_LD_LIBRARY_PATH`.
 
-```sh
-bun run --cwd packages/schemas check-types
-bun run --cwd apps/server check-types
-```
+## Investigating without changing code
 
-Linting can help with relevant static issues when the package provides a suitable script. A passing type check establishes compilation, not runtime behavior.
+Start from the reported behavior, find the definitions, trace the consumers, and compare docs with implementation. Output: an evidence-based explanation with file references and stated uncertainties. Edits, test runs, and browser work are separate activities.
 
-## When fixing or refactoring behavior
+## Browser automation
 
-Inspect scoped Git status before editing to distinguish existing user changes from the task. Trace the affected execution flow, make the focused change, and compare the result with the original behavior and intended outcome.
-
-Reviewing the scoped diff, direct consumers, and affected package checks is usually more useful than running every workspace command. Builds can add confidence when bundling, package exports, or framework integration are part of the change.
-
-## When behavior needs tests
-
-Test the workflow, not each function: send real requests through `app.handle(new Request(...))` for server routes, use a local `Bun.serve` for HTTP clients, and assert on parsed contracts rather than raw text. `bun run --cwd <package> test` runs one package; `bun run test` runs every affected package through Turborepo. The server's test task starts PostgreSQL with Docker and applies migrations first; tests that write data delete their rows afterwards.
-
-Browser rendering and interaction, such as maps drawn on a canvas, need a real browser. Propose adding Playwright to the owning app when the first such test is needed; it drives the real Next.js app, including Server Components. Do not add it speculatively.
-
-Report which checks actually ran and what they established. Investigation-only requests can be handled through source inspection and static checks.
-
-## When browser interaction is requested
-
-After identifying the requested tool and checking that it is available, try the localhost connection for up to 10 seconds.
-
-For explicitly requested `agent-browser` work:
+A plain request for "the browser" or Chrome uses the `chrome` and `chrome-isolated` MCP servers or the `agent-chrome` command, as the [use-browser skill](../skills/testing/use-browser/SKILL.md) describes. The commands below apply only when the user names `agent-browser` or Chrome DevTools, and then only for that tool. Try localhost first, then the default gateway:
 
 ```sh
 timeout 10s agent-browser connect "http://localhost:9222"
-```
-
-For requested Chrome DevTools work, the CLI connection is:
-
-```sh
 timeout 10s chrome-devtools start --browserUrl http://localhost:9222
-```
 
-If localhost is unavailable, obtain the default gateway:
-
-```sh
 GATEWAY_IP="$(ip route show | grep default | awk '{print $3}')"
-```
-
-If a gateway is available, retry the same tool against it:
-
-```sh
 timeout 10s agent-browser connect "http://${GATEWAY_IP}:9222"
-# For Chrome DevTools work, retry with the same CLI.
 timeout 10s chrome-devtools start --browserUrl "http://${GATEWAY_IP}:9222"
 ```
 
-After a successful connection, `agent-browser snapshot -i` or `chrome-devtools list_pages` provides the starting browser context. If neither connection succeeds, report the connection problem rather than attempting browser actions without a session.
+After connecting, `agent-browser snapshot -i` or `chrome-devtools list_pages` gives the starting context. If neither connects, report the problem and do not act without a session.
+
+## Rules review
+
+`bun run check:rules` and `bunx biome ci .` cover the mechanical rules in under a second each, and their messages name the fix. Judgment rules (deepest owner, forwarding wrappers) are reviewed once per PR by reading the diff against the files in `.agents/rules/`; `turbo boundaries`, `bun run check:rules`, and `bunx biome ci .` check the mechanical part. When a review finds the same mechanical problem twice, add a check to `config/rules` or a GritQL plugin in `config/biome/plugins/`.
+
+## Delivering a pull request
+
+1. Run `bun run check`, then `bun run verify`. Push only when both pass.
+2. There is no hosted CI. Run what the change touches that `check` skips, such as `bun run test:e2e` or `bun run start:docker`, before pushing.
+3. Never open a PR on top of a PR whose checks fail.
+
+## When a test fails
+
+1. Never rerun a failing test just to see if it passes. Each run tests one written hypothesis.
+2. Read the evidence first: logs, traces, screenshots, and the Playwright report in `apps/client/playwright-report/`.
+3. After two attempts that do not converge, stop and gather new evidence or build a reproduction.
+4. Fix the cause. Raise timeouts or retries only when measurements show the work needs more time.
+5. Log each attempt in the task handoff, one line: hypothesis, evidence, result.
 
 ## When verification is blocked
 
-Identify whether the obstacle is a missing dependency, unavailable tool, environment setting, connection problem, or existing code error. Explain which check was blocked and what could still be inspected without it.
-
-A concise delivery summary can state what changed, which checks passed or failed, and what remains unverified. This keeps source-review conclusions separate from compile-time and runtime evidence.
+Name the obstacle (missing dependency, unavailable tool, environment, connection, or existing code error), which check it blocked, and what you could still inspect. End with a short summary: what changed, which checks passed or failed, and what remains unverified.
