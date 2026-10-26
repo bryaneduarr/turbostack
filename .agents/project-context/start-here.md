@@ -1,15 +1,13 @@
 # Start here
 
-Read only what the task needs; these notes are evidence pointers, not replacement rules.
+Read only what the task needs; notes are pointers, not rules.
 
-- Purpose/scope: [current scope](product/current-scope.md).
-- Architecture/owners: [runtime boundaries](architecture/runtime-boundaries.md).
-- Implemented features: [health and expected failures](features/health.md), [user profiles](features/user-profiles.md).
-- Data/API contracts: [route definitions](contracts/route-definitions.md), [success responses](contracts/success-responses.md).
-- Toolchain/check/test commands: [development](development/commands.md).
-- Setup/database hazards: [pitfalls](development/setup-pitfalls.md).
-- Pi/Claude Code wiring: [agent harnesses](development/agent-harnesses.md).
-- Recent work, not a new assignment: [production foundation](tasks/production-foundation/handoff.md).
-- Workflows: [PR writing](../skills/pr/SKILL.md), [feature completion](../skills/finish-feature/SKILL.md).
+- Scope: [current scope](product/current-scope.md). Architecture: [runtime boundaries](architecture/runtime-boundaries.md).
+- Planning: [capability map](capabilities.md) lists what exists, owners, and gaps.
+- Features: [health](features/health.md), [user profiles](features/user-profiles.md).
+- Contracts: [routes](contracts/route-definitions.md), [responses](contracts/success-responses.md).
+- Development: [commands](development/commands.md), [pitfalls](development/setup-pitfalls.md), [harnesses](development/agent-harnesses.md).
+- Plans: [template port](../plans/template-port/plan.md) (approved 2026-10-26; step 1 on branch `template/01-instructions`).
+- Workflows: [PR](../skills/github/pr/SKILL.md), [deliver plan](../skills/workflow/deliver-plan/SKILL.md).
 
-Evidence dates/revisions belong to each note. Recheck relevant source changes before relying on it. Create additional security, integration, debugging, or decision pointers only when actual work establishes useful evidence; do not preload them or invent requirements.
+Recheck sources before relying on a note; add pointers only from real evidence.
