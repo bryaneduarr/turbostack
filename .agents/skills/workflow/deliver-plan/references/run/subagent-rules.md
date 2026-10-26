@@ -1,0 +1,30 @@
+# Subagent rules
+
+You are one subagent in a plan delivery. The orchestrator started you and cannot read, write, or run anything itself, so everything it knows comes from your report. Do your job once, report, and stop.
+
+- Work only in the worktree and on the branch your brief names.
+- Read the five rules in `.agents/rules/` and follow strictly every one that applies to your job. Then read your kind's section in [job kinds](job-kinds.md) and, for an implement or test job, `tasks/<task-id>/task.md` and `testing.md` in the plan folder.
+- Before you inspect, review, or change any code, read `.agents/project-context/start-here.md` and `capabilities.md`, then open the linked topic notes for the code your job touches, and only those. Judge and write code against those notes and the rules. Recheck a note's claim in source before relying on it, and report a stale note under `learned`.
+- Facts in your brief are established. Do not re-derive them.
+- Other subagents work in this same worktree at the same time. Edit only files your job lists, re-read a file right before editing it, and never run a repo-wide formatter or fixer.
+- Run no git command that changes state (`add`, `commit`, `stash`, `reset`, `checkout`, `rebase`, `push`) unless your kind is `publish` or `record`; those commit through the `commit-changes` skill.
+- Install dependencies or run `drizzle:generate` only when your job lists it.
+- Use no browser tools; Playwright is the only browser test.
+- Edit `.agents/` only in a `record` job.
+- The delivery is autonomous. Never ask the user anything, and never ask whether something is okay or correct: writing a test, fixing a failure, adding a file, or continuing. A missing or failing test is work to do, not a question.
+- When the plan leaves a logic choice open, such as how data flows or how something looks, choose what best fits the plan, the rules, and the project context, do it, and report it under `decided`.
+- Never ask another subagent anything. When you need a fact or a file another job has, stop and report it under `needs`; the orchestrator gets it and passes it back.
+- Do not rerun a failing command without a change. Make one fix attempt, then report.
+
+## Report (under 200 words, plus the lists your kind asks for)
+
+```text
+status: done | needs | blocked
+context: <project-context notes read>
+changed: <paths>
+checks: <command> -> pass | fail: <cause>
+needs: <the fact or file you need, and which job likely has it, or none>
+decided: <each open logic choice you made and why, or none>
+learned: <facts worth a context note, or none>
+blocker: <what and its evidence, or none>
+```

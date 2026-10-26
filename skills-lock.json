@@ -8,33 +8,12 @@
       "computedHash": "548a1f92c7ff55081c65ec1577ff5136beb1d0f58252d448d5bd43f05fefc703",
       "wellKnownDigest": "sha256:a674b7d81066e3cc471a7512ddb4ae724418cbfefa75cbb050b0dc430e4d57a0"
     },
-    "domain-modeling": {
-      "source": "skills.sh",
-      "sourceUrl": "https://skills.sh/p/HQaXdwg6Y66QuDsG",
-      "sourceType": "well-known",
-      "computedHash": "b3eb40152b81f0c98fd2095a023c019452dbdce56f7540cc67fece2972db8369",
-      "wellKnownDigest": "sha256:18a9314d338b8135e4108d1d31d2fd57ad289cf8bf31d2acd6a6f3053ac22a38"
-    },
     "drizzle-orm-patterns": {
       "source": "skills.sh",
       "sourceUrl": "https://skills.sh/p/HQaXdwg6Y66QuDsG",
       "sourceType": "well-known",
       "computedHash": "d63e6d73a9f579b505a5694af2f3b3200c2b5eeea147e88b9b6d1e5fce23bcbb",
       "wellKnownDigest": "sha256:58d13bc4987ab312224e02086b93cb17b5821dc97375eb5b6889b0add6e57216"
-    },
-    "grill-with-docs": {
-      "source": "skills.sh",
-      "sourceUrl": "https://skills.sh/p/HQaXdwg6Y66QuDsG",
-      "sourceType": "well-known",
-      "computedHash": "35e62aa423aaeab6a414bcac273f56dfb17802ef2334b41b6a3b00f28196c8cf",
-      "wellKnownDigest": "sha256:2dff19547f0f72000f8b88868e21b7d76c27cf5c7ececc6edf4042bbe06157ac"
-    },
-    "grilling": {
-      "source": "skills.sh",
-      "sourceUrl": "https://skills.sh/p/HQaXdwg6Y66QuDsG",
-      "sourceType": "well-known",
-      "computedHash": "ef1641a2047b71b60f1942cd35efb47d3afc9d584dff5a0b01f8c7db923aaa08",
-      "wellKnownDigest": "sha256:84ca0320c5fa81a1261d6d1d4c120ada9dea80f856a2c2565404f7125a809b86"
     },
     "nextjs-performance": {
       "source": "skills.sh",
@@ -56,13 +35,6 @@
       "sourceType": "well-known",
       "computedHash": "15f7299cfc3708d572db2e813b22af39f4284cbab9a824f518556b21131b198a",
       "wellKnownDigest": "sha256:f7e8bdd401fed856133dc81ac904a637f4617429ff760b458da58fc467883b9b"
-    },
-    "retro": {
-      "source": "skills.sh",
-      "sourceUrl": "https://skills.sh/p/HQaXdwg6Y66QuDsG",
-      "sourceType": "well-known",
-      "computedHash": "b8d55851a2909e26c2dbb2e8563719c87b3b700559f604e4df344f8c27e21047",
-      "wellKnownDigest": "sha256:09c4f9fe72fc5bc8e486a2bbb32dd785ca6264c56a53dd1bf9a334af72586efd"
     },
     "tailwind-css-patterns": {
       "source": "skills.sh",
