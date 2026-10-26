@@ -38,8 +38,10 @@ Make turbostack a clean, product-free template that carries what veyra taught: a
 13. **Plans and context:** port `workflow/deliver-plan` and the `.agents/plans/` conventions; restart `project-context` with a fresh `start-here.md` and `capabilities.md` for this template. Rejected: empty context folder.
 14. **Generic runtime pieces, all of them:** support error codes and request IDs, `api-client` results, logger factory, security headers, same-origin redirects, `dev-stack` and `verify` scripts. Rejected: a subset; none.
 15. **Delivery:** one stack of PRs in 5 steps (below). Rejected: one big PR; commit to `main`.
-- **A (assumed, unconfirmed):** delete all of `.github/` (`ci.yml`, `release-images.yml`, `dependabot.yml`). Confirm before step 5.
-- **B (assumed, unconfirmed):** drop `scripts/merge-stack.script.ts`, since it waits on GitHub checks. Confirm before step 2.
+- **A (confirmed 2026-10-26):** delete all of `.github/` (`ci.yml`, `release-images.yml`, `dependabot.yml`).
+- **B (confirmed 2026-10-26):** drop `scripts/merge-stack.script.ts`, since it waits on GitHub checks.
+- **Push and PRs (confirmed 2026-10-26):** push each step and open its stacked PR.
+- **During delivery:** `config/setup`, `doctor`, and `verify` moved from step 2 to step 3 because they need the database roles; session-key generation was dropped because the template has no sign-in; `app_cli` stays as a read-only operator role; `seed:dev` adds two example profiles.
 
 ## Scope
 
