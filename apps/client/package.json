@@ -13,6 +13,7 @@
     "start": "node --env-file-if-exists=.env .next/standalone/apps/client/server.js",
     "test": "bun test",
     "test:e2e": "playwright test",
+    "test:e2e:install": "playwright install chromium firefox",
     "test:e2e:report": "playwright show-report",
     "test:e2e:ui": "playwright test --ui"
   },

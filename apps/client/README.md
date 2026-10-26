@@ -76,7 +76,9 @@ database, and runs [Playwright](./playwright.config.ts) against its own stack on
 ports 3100 (client) and 3101 (API). Tests live in `src/e2e/` as `*.e2e.ts`; API
 contract tests go under `src/e2e/api-contracts/`. `bun run test:e2e:changed` runs
 only the API and Chromium projects. Install browsers once with
-`bunx playwright install chromium firefox`.
+`bun run test:e2e:install`. On NixOS the config builds the libraries the
+browsers need with Nix and caches their path, so no export is needed; WebKit is
+skipped there.
 
 ## Production
 

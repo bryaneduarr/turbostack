@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 import { defineConfig, devices } from "@playwright/test";
+import { loadNixosBrowserLibraries } from "@/e2e/config/browsers/load-nixos-browser-libraries.config";
 import { loadDatabaseEnvironment } from "@/e2e/config/environment/load-database-environment.config";
 import {
   E2E_API_PORT,
@@ -9,6 +10,7 @@ import {
 } from "@/e2e/config/servers/e2e-servers.constant";
 
 loadDatabaseEnvironment();
+loadNixosBrowserLibraries();
 
 const apiContractTests = /api-contracts\/.*\.e2e\.ts$/;
 
