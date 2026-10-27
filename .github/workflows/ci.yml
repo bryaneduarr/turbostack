@@ -42,8 +42,8 @@ jobs:
 
       - name: Check migrations match the tables
         run: |
-          bun run --cwd apps/server drizzle:check
-          bun run --cwd apps/server drizzle:generate
+          bun run --cwd packages/database drizzle:check
+          bun run --cwd packages/database drizzle:generate
           git diff --exit-code
           test -z "$(git status --porcelain)"
 
