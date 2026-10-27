@@ -1,0 +1,8 @@
+language js
+
+or { `FormEvent`, `FormEventHandler`, `React.FormEvent`, `React.FormEventHandler` } as $type where {
+  register_diagnostic(
+    span = $type,
+    message = "FormEvent does not match a real DOM event; type onSubmit with SubmitEvent<HTMLFormElement> and onChange with ChangeEvent<Element>."
+  )
+}

@@ -1,0 +1,16 @@
+language js
+
+or {
+  `useMemo($...)`,
+  `useCallback($...)`,
+  `memo($...)`,
+  `React.useMemo($...)`,
+  `React.useCallback($...)`,
+  `React.memo($...)`,
+  `"use memo"`
+} as $call where {
+  register_diagnostic(
+    span = $call,
+    message = "React Compiler handles memoization; add manual memoization only with a demonstrated reason in a biome-ignore comment."
+  )
+}

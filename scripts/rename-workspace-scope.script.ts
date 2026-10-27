@@ -35,9 +35,10 @@ function listTrackedFiles(): string[] {
       (path) =>
         path !== "" && path !== "scripts/rename-workspace-scope.script.ts",
     )
-    .filter(
-      (path) => lstatSync(path, { throwIfNoEntry: false })?.isFile() === true,
-    );
+    .filter((path) => {
+      const stats = lstatSync(path, { throwIfNoEntry: false });
+      return stats !== undefined && stats.isFile();
+    });
 }
 
 if (!npmScopePattern.test(NEW_SCOPE)) {

@@ -93,9 +93,24 @@ are extensionless.
 }
 ```
 
+### Rule Plugins
+
+`plugins/` holds GritQL rules for project conventions that Biome has no built-in
+rule for, such as hardcoded HTTP statuses, loose Zod schemas, manual
+memoization, and unvalidated environment access. Each diagnostic names the fix.
+
+Biome resolves plugin paths from the folder of the configuration that lists
+them, so the plugins are declared once in the root `biome.json` with root-relative
+paths. To add one, create `plugins/<area>/<rule>.grit`, list it there, and prove
+it fires on a throwaway file before relying on it. Use non-capturing `(?:...)`
+groups in GritQL regular expressions; capturing groups bind variables and make
+the plugin error.
+
 ## Usage
 
-The root `biome.json` in the workspace root extends from this configuration. All packages automatically inherit these settings.
+The root `biome.json` extends this configuration and declares the rule plugins.
+Each package's `biome.json` uses `"extends": "//"` to inherit the root
+configuration, plugins included.
 
 ### Running Biome
 

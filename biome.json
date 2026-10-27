@@ -1,4 +1,15 @@
 {
+  "root": true,
   "extends": ["@workspace/biome/biome"],
-  "root": true
+  "plugins": [
+    "./config/biome/plugins/api/no-direct-api-requests.grit",
+    "./config/biome/plugins/api/no-unregistered-server-routes.grit",
+    "./config/biome/plugins/environment/no-unvalidated-environment.grit",
+    "./config/biome/plugins/http-status/no-hardcoded-http-status.grit",
+    "./config/biome/plugins/react/no-form-event-types.grit",
+    "./config/biome/plugins/react/no-manual-memoization.grit",
+    "./config/biome/plugins/types/no-double-type-assertion.grit",
+    "./config/biome/plugins/zod/no-envelope-schema-validation.grit",
+    "./config/biome/plugins/zod/no-loose-zod-schemas.grit"
+  ]
 }

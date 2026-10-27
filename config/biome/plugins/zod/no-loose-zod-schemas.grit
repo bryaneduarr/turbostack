@@ -1,0 +1,19 @@
+language js
+
+or {
+  `z.any()` as $call where {
+    register_diagnostic(
+      span = $call,
+      message = "Do not use z.any(); define the concrete schema."
+    )
+  },
+  or { `z.unknown()`, `z.looseObject($_)`, `$_.passthrough()`, `$_.loose()` } as $call where {
+    $filename <: r".*/packages/schemas/src/.*",
+    $filename <: not r".*/packages/schemas/src/server/responses/(?:envelope/response-envelope|success/success-response)\.schema\.ts$",
+    $filename <: not r".*\.test\.ts$",
+    register_diagnostic(
+      span = $call,
+      message = "Contract schemas need a concrete, strict shape; do not accept unknown or undeclared fields."
+    )
+  }
+}

@@ -1,9 +1,5 @@
-type PostcssConfig = {
-  plugins: Record<string, Record<string, never>>;
-};
-
 const config = {
   plugins: { "@tailwindcss/postcss": {} },
-} satisfies PostcssConfig;
+} satisfies { plugins: Record<string, Record<string, never>> };
 
 export default config;
