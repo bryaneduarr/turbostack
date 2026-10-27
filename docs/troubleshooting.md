@@ -2,7 +2,7 @@
 
 ## A port is already in use
 
-**Symptom:** a start fails or a page does not load on 3000, 3001, or the database port. **Cause:** another process owns the port. **Fix:** find the holder, then stop it with `kill <pid>`, or change `DB_PORT` in `apps/server/.env` when another PostgreSQL holds the database port.
+**Symptom:** a start fails or a page does not load on 3000, 3001, or the database port. **Cause:** another process owns the port. **Fix:** find the holder, then stop it with `kill <pid>`. When another PostgreSQL, such as a system service, holds the database port, set `DB_PORT` in `apps/server/.env` to the free port that `bun run doctor` suggests instead.
 
 ```sh
 lsof -nP -iTCP:3000 -sTCP:LISTEN

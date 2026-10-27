@@ -4,7 +4,7 @@ import type { PortClaim } from "@workspace/setup/types/doctor/preflight/port-cla
 
 const databaseClaim: PortClaim = {
   port: 5432,
-  service: "PostgreSQL",
+  service: "database",
   composeService: "postgres",
 };
 

@@ -26,6 +26,15 @@ function readPinnedBunVersion(manifest: unknown): string {
   return packageManager.slice(bunPinPrefix.length);
 }
 
+// Patch releases keep the lockfile and runtime behavior, so they pass; a
+// different minor or major release does not.
+export function isSupportedBunVersion(
+  installedVersion: string,
+  pinnedVersion: string,
+): boolean {
+  return Bun.semver.satisfies(installedVersion, `~${pinnedVersion}`);
+}
+
 async function commandSucceeds(command: string[]): Promise<boolean> {
   try {
     const child = Bun.spawn(command, { stdout: "ignore", stderr: "ignore" });
@@ -48,10 +57,10 @@ export async function checkToolchain(): Promise<readonly DoctorFailure[]> {
   ]);
   const failures: DoctorFailure[] = [];
 
-  if (Bun.version !== pinnedBunVersion) {
+  if (!isSupportedBunVersion(Bun.version, pinnedBunVersion)) {
     failures.push({
-      summary: `Bun ${Bun.version} is not the pinned version`,
-      reason: `package.json pins bun@${pinnedBunVersion}`,
+      summary: `Bun ${Bun.version} does not match the pinned version`,
+      reason: `package.json pins bun@${pinnedBunVersion}, and only its patch releases are accepted`,
       fix: isDevcontainer()
         ? `set the oven/bun image in .devcontainer/Dockerfile to ${pinnedBunVersion}, then rebuild the devcontainer`
         : `curl -fsSL https://bun.sh/install | bash -s "bun-v${pinnedBunVersion}"`,

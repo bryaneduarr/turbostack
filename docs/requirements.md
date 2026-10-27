@@ -5,7 +5,7 @@ Development needs only three tools on the machine: git, Bun, and Docker. Postgre
 ## Needed for development
 
 - **git**: clones the repository.
-- **Bun 1.4.0 or newer**: installs packages and runs every project command. Install it from [bun.sh](https://bun.sh).
+- **Bun 1.4.0 or a later 1.4 patch release**: installs packages and runs every project command. Install it from [bun.sh](https://bun.sh).
 - **Docker with Compose v2**: runs the database. Install it from [docs.docker.com](https://docs.docker.com/get-docker/).
 
 ## Optional or other cases
