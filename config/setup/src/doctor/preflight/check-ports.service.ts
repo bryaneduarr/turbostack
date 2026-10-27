@@ -86,7 +86,7 @@ async function databasePortClaims(): Promise<readonly PortClaim[]> {
     values.DB_PORT ?? "5432",
   );
   return parsed.success
-    ? [{ port: parsed.data, service: "PostgreSQL", composeService: "postgres" }]
+    ? [{ port: parsed.data, service: "database", composeService: "postgres" }]
     : [];
 }
 
@@ -98,26 +98,50 @@ function isPortFree(port: number): Promise<boolean> {
   });
 }
 
+// The first port above the wanted one that nothing listens on.
+async function nextFreePort(port: number): Promise<number | undefined> {
+  for (let candidate = port + 1; candidate <= port + 100; candidate += 1) {
+    if (await isPortFree(candidate)) return candidate;
+  }
+  return undefined;
+}
+
+// Another PostgreSQL on the host, such as a system service, is usually not
+// this project's to stop, so the database fix offers a free DB_PORT first.
+async function databasePortFix(port: number, stopFix: string): Promise<string> {
+  const freePort = await nextFreePort(port);
+  return freePort === undefined
+    ? stopFix
+    : `Set DB_PORT=${freePort} in apps/server/.env, or ${stopFix}`;
+}
+
 async function busyPortFailure({
   port,
   service,
-}: {
-  readonly port: number;
-  readonly service: string;
-}): Promise<DoctorFailure> {
+  composeService,
+}: PortClaim): Promise<DoctorFailure> {
   const inspect = `lsof -nP -iTCP:${port} -sTCP:LISTEN`;
   const holder = await listeningProcess(port);
+  const stopFix =
+    holder === undefined
+      ? `stop the process listening on port ${port}.`
+      : `stop it with kill ${holder.pid}.`;
+  const capitalizedStopFix = `${stopFix.charAt(0).toUpperCase()}${stopFix.slice(1)}`;
+  const fix =
+    composeService === "postgres"
+      ? await databasePortFix(port, stopFix)
+      : capitalizedStopFix;
   if (holder === undefined) {
     return {
       summary: `Port ${port} is busy`,
       reason: `The ${service} needs port ${port}. Inspect it with ${inspect} once lsof is installed.`,
-      fix: `Stop the process listening on port ${port}.`,
+      fix,
     };
   }
   return {
     summary: `Port ${port} is busy, held by ${holder.name} (pid ${holder.pid})`,
     reason: `The ${service} needs port ${port}. Inspect it with ${inspect}.`,
-    fix: `kill ${holder.pid}`,
+    fix,
   };
 }
 

@@ -1,6 +1,6 @@
 # Capability map
 
-Evidence: 2026-10-26 UTC; `31c5212` plus steps 1 to 4 of the [template port](../plans/template-port/plan.md) (instructions, rules, tokens, database, devcontainer, setup, UI, support codes, Playwright). Paths source-inspected; no runtime checks for this map.
+Evidence: 2026-10-26 UTC; `31c5212` plus all 5 steps of the [template port](../plans/template-port/plan.md). Paths source-inspected; no runtime checks for this map.
 
 Planner use: reuse what Features lists, build what Known gaps names, then open the linked topic notes. Owners are the paths to recheck when a line looks stale.
 
@@ -19,6 +19,7 @@ Planner use: reuse what Features lists, build what Known gaps names, then open t
 - **Browser form validation**: `useClientFormValidation` and `useActionToast` in `packages/ui/src/hooks/`.
 - **Client security headers**: `apps/client/src/proxy.ts`, `packages/utils/src/http/security-headers/`.
 - **End-to-end tests**: Playwright on ports 3100-3101. Note: [e2e tests](development/e2e-tests.md).
+- **User docs**: `docs/` (get started, requirements, run, tests, production, devcontainer, troubleshooting) and the root `README.md`.
 - **Detached dev stack**: `bun run dev:start`, `dev:status`, `dev:stop`. Owner: `scripts/dev-stack.script.ts`.
 
 ## Feature slice
@@ -35,5 +36,6 @@ User profiles is the example. Add files in each layer, reading only the named ex
 
 ## Known gaps
 
-- Step 5 of the [template port](../plans/template-port/plan.md) still adds `docs/`, the README rewrite, and the removal of `.github/`.
+- No hosted CI by choice; `bun run verify` is the gate before pushing.
+- WebKit is not run on NixOS hosts.
 - Product domain is not chosen: [current scope](product/current-scope.md).

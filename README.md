@@ -15,124 +15,72 @@ Build modern applications with **Next.js** on the frontend and **Elysia** on the
 | [Turborepo](https://turbo.build/repo)         |
 | [Next.js](https://nextjs.org/)                |
 | [React](https://react.dev/)                   |
-| [Elysia](https://elysiajs.com/)                  |
+| [Elysia](https://elysiajs.com/)               |
+| [PostgreSQL](https://www.postgresql.org/) and [Drizzle](https://orm.drizzle.team/) |
 | [Tailwind CSS](https://tailwindcss.com/)      |
 | [TypeScript](https://www.typescriptlang.org/) |
 | [Biome](https://biomejs.dev/)                 |
+| [Playwright](https://playwright.dev/)         |
 
 ## Project Structure
 
 This repo is organized into three main sections:
 
 1. **[Configuration](./config/)**: Centralized config for project dependencies:
-   - [Biome](./config/biome/) - Shared linting and formatting rules
+   - [Biome](./config/biome/) - Shared linting and formatting rules, plus GritQL rule plugins
    - [TypeScript](./config/typescript/) - Shared TypeScript configuration
-   - [Tailwind CSS](./config/tailwind/) - Shared styling and theme
+   - [Tailwind CSS](./config/tailwind/) - Shared styling, design tokens, and motion utilities
+   - [Rules](./config/rules/) - The project structure checker behind `bun run check:rules`
+   - [Setup](./config/setup/) - Env files, the `doctor` checks, and the `bun run dev` entry point
 
 2. **[Packages](./packages/)**: Shared code and UI components:
    - [@workspace/ui](./packages/ui/) - Our own React components, with no UI library dependencies
-   - [@workspace/schemas](./packages/schemas/) - Zod validation and schema-derived contracts
+   - [@workspace/schemas](./packages/schemas/) - Zod validation, schema-derived contracts, and support error codes
    - [@workspace/utils](./packages/utils/) - Runtime-neutral utilities and canonical HTTP status constants
    - [@workspace/api-client](./packages/api-client/) - Typed API requests built from shared route definitions
+   - [@workspace/database](./packages/database/) - Drizzle tables, migrations, and Drizzle Kit commands
 
 3. **[Applications](./apps/)**: Main apps:
    - **[web-client](./apps/client/)**: Next.js 16 + React 19 with Turbopack
    - **[api-server](./apps/server/)**: Elysia + TypeScript backend running on Bun
-     - Fast, modern API server
      - Auto-generated OpenAPI docs with Scalar
      - Type-safe, Zod-validated environment config
+     - Least-privilege database roles
 
-## Setup Instructions
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) v22.9 or newer (used by the Next.js client)
-- [Bun](https://bun.sh/) v1.4.0 or newer; CI uses the exact version in the root `packageManager` field
-- [Docker](https://docs.docker.com/get-docker/) for the local PostgreSQL database and production images
-
-#### Install Bun
-
-- **Windows** (via PowerShell):
-
-  ```powershell
-  powershell -c "irm bun.sh/install.ps1 | iex"
-  ```
-
-- **Linux/macOS**:
-
-  ```sh
-  curl -fsSL https://bun.sh/install | bash
-  ```
-
-- **Using npm** (alternative):
-
-  ```sh
-  npm install -g bun
-  ```
-
-#### Clone and Install
-
-1. Clone the repository:
-
-   ```sh
-   git clone https://github.com/bryaneduarr/turbostack.git
-   cd turbostack
-   ```
-
-2. Install dependencies:
-
-   ```sh
-   bun install
-   ```
-
-#### Environment Setup
-
-1. Copy the example env files. Docker Compose reads the server's `DB_*` values, so
-   the local database is created with the credentials and port the server uses.
-   The client's `SERVER_URL` points at the API server:
-
-   ```sh
-   cp apps/server/.env.example apps/server/.env
-   cp apps/client/.env.example apps/client/.env
-   ```
-
-#### First-Time Setup
-
-Installs dependencies from the lockfile, then applies the committed migrations;
-Turborepo starts PostgreSQL in Docker first:
+## Quick Start
 
 ```sh
-bun run setup
-```
-
-If port 5432 is already used by another PostgreSQL, change `DB_PORT` in
-`apps/server/.env` (for example to `55432`); the container and the server both use it.
-
-#### Start Development
-
-```sh
+git clone <repository>
+cd <repository>
 bun run dev
 ```
 
-Turborepo starts PostgreSQL first, then the API server and the web client with hot
-reloading, and shows every task's logs.
+`bun run dev` installs dependencies, writes the env files, starts PostgreSQL in
+Docker, creates the database roles, applies the migrations, seeds example
+profiles, and starts both apps with hot reloading. The web client runs at
+http://localhost:3000 and the API server at http://localhost:3001.
 
-#### Run the Production Build Locally
-
-```sh
-bun run start
-```
-
-Builds every app, starts PostgreSQL, then runs the bundled API server with
-`NODE_ENV=production` and the Next.js production server.
+The [documentation index](./docs/README.md) covers the details, including the
+[dev container](./docs/devcontainer.md) for machines without Bun.
 
 ---
 
-## Quality Checks and CI
+## Quality Checks
 
-`bun run check` runs the same checks as CI: Biome (lint, formatting, and import
-order), Turborepo boundaries, type checks, tests, and builds. CI also checks that
-committed migrations match the Drizzle tables.
+`bun run check` runs Biome (lint, formatting, import order, and the project's
+GritQL rule plugins), Turborepo boundaries, the project structure rules, the
+Compose file check, type checks, tests, and builds.
+
+`bun run verify` is the single local gate before pushing. It runs every check in
+order (lockfile, Biome, boundaries, structure rules, migrations against tables,
+type checks, unit tests, builds, and the Playwright suite on the API and
+Chromium), continues past failures, and ends with a pass/fail summary; it exits
+non-zero if any check failed. There is no hosted CI, so run it locally.
+
+The rules in `.agents/rules/` are enforced in two layers. Everything mechanical
+fails the build: `config/biome/plugins/` holds the code-pattern rules, and
+`config/rules` (`bun run check:rules`) checks naming, placement, file size,
+contract documentation, route definitions, comments, and dependencies.
 
 ## End-to-End Type Safety
 
@@ -154,8 +102,9 @@ const result = await sendApiRequest({
 });
 ```
 
-A wrong path, method, input, or response type fails `check-types`. The home page
-of the web client calls `/health/ready` this way from a Server Component.
+A wrong path, method, input, or response type fails `check-types`. Every failed
+response carries a request ID, and the client maps it to a support code such as
+`API-002`, which alerts, toasts, and error pages show beside the ID.
 
 ## Reference Feature: User Profiles
 
@@ -164,18 +113,25 @@ their structure when adding a feature:
 
 | Layer | Where | What it shows |
 |---|---|---|
-| Database | `apps/server/src/db/tables/users/profile/` and migration `0001` | Required columns, an index for listing, a generated migration |
-| Contracts | `packages/schemas/src/server/routes/users/profiles/` | Shared schemas and one route definition per operation, using `params`, `query`, and `body` |
-| Server | `apps/server/src/routes/users/profiles/` and `src/services/users/profiles/` | Contracts, handlers, database services, `NOT_FOUND` failures, and a database-backed workflow test |
-| Client | `apps/client/src/app/profiles/` and `src/actions/users/profiles/` | Server Components that read through the api-client, and Server Actions that validate form data before calling the API |
-| UI | `packages/ui/src/components/text-field/` | A labeled input that shows validation messages |
+| Database | `packages/database/src/tables/users/profile/` and its migrations | Required columns, a listing index, and a grant migration for the runtime role |
+| Contracts | `packages/schemas/src/server/routes/users/profiles/` | Shared schemas and one route definition per operation |
+| Server | `apps/server/src/routes/users/profiles/` and `src/services/users/profiles/` | Handlers, database services, `NOT_FOUND` failures, and a database-backed workflow test |
+| Client | `apps/client/src/app/profiles/` and `src/actions/users/profiles/` | Server Components that read through the api-client, and Server Actions with browser and server validation |
+| End to end | `apps/client/src/e2e/users/profiles/` and `src/e2e/api-contracts/` | A browser flow and an API contract test |
 
 The API serves `GET` and `POST /api/v1/users/profiles` (list with `limit` and
 `offset`, and create) and `GET` and `PUT /api/v1/users/profiles/:profileId` (read
-and replace names). The web client shows them at `/profiles`. Its forms work
-without JavaScript, keep what was typed when validation fails, and refresh only
-the affected pages after a change. Delete or rename the feature when your project
-has its own domain.
+and replace names). The web client shows them at `/profiles`. Delete or rename the
+feature when your project has its own domain.
+
+## Database
+
+Each process connects as its own role: migrations as `app_migrator`, which owns
+the schema; the API as `app_runtime`, which holds only the grants that migrations
+give it; and manual inspection as the read-only `app_cli`. A grant test fails
+until every table lists its expected privileges for every role. See the
+[database package](./packages/database/README.md) and the
+[server database notes](./apps/server/src/db/README.md).
 
 ## Tests
 
@@ -184,9 +140,25 @@ Tests use Bun's built-in runner (`bun:test`) and live next to the code as
 `app.handle(new Request(...))`, so no port is opened. Write tests for workflows
 and logic that need verification, not for every function.
 
-The server's `test` task starts PostgreSQL with Docker and applies migrations
-first, so `bun run test` and CI run database-backed tests the same way. Tests
-remove the rows they create.
+The server's `test` task recreates a separate `<DB_NAME>_test` database with the
+same roles and migrations first, so tests never touch development data.
+
+### End-to-End Tests
+
+Playwright tests in `apps/client/src/e2e/` drive production builds of both apps
+in real browsers against the test database. They use ports 3100 and 3101, so they
+run beside `bun run dev`.
+
+```sh
+bun run test:e2e:install                   # once: Chromium and Firefox
+bun run test:e2e                           # build, migrate, test
+bun run --cwd apps/client test:e2e:report  # open the last report
+```
+
+Pass Playwright options after `--`, such as `bun run test:e2e -- --project=chromium`.
+Failed tests keep a trace, video, and screenshot under `apps/client/test-results/`.
+On NixOS the config builds the libraries the browsers need with Nix, and skips
+WebKit, whose downloaded build needs older system libraries.
 
 ### Package Boundaries
 
@@ -200,18 +172,12 @@ package's `turbo.json`):
 | `package` | Shared packages may not depend on apps |
 | `runtime-neutral` | May depend only on other runtime-neutral packages and configs |
 | `server` | May not depend on browser packages such as `@workspace/ui` |
-| `config` | May depend only on other config packages |
-
-[`.github/workflows/ci.yml`](./.github/workflows/ci.yml) runs on pull requests and
-pushes to `main`. Biome checks the whole repository; type checks, tests, and builds
-run only for packages affected by the change (`turbo --affected`), including
-packages that depend on a changed workspace package. Set the optional `TURBO_TOKEN`
-secret and `TURBO_TEAM` variable to share Turborepo's remote cache with CI.
+| `config` | May depend only on other config and runtime-neutral packages |
 
 ## Production and Deployment
 
 Each deployable app owns a `Dockerfile`, built from the repository root. The API
-server image contains one bundled file, so no `node_modules` ship. The web client
+server image contains bundled files, so no `node_modules` ship. The web client
 image contains the Next.js standalone server on Node.js and reads `SERVER_URL` at
 runtime, so the same image runs in every environment:
 
@@ -221,27 +187,22 @@ docker build -f apps/client/Dockerfile -t web-client .
 ```
 
 To run the production containers locally (PostgreSQL, migrations, the API server,
-then the web client on port 3000), using the settings in `apps/server/.env`:
+then the web client on port 3000), using the settings in `apps/server/.env` and
+`apps/client/.env`, see [run production locally](./docs/run-production-locally.md):
 
 ```sh
 bun run start:docker
 ```
 
-Images are named after their package: `ghcr.io/<owner>/<repository>/api-server`.
-
-[`.github/workflows/release-images.yml`](./.github/workflows/release-images.yml)
-runs after CI passes on `main`. It builds every app that has a `Dockerfile` and
-publishes it to GitHub Container Registry tagged `sha-<commit>` and `latest`.
-Building every app means a failed release never leaves an app without a later
-change; Docker layer caching keeps unchanged apps fast.
-
 When adding a deploy job for the chosen hosting platform, deploy in this order:
 
-1. Run migrations with the new server image:
-   `bun db/migrate/apply-migrations.script.js`. Concurrent runs wait on a
-   PostgreSQL advisory lock, and `DB_MIGRATION_LOCK_TIMEOUT_SECONDS` stops a
-   migration that cannot get a table lock from blocking traffic.
-2. Deploy the API server, then the web client, using the same `sha-<commit>` tag.
+1. Once per database, create the least-privilege roles with the provider's admin
+   user: `bun db/provision/provision-database.script.js`. Then run migrations
+   with the new server image: `bun db/migrate/apply-migrations.script.js`.
+   Concurrent runs wait on a PostgreSQL advisory lock, and
+   `DB_MIGRATION_LOCK_TIMEOUT_SECONDS` stops a migration that cannot get a table
+   lock from blocking traffic.
+2. Deploy the API server, then the web client, using the same image tag.
 3. Point readiness probes at `GET /health/ready` and liveness probes at
    `GET /health/live`.
 
@@ -252,10 +213,9 @@ later release), because old and new server versions run together during a deploy
 
 ## Dependency Updates
 
-The committed `bun.lock` is the source of truth; CI installs with
-`--frozen-lockfile`. [Dependabot](./.github/dependabot.yml) opens weekly pull
-requests: grouped minor and patch updates, separate major updates, and GitHub
-Actions and Docker Compose image updates.
+The committed `bun.lock` is the source of truth; `bun run verify` checks it with
+`--frozen-lockfile`. List and apply updates with `bun run outdated` and
+`bun run update`.
 
 Bun and Turbo are pinned in more than one place: the root `packageManager` field,
 the root `turbo` version, and every app `Dockerfile`. Update them together with:
@@ -265,18 +225,18 @@ bun run update:toolchain
 ```
 
 It reads the latest versions from npm, updates those files and `bun.lock`, and
-reminds you to run `bun upgrade` for your local Bun. Dependabot ignores `turbo`
-so the two never disagree.
+reminds you to run `bun upgrade` for your local Bun.
 
 ---
 
 ## UI Components
 
-`@workspace/ui` contains our own components, built on native elements and Tailwind
-classes with no UI library dependencies. Each component lives in
-`packages/ui/src/components/<component>/<component>.component.tsx`, and its props
-interface in `packages/ui/src/types/components/<component>/`. Props such as
-`variant`, `size`, and `type` are required, so every use states its intent:
+`@workspace/ui` contains our own components, built on native elements and the
+shared design tokens with no UI library dependencies: typography, links, buttons,
+fields, layout, feedback, toasts, data display, navigation, dialogs, and motion.
+Base components are the only code that applies visual classes; everything else
+composes them. Props such as `variant`, `size`, and `type` are required, so every
+use states its intent:
 
 ```tsx
 import { Button } from "@workspace/ui/components/button/button.component";
@@ -286,131 +246,51 @@ import { Button } from "@workspace/ui/components/button/button.component";
 </Button>;
 ```
 
-Variants: `primary`, `secondary`, `outline`, `ghost`, `destructive`. Sizes:
-`small`, `medium`, `large`.
+See the [UI package](./packages/ui/README.md) and the
+[UI and styling rules](./.agents/rules/ui-and-styling.md).
 
 ---
 
 ## Tailwind CSS
 
-[Tailwind CSS v4](https://tailwindcss.com/docs/v4-beta) is configured with CSS variables for theming. Configuration is centralized in [config/tailwind/](./config/tailwind/).
+[Tailwind CSS v4](https://tailwindcss.com/docs) is configured with CSS variables
+for theming. Configuration is centralized in [config/tailwind/](./config/tailwind/).
 
 The global styles in [globals.css](./config/tailwind/globals.css) provide:
 
-- Light and dark mode color schemes
-- Color, border, ring, and radius tokens used by `@workspace/ui`
+- Neutral light and dark color schemes that follow the system setting
+- Color, border, ring, radius, shadow, and motion tokens used by `@workspace/ui`
+- Lucide icons through Iconify utility classes
 
 ---
 
 ## Available Scripts
 
-All scripts are run from the project root using [Bun](https://bun.sh/) and [Turborepo](https://turbo.build/repo/docs). These commands work across all apps and packages:
+Run every script from the project root with [Bun](https://bun.sh/):
 
-- **bun install**: Install all dependencies for the monorepo.
-
-  ```sh
-  bun install
-  ```
-
-- **bun run build**: Build all apps and packages (Next.js client, Elysia server, shared packages).
-
-  ```sh
-  bun run build
-  ```
-
-- **bun run clean**: Remove build files and node_modules for a fresh start.
-
-  ```sh
-  bun run clean
-  ```
-
-- **bun run check-types**: Type-check all TypeScript codebases.
-
-  ```sh
-  bun run check-types
-  ```
-
-- **bun run dev**: Start PostgreSQL, then every app with hot reloading.
-
-  ```sh
-  bun run dev
-  ```
-
-- **bun run check**: Run Biome CI checks, type checks, tests, and builds, as CI does.
-
-  ```sh
-  bun run check
-  ```
-
-- **bun run test**: Run Bun tests in every package that defines them.
-
-  ```sh
-  bun run test
-  ```
-
-- **bun run db:up** / **bun run db:down**: Start or stop the local PostgreSQL container.
-
-  ```sh
-  bun run db:up
-  ```
-
-- **bun run format**: Format code, apply safe lint fixes, and organize imports using Biome.
-
-  ```sh
-  bun run format
-  ```
-
-- **bun run lint**: Lint all code using Biome.
-
-  ```sh
-  bun run lint
-  ```
-
-- **bun run outdated**: List outdated dependencies in every workspace.
-
-  ```sh
-  bun run outdated
-  ```
-
-- **bun run update**: Choose dependency updates interactively in every workspace; the lockfile is kept.
-
-  ```sh
-  bun run update
-  ```
-
-- **bun run update:toolchain**: Pin the latest Bun and Turbo in `package.json`, every app `Dockerfile`, and `bun.lock`.
-
-  ```sh
-  bun run update:toolchain
-  ```
-
-- **bun run setup**: Install from the lockfile, start PostgreSQL, and apply migrations (first-time setup).
-
-  ```sh
-  bun run setup
-  ```
-
-- **bun run start**: Build every app, start PostgreSQL, and run the production servers.
-
-  ```sh
-  bun run start
-  ```
-
-- **bun run start:docker**: Build and run the production API server containers with PostgreSQL and migrations.
-
-  ```sh
-  bun run start:docker
-  ```
-
-- **bun run rename-scope**: Rename the internal package scope in every tracked file, reinstall, and
-  reformat. Set `NEW_SCOPE` in
-  [`scripts/rename-workspace-scope.script.ts`](./scripts/rename-workspace-scope.script.ts) first.
-
-  ```sh
-  bun run rename-scope
-  ```
-
----
+| Script | What it does |
+|---|---|
+| `bun run dev` | Set up everything a fresh clone needs, then start both apps with hot reloading |
+| `bun run dev:start` / `dev:status` / `dev:stop` | Run the dev stack in the background, check it, or stop it |
+| `bun run setup` | Install from the lockfile and write the env files |
+| `bun run doctor` | Check the toolchain, workspaces, env files, and ports |
+| `bun run db:up` / `db:down` | Start or stop the local PostgreSQL container |
+| `bun run db:provision` | Create the database roles with the admin credentials |
+| `bun run drizzle:generate` / `drizzle:migrate` | Generate a migration from the tables, or apply migrations |
+| `bun run seed:dev` | Add example profiles to an empty development database |
+| `bun run check` | Biome, boundaries, structure rules, Compose file, types, tests, and builds |
+| `bun run check:rules` | Check naming, placement, size, documentation, comments, and dependencies |
+| `bun run verify` | Every check, including migration drift and end-to-end tests, with a summary |
+| `bun run test` | Bun tests in every package that defines them |
+| `bun run test:e2e` | Build both apps and run the Playwright suite |
+| `bun run test:e2e:changed` | Playwright on the API and Chromium for specs changed since `origin/main` |
+| `bun run build` / `start` | Build every app, or run the built apps |
+| `bun run start:docker` | Build and run the production containers |
+| `bun run format` / `lint` | Format and fix, or lint, with Biome |
+| `bun run outdated` / `update` | List or interactively apply dependency updates |
+| `bun run update:toolchain` | Pin the latest Bun and Turbo everywhere they appear |
+| `bun run rename-scope` | Rename the `@workspace` package scope; set `NEW_SCOPE` in [the script](./scripts/rename-workspace-scope.script.ts) first |
+| `bun run clean` | Remove build output and `node_modules` |
 
 ## License
 

@@ -15,7 +15,7 @@ bun run check:rules
 
 It reads every tracked and new, unignored file, prints each violation as
 `path:line  [rule-id]  message`, and exits non-zero when any remain. It also runs
-in `bun run check`, `bun run verify`, and CI.
+in `bun run check` and `bun run verify`.
 
 ## Structure
 
