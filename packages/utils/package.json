@@ -10,6 +10,8 @@
     "lint": "biome lint ."
   },
   "exports": {
-    "./http/*": "./src/http/*.ts"
+    "./http/*": "./src/http/*.ts",
+    "./time/*": "./src/time/*.ts",
+    "./types/*": "./src/types/*.ts"
   }
 }

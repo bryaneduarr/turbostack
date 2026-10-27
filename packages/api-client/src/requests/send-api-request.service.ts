@@ -48,10 +48,23 @@ export async function sendApiRequest<Route extends RouteDefinition>({
   try {
     failureBody = await response.json();
   } catch {
-    return { kind: "unexpected-response", status: response.status };
+    return {
+      kind: "unexpected-response",
+      status: response.status,
+      requestId: readRequestId(response),
+    };
   }
   const failure = errorResponseSchema.safeParse(failureBody);
   return failure.success
     ? { kind: "failure", response: failure.data }
-    : { kind: "unexpected-response", status: response.status };
+    : {
+        kind: "unexpected-response",
+        status: response.status,
+        requestId: readRequestId(response),
+      };
+}
+
+function readRequestId(response: Response): string | null {
+  const requestId = z.uuid().safeParse(response.headers.get("x-request-id"));
+  return requestId.success ? requestId.data : null;
 }

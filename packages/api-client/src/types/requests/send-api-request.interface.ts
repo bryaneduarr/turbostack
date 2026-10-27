@@ -11,11 +11,11 @@ export interface SendApiRequestInput<Route extends RouteDefinition> {
   baseUrl: string;
   /** Supplies the shared route definition that fixes the method, path, inputs, and response schema. */
   route: Route;
-  /** Contains the path parameter values, or null when the route declares none. */
+  /** Contains the path parameter values the route declares. */
   params: RouteInput<Route["params"]>;
-  /** Contains the query-string values, or null when the route reads no query string. */
+  /** Contains the query-string values the route reads. */
   query: RouteInput<Route["query"]>;
-  /** Contains the JSON request body, or null when the route accepts no body. */
+  /** Contains the JSON request body the route accepts. */
   body: RouteInput<Route["body"]>;
   /** Supplies fetch options such as headers, caching, and abort signals; the route controls method and body. */
   init: Omit<RequestInit, "method" | "body">;
@@ -25,7 +25,13 @@ export interface SendApiRequestInput<Route extends RouteDefinition> {
 export type ApiResult<Route extends RouteDefinition> =
   | { kind: "success"; response: z.output<Route["response"]> }
   | { kind: "failure"; response: ErrorResponse }
-  | { kind: "unexpected-response"; status: number }
+  | {
+      kind: "unexpected-response";
+      /** Contains the HTTP status code of the answer that did not match the envelope. */
+      status: number;
+      /** Holds the request ID the unexpected answer showed. */
+      requestId: string | null;
+    }
   | { kind: "unreachable"; cause: unknown };
 
 /** Represents every unsuccessful API outcome, which does not depend on the route. */

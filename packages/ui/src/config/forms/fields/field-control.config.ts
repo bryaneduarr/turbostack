@@ -1,0 +1,2 @@
+export const fieldControlClassName =
+  "w-full min-w-0 rounded-lg border border-border bg-background px-3 text-sm shadow-xs transition-[border-color,box-shadow] duration-200 ease-smooth placeholder:text-muted-foreground hover:border-border-strong focus-visible:border-accent focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:animate-shake aria-invalid:border-destructive aria-invalid:focus-visible:ring-destructive/20";

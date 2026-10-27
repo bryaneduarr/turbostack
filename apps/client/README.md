@@ -24,8 +24,8 @@ Server Components, Server Actions, and Route Handlers call the API with
 `cache: "no-store"`, and a five-second timeout, so callers pass only the route
 definition and its `params`, `query`, and `body`. Pages that call it start with
 `await connection()` so Next.js renders them per request instead of at build
-time. [`describeApiFailure`](./src/services/api/results/describe-api-failure.service.ts)
-turns every unsuccessful result into a message for users.
+time. Pages show an unsuccessful result with `ApiFailureAlert` from `@workspace/ui`,
+which states the failure with its support code and request ID.
 
 ## Forms and Server Actions
 
@@ -33,12 +33,15 @@ The profile forms show the pattern for mutations:
 
 1. A Client Component form
    ([`user-profile-form.component.tsx`](./src/components/users/profiles/form/user-profile-form.component.tsx))
-   submits through `useActionState`, so it also works without JavaScript.
+   submits through `useActionState`, so it also works without JavaScript. With
+   JavaScript, `useClientFormValidation` runs the same parser in the browser and
+   cancels an invalid submission, and `useActionToast` reports progress.
 2. The Server Action
    ([`actions/users/profiles/`](./src/actions/users/profiles/)) validates the
    form data with the shared schema, validates bound arguments such as the
    profile ID, calls the API through `requestApi`, and returns a form state:
-   `editing`, `invalid` with field messages, `failed`, or `saved`.
+   `editing`, `invalid` with field messages, `failed` with a support reference,
+   or `saved`.
 3. After a change, the action calls `revalidatePath` only for the pages that show
    the changed profile.
 
@@ -50,6 +53,7 @@ clear the form.
 | Variable | Purpose |
 |---|---|
 | `SERVER_URL` | API server base URL, used by the client's server; never sent to the browser |
+| `NODE_ENV` | Runtime mode; `production` adds the HSTS header |
 
 [`client-env.config.ts`](./src/config/environment/client-env.config.ts) validates
 it with the shared `clientEnvSchema` at request time, and
@@ -58,6 +62,23 @@ starts, so a missing value fails fast. Because it is read at runtime rather than
 inlined at build time, one build or Docker image works in every environment. Call
 the API from Server Components, Server Actions, or Route Handlers; add a
 `NEXT_PUBLIC_` variable only if the browser must call the API directly.
+
+## Security headers
+
+[`proxy.ts`](./src/proxy.ts) adds the baseline headers from
+[`client-security-headers.config.ts`](./src/config/http/security-headers/client-security-headers.config.ts)
+to every page response.
+
+## End-to-end tests
+
+`bun run test:e2e` from the repository root builds both apps, recreates the test
+database, and runs [Playwright](./playwright.config.ts) against its own stack on
+ports 3100 (client) and 3101 (API). Tests live in `src/e2e/` as `*.e2e.ts`; API
+contract tests go under `src/e2e/api-contracts/`. `bun run test:e2e:changed` runs
+only the API and Chromium projects. Install browsers once with
+`bun run test:e2e:install`. On NixOS the config builds the libraries the
+browsers need with Nix and caches their path, so no export is needed; WebKit is
+skipped there.
 
 ## Production
 
@@ -82,3 +103,6 @@ docker run --rm -e SERVER_URL=http://host.docker.internal:3001 -p 3000:3000 web-
 - **bun run format** - Format code with Biome
 - **bun run lint** - Lint code with Biome
 - **bun run start** - Run the standalone production server
+- **bun run test** - Run the unit tests
+- **bun run test:e2e** - Run Playwright against built apps (use the root script)
+- **bun run test:e2e:report** - Open the last Playwright report

@@ -1,6 +1,6 @@
 ---
 name: pr
-description: "Write a short pull request body from a fixed What / How / Why template, then open the PR with labels, the author as assignee, and a review request. Use when writing, opening, or revising a pull request."
+description: "Write a short pull request body from a fixed What / How / Why template, then open the PR with labels, the author as assignee, and review requests to the other collaborators. Use when writing, opening, or revising a pull request."
 ---
 
 # Pull request
@@ -60,13 +60,15 @@ Rules:
      --assignee @me --label "<type>" --label "area: <area>"
    ```
 
-4. Request review from the author:
+4. Request review from the repository's other collaborators. GitHub refuses review requests to a PR's own author, so never request the author:
 
    ```bash
-   gh pr edit <number> --add-reviewer "$(gh api user --jq .login)"
+   me="$(gh api user --jq .login)"
+   gh api "repos/{owner}/{repo}/collaborators" --jq ".[].login | select(. != \"$me\")" |
+     while read -r reviewer; do gh pr edit <number> --add-reviewer "$reviewer"; done
    ```
 
-   GitHub refuses review requests to a PR's own author. When it does, keep the assignment, skip the request, and say so in the report.
-5. Report the PR URL, the labels, the assignee, and whether the review request was accepted.
+   When the author is the only collaborator, the assignment stands in for the review request; this is expected, not a blocker.
+5. Report the PR URL, the labels, the assignee, and who was asked to review, or that no other collaborator exists.
 
 Edit the body afterward only when later changes alter what it states.

@@ -1,10 +1,11 @@
 "use server";
 
+import { describeFailedMutation } from "@workspace/api-client/results/mutation-failure/describe-failed-mutation.service";
+import { describeRejectedPageFailure } from "@workspace/api-client/results/page-failure/describe-rejected-page-failure.service";
 import { updateUserProfileRoute } from "@workspace/schemas/server/routes/users/profiles/update/update-user-profile.route";
 import { userProfileParamsSchema } from "@workspace/schemas/server/routes/users/profiles/user-profile.schema";
 import { revalidatePath } from "next/cache";
 import { requestApi } from "@/services/api/requests/request-api.service";
-import { describeApiFailure } from "@/services/api/results/describe-api-failure.service";
 import { parseUserProfileForm } from "@/services/users/profiles/form/parse-user-profile-form.service";
 import type { UserProfileFormState } from "@/types/users/profiles/form/user-profile-form.interface";
 
@@ -18,7 +19,10 @@ export async function updateUserProfileAction(
   // Bound arguments still arrive from the browser, so the ID is validated too.
   const params = userProfileParamsSchema.safeParse({ profileId });
   if (!params.success) {
-    return { kind: "failed", values: form.values, message: "Unknown profile." };
+    return {
+      ...describeRejectedPageFailure("Unknown profile."),
+      values: form.values,
+    };
   }
 
   const result = await requestApi({
@@ -28,11 +32,7 @@ export async function updateUserProfileAction(
     body: form.names,
   });
   if (result.kind !== "success") {
-    return {
-      kind: "failed",
-      values: form.values,
-      message: describeApiFailure(result),
-    };
+    return { ...describeFailedMutation(result), values: form.values };
   }
 
   revalidatePath("/profiles");

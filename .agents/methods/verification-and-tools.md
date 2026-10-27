@@ -55,7 +55,7 @@ Notes:
 - After `dev:stop`, confirm ports 3000-3001 are free (`ss -ltn`).
 - A local PostgreSQL already listening on the database port blocks `db:up`; stop it first. See [setup pitfalls](../project-context/development/setup-pitfalls.md).
 - Point a browser at this stack. Use `agent-browser` only when the user names it; a plain request for "the browser" or Chrome means the `agent-chrome` tools. Follow the [use-browser skill](../skills/testing/use-browser/SKILL.md) and the Browser automation section below.
-- The e2e suite runs its own stack on ports 3100-3101. Run `bun run test:e2e` detached with output going to a log file, and poll that file with short checks instead of blocking on it. On NixOS, browsers that fail to launch with missing `libglib` or `libmozgtk` need their libraries on `NIX_LD_LIBRARY_PATH`.
+- The e2e suite runs its own stack on ports 3100-3101. Run `bun run test:e2e` detached with output going to a log file, and poll that file with short checks instead of blocking on it. Install browsers once with `bun run test:e2e:install`. On NixOS the Playwright config builds the browser libraries with Nix itself; a launch error naming a missing library means `nix` failed, so check its warning in the log.
 
 ## Investigating without changing code
 

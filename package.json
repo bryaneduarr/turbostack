@@ -33,6 +33,9 @@
     "start": "turbo start",
     "start:docker": "docker compose --env-file apps/server/.env --profile production up --build",
     "test": "turbo test",
+    "test:e2e": "turbo test:e2e --",
+    "test:e2e:changed": "turbo test:e2e -- --project=api --project=chromium --only-changed=origin/main",
+    "test:e2e:install": "bun run --cwd apps/client test:e2e:install",
     "update": "bun update --interactive --recursive",
     "update:toolchain": "bun scripts/update-toolchain.script.ts",
     "verify": "bun scripts/verify-workspace.script.ts"

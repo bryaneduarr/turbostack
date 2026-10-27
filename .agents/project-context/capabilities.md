@@ -1,6 +1,6 @@
 # Capability map
 
-Evidence: 2026-10-26 UTC; `31c5212` plus steps 1 to 3 of the [template port](../plans/template-port/plan.md) (instructions, rule enforcement, tokens, database, Docker, devcontainer, setup). Paths source-inspected; no runtime checks for this map.
+Evidence: 2026-10-26 UTC; `31c5212` plus steps 1 to 4 of the [template port](../plans/template-port/plan.md) (instructions, rules, tokens, database, devcontainer, setup, UI, support codes, Playwright). Paths source-inspected; no runtime checks for this map.
 
 Planner use: reuse what Features lists, build what Known gaps names, then open the linked topic notes. Owners are the paths to recheck when a line looks stale.
 
@@ -14,6 +14,11 @@ Planner use: reuse what Features lists, build what Known gaps names, then open t
 - **Design tokens**: neutral light and dark tokens, motion utilities, Lucide icons. Owner: `config/tailwind/globals.css`.
 - **Database**: `packages/database` with migrator, runtime, and read-only roles, grant tests, test database, `seed:dev`. Note: [database](packages/database.md).
 - **One-command setup and devcontainer**: `config/setup` (env files, `doctor`, `doctor:stack`), `.devcontainer/`, `scripts/dc`, `bun run verify`. Note: [devcontainer](development/devcontainer-workflow.md).
+- **Support error codes**: `SUPPORT_ERROR_CODE` in `packages/schemas/src/support/errors/codes/`, request IDs on every API error, `describeSupportReference` and `describeFailedMutation` in `packages/api-client/src/results/`, shown by `ErrorReference`, `FailureAlert`, `ApiFailureAlert`, and the error pages.
+- **Base UI components**: typography, links, buttons, fields, layout, feedback, toasts, data display, navigation (`AppBar`), dialog, motion in `packages/ui/src/components/`; shared class maps in `packages/ui/src/config/`.
+- **Browser form validation**: `useClientFormValidation` and `useActionToast` in `packages/ui/src/hooks/`.
+- **Client security headers**: `apps/client/src/proxy.ts`, `packages/utils/src/http/security-headers/`.
+- **End-to-end tests**: Playwright on ports 3100-3101. Note: [e2e tests](development/e2e-tests.md).
 - **Detached dev stack**: `bun run dev:start`, `dev:status`, `dev:stop`. Owner: `scripts/dev-stack.script.ts`.
 
 ## Feature slice
@@ -25,9 +30,10 @@ User profiles is the example. Add files in each layer, reading only the named ex
 - **Server contract, handler, service**: `apps/server/src/routes/users/profiles/create/`, `apps/server/src/services/users/profiles/create/create-user-profile.service.ts`.
 - **Router and tests**: `apps/server/src/routes/users/profiles/user-profiles.router.ts`, `user-profiles.test.ts` beside it.
 - **Client page, action, form parser**: `apps/client/src/app/profiles/page.tsx`, `apps/client/src/actions/users/profiles/create/`, `apps/client/src/services/users/profiles/form/parse-user-profile-form.service.ts`.
-- **UI**: base components in `packages/ui/src/components/` (only `Button` today).
+- **Form and toasts**: `apps/client/src/components/users/profiles/form/user-profile-form.component.tsx`, `describe-user-profile-toast.service.ts` beside the parser.
+- **E2E**: `apps/client/src/e2e/api-contracts/users/profiles/`, `apps/client/src/e2e/users/profiles/`.
 
 ## Known gaps
 
-- Rules and skills now describe tooling that steps 4 and 5 of the [template port](../plans/template-port/plan.md) still add: Playwright, `useClientFormValidation`, base components, support error codes, and `docs/`.
+- Step 5 of the [template port](../plans/template-port/plan.md) still adds `docs/`, the README rewrite, and the removal of `.github/`.
 - Product domain is not chosen: [current scope](product/current-scope.md).
