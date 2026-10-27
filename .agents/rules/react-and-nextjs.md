@@ -9,6 +9,7 @@ These rules are mandatory. Follow React 19 and Next.js 16 conventions.
 - Do not add `useMemo`, `useCallback`, or `React.memo` by default.
 - Manual memoization requires a demonstrated reason, such as an external API's stable-reference contract or a measured performance problem.
 - Do not mechanically introduce `"use memo"` directives.
+- Memoization advice from skills, tutorials, or other imported guidance does not override these conventions.
 
 ## Server and client boundaries
 
@@ -28,6 +29,7 @@ These rules are mandatory. Follow React 19 and Next.js 16 conventions.
 
 - Use Server Actions for mutations that naturally belong to UI forms or button-triggered actions.
 - Keep validation, authorization, business logic, and sensitive operations on the server.
+- Also validate form values in the browser before submitting, as required by `types-and-validation.md`; this never replaces server validation.
 - Validate user-controlled mutation values even when invoked through a Server Action.
 - Introduce caching only when what is cached, its lifetime, refresh behavior, and mutation invalidation are understood.
 - After a mutation, invalidate or update only affected cached data using appropriate Next.js APIs.

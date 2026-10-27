@@ -1,8 +1,8 @@
 # Agent harnesses
 
-Evidence: 2026-10-14; `018c6c1`; uncommitted harness files below; source-inspected, Claude Code discovery not runtime-verified.
+Evidence: 2026-10-26; `31c5212` plus uncommitted step 1 of the template port; source-inspected, Claude Code discovery not runtime-verified.
 
-- Pi reads [AGENTS.md](../../../AGENTS.md) and `.agents/skills/` directly.
-- Claude Code reads [CLAUDE.md](../../../CLAUDE.md), which imports `AGENTS.md` and maps skill usage.
-- `.claude/skills` symlinks to `.agents/skills`; edit skills only there.
+- Pi reads [AGENTS.md](../../../AGENTS.md) and `.agents/skills/` directly; `CLAUDE.md` is a symlink to it.
+- Skills live in `.agents/skills/<group>/<name>/` (`coding`, `github`, `testing`, `workflow`); `.claude/skills/<name>` holds one symlink per skill because Claude Code discovers one level deep.
+- `.claude/settings.json` empties commit and PR attribution.
 - `.gitignore` excludes `.pi/` and `.claude/settings.local.json`.

@@ -20,9 +20,9 @@ These rules are mandatory. Use modern TypeScript 7 and Zod 4 conventions.
 
 ## Mandatory contract documentation
 
-- Use `/* ... */` block comments immediately above every responsibility-specific interface, its explicitly declared members, and every field in a new or changed Zod object schema.
-- Briefly state the interface's main purpose in its block comment.
-- Briefly explain what each member represents, distinguishing raw input from validated output when relevant. Prefer a single-sentence block comment.
+- Use `/** ... */` JSDoc comments immediately above every responsibility-specific interface or type, its explicitly declared members, and every field in a Zod object schema, so editors show them on hover. Do not use plain `/* ... */` or `//` comments for contract documentation.
+- Briefly state the interface's main purpose in its JSDoc comment.
+- Briefly explain what each member represents, distinguishing raw input from validated output when relevant. Prefer a single-sentence JSDoc comment.
 - Briefly explain what each schema field represents or controls. Mention constraints, transformations, defaults, or optionality only when needed to clarify its purpose.
 - Do not include file paths, source file inventories, or consumer file inventories in these comments.
 - Update comments when the represented data or purpose changes.
@@ -37,11 +37,11 @@ import type { signInSchema } from "@workspace/schemas/authentication/sign-in/sig
 
 type ValidatedSignInData = z.output<typeof signInSchema>;
 
-/* Represents validated credentials used to sign in. */
+/** Represents validated credentials used to sign in. */
 export interface ValidatedSignInCredentials extends ValidatedSignInData {
-  /* Identifies the account using its normalized email address. */
+  /** Identifies the account using its normalized email address. */
   email: ValidatedSignInData["email"];
-  /* Contains the nonempty password submitted for authentication. */
+  /** Contains the nonempty password submitted for authentication. */
   password: ValidatedSignInData["password"];
 }
 ```
@@ -60,6 +60,12 @@ The example shows the required brief comment style. Production comments must des
 - Use the parsed result, not the original input, for subsequent application logic.
 - Validate incoming API responses on the receiving side; a server-side schema or a TypeScript annotation does not validate network data for a client.
 - OpenAPI descriptions and generated documentation do not replace runtime validation.
+
+## Validate user input in the browser first
+
+- Every form or other user-triggered submission must validate all of its values in the browser before sending them to a Server Action or the API: emails, passwords, and every other field. Cancel the submission and show each unmet requirement next to its field when any value is invalid, so invalid data never reaches the server.
+- Run the same shared schemas and form parsers the server uses; never write separate client-only rules that can drift from the server's. In the web client, use `useClientFormValidation` with the form's parser and keep server-returned field errors as the fallback.
+- Browser validation only reduces server load and gives faster feedback. The server still validates every value as an untrusted boundary, and forms keep working without JavaScript.
 
 ## Concrete endpoint contracts
 
@@ -86,10 +92,10 @@ The example shows the required brief comment style. Production comments must des
 
 ## Required values and explicit absence
 
-- Make validated domain values and internal function parameters required and non-nullable by default. Allow `null`, `undefined`, optional properties, `.optional()`, `.nullable()`, or `.nullish()` only when absence has a concrete domain, persistence, protocol, framework, or library meaning; document that meaning in the owning contract.
+- Make validated domain values and internal function parameters required and non-nullable by default. Allow `null`, `undefined`, optional properties, `.optional()`, `.nullable()`, or `.nullish()` only when absence has a concrete domain, persistence, protocol, framework, or library meaning. Document that meaning in the owning contract only when the name and type do not already make it obvious; never add clauses such as "or null when none", "an empty list means valid", or a default already visible in code.
 - Do not make a field optional merely to simplify callers or provide a hidden fallback. Require callers to supply known values. Normalize genuinely optional boundary input once with a meaningful schema default or transformation, then use its required parsed output internally.
 - Model mutually exclusive states with literal-discriminated unions and required fields for each variant, not bags of optional or nullable members. Narrow the state before accessing variant-specific fields and handle every variant explicitly.
-- Do not use optional chaining (`?.`) or non-null assertions (`!`) to work around application-owned contracts. Correct the source contract when presence is guaranteed; when absence is real, narrow it explicitly and define the missing-value behavior before access.
+- Never use non-null assertions (`!`). Outside tests, use optional chaining (`?.`) only directly after a regex result (`.exec(...)`, `.match(...)`), a `Map` lookup (`.get(...)`), or an index access (`[...]`). Everywhere else, correct the source contract when presence is guaranteed, or narrow the value with an explicit check and define the missing-value behavior before access.
 - Handle edge cases deliberately: missing versus explicit null input, empty strings, empty collections, failed array/map lookups, unmatched routes, missing request context, invalid status codes, nullable database columns, and framework lifecycle states. Use tuples for fixed-size results when required elements are known structurally.
 - Do not replace meaningful absence with arbitrary empty objects, empty strings, zero, random identifiers, or other fabricated domain values. Defaults must preserve the intended semantics; reject invalid data, return a documented absent-state variant, or omit a genuinely optional external field after narrowing.
 - Preserve intentional wire-level nulls and bodyless HTTP responses when the published protocol requires them. Do not silently change API or database contracts just to remove nullability.

@@ -5,8 +5,9 @@ These rules are mandatory for code creation, changes, refactoring, review, and v
 ## Keep responsibilities clear
 
 - Keep files focused on one responsibility, preferably one main function per file.
-- Target approximately 150 lines per file. A small overrun is acceptable when splitting would reduce clarity; do not sacrifice correctness to meet the target.
-- Split substantially larger implementation files by responsibility into descriptive subfolders.
+- A source file, including scripts and test files (`.test.ts`, `.e2e.ts`), must not exceed 200 lines. Generated files (migrations and their snapshots, framework-generated declarations such as `next-env.d.ts`) are exempt. There are no overruns beyond the reviewed exceptions in `config/rules`; `bun run check:rules` enforces this.
+- When a file nears 200 lines, split it by responsibility into descriptive subfolders before adding more.
+- A folder must not hold more than 10 files directly; subfolders do not count. When adding a file would exceed 10, group the files into descriptively named subfolders by responsibility, each one an actual ownership boundary. Do not create `misc/`, `shared/`, `common/`, or catch-all `utils/` buckets, and do not use barrel or `index.ts` files to hold them. Exempt only generated output (`packages/database/src/migrations` and its `meta/` folder), symlink entries, repository and app root folders, and reviewed exceptions in `config/rules`; `bun run check:rules` enforces this.
 - Keep schemas and interfaces grouped by feature, operation, or route under `packages/schemas/src/`. Each responsibility must have its own descriptive interface file containing only its related contracts.
 - Use operation-specific folders and dedicated domain type locations when appropriate. Do not merge unrelated responsibilities into one type catalog or aggregate interface.
 - Name files and folders for their actual responsibility. Avoid vague names such as `utils.ts`, `helpers.ts`, or `common.ts`.
@@ -105,6 +106,14 @@ The root `package.json` dependencies and devDependencies must be limited to `@wo
 - Do not add any other root dependency or devDependency.
 - Add dependencies to the workspace package that owns the code or configuration.
 - Do not change unrelated dependency versions during another task.
+
+## Agent skills
+
+When creating or restructuring a skill in `.agents/skills/<group>/<name>/`:
+
+- Keep `SKILL.md` brief: when to use it, the steps, and links. Move details and templates out of it.
+- Put every other file under `references/`, never beside `SKILL.md`. Group files into folders by concern, such as `references/<feature>/` or `references/prepare/templates/`, nesting as deep as the content needs.
+- Add `references/README.md` listing every folder and file with what it holds. Update it whenever a reference is added, moved, or removed.
 
 ## Decision priority
 
