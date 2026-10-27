@@ -3,14 +3,14 @@ import type { z } from "zod";
 
 type ValidatedDatabaseEnvironmentData = z.output<typeof databaseEnvSchema>;
 
-/** Contains validated PostgreSQL environment settings with defaults resolved. */
+/** Contains validated PostgreSQL environment settings for the API with defaults resolved. */
 export interface ValidatedDatabaseEnvironment
   extends ValidatedDatabaseEnvironmentData {
   /** Identifies the trimmed PostgreSQL hostname or address. */
   DB_HOST: ValidatedDatabaseEnvironmentData["DB_HOST"];
   /** Selects the validated PostgreSQL listening port. */
   DB_PORT: ValidatedDatabaseEnvironmentData["DB_PORT"];
-  /** Identifies the trimmed database account used to authenticate. */
+  /** Identifies the API's least-privilege database role. */
   DB_USER: ValidatedDatabaseEnvironmentData["DB_USER"];
   /** Contains the database password preserved without transformation. */
   DB_PASSWORD: ValidatedDatabaseEnvironmentData["DB_PASSWORD"];
@@ -30,6 +30,4 @@ export interface ValidatedDatabaseEnvironment
   DB_SHUTDOWN_TIMEOUT_SECONDS: ValidatedDatabaseEnvironmentData["DB_SHUTDOWN_TIMEOUT_SECONDS"];
   /** Limits each application query in seconds, with zero disabling the limit. */
   DB_STATEMENT_TIMEOUT_SECONDS: ValidatedDatabaseEnvironmentData["DB_STATEMENT_TIMEOUT_SECONDS"];
-  /** Limits how long a migration statement waits for a table lock in seconds. */
-  DB_MIGRATION_LOCK_TIMEOUT_SECONDS: ValidatedDatabaseEnvironmentData["DB_MIGRATION_LOCK_TIMEOUT_SECONDS"];
 }

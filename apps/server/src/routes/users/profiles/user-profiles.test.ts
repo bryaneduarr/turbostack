@@ -1,4 +1,5 @@
 import { afterAll, describe, expect, it } from "bun:test";
+import { usersProfile } from "@workspace/database/tables/users/profile/user-profile.table";
 import { errorResponseSchema } from "@workspace/schemas/server/responses/errors/error-response.schema";
 import { listUserProfilesResponseSchema } from "@workspace/schemas/server/routes/users/profiles/list/list-user-profiles.schema";
 import { userProfileResponseSchema } from "@workspace/schemas/server/routes/users/profiles/user-profile.schema";
@@ -10,8 +11,7 @@ import {
 } from "@workspace/utils/http/status-codes/http-status-code.constant";
 import { inArray } from "drizzle-orm";
 import app from "@/application.module";
-import { db } from "@/db/config/connection/database-connection.config";
-import { usersProfile } from "@/db/tables/users/profile/user-profile.table";
+import { fixtureDb } from "@/db/testing/fixtures/connection/fixture-database-connection.config";
 
 const profilesUrl = "http://localhost/api/v1/users/profiles";
 const createdProfileIds: string[] = [];
@@ -35,7 +35,7 @@ async function createProfile(firstName: string, lastName: string) {
 
 afterAll(async () => {
   if (createdProfileIds.length > 0) {
-    await db
+    await fixtureDb
       .delete(usersProfile)
       .where(inArray(usersProfile.id, createdProfileIds));
   }

@@ -1,0 +1,19 @@
+{
+  "extends": "@workspace/typescript/bundler",
+  "compilerOptions": {
+    "paths": {
+      "@workspace/setup/*": [
+        "./src/*"
+      ]
+    },
+    "types": [
+      "bun"
+    ]
+  },
+  "include": [
+    "."
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

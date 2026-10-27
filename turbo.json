@@ -11,24 +11,45 @@
     "MAX_REQUEST_BODY_BYTES",
     "HTTP_*",
     "SHUTDOWN_*",
-    "DB_*"
+    "DB_*",
+    "DEVCONTAINER"
   ],
   "boundaries": {
     "tags": {
       "app": {
-        "dependents": { "allow": [] }
+        "dependents": {
+          "allow": []
+        }
       },
       "package": {
-        "dependencies": { "deny": ["app"] }
+        "dependencies": {
+          "deny": [
+            "app"
+          ]
+        }
       },
       "runtime-neutral": {
-        "dependencies": { "allow": ["runtime-neutral", "config"] }
+        "dependencies": {
+          "allow": [
+            "runtime-neutral",
+            "config"
+          ]
+        }
       },
       "server": {
-        "dependencies": { "deny": ["browser"] }
+        "dependencies": {
+          "deny": [
+            "browser"
+          ]
+        }
       },
       "config": {
-        "dependencies": { "allow": ["config"] }
+        "dependencies": {
+          "allow": [
+            "config",
+            "runtime-neutral"
+          ]
+        }
       }
     }
   },
@@ -36,13 +57,42 @@
     "//#db:up": {
       "cache": false
     },
+    "//#doctor:stack": {
+      "cache": false,
+      "dependsOn": [
+        "api-server#seed:dev"
+      ]
+    },
+    "api-server#db:provision": {
+      "cache": false,
+      "dependsOn": [
+        "//#db:up"
+      ]
+    },
+    "api-server#seed:dev": {
+      "cache": false,
+      "dependsOn": [
+        "@workspace/database#drizzle:migrate"
+      ]
+    },
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "dist/**"
+      ]
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": [
+        "^check-types"
+      ]
     },
     "clean": {
       "cache": false
@@ -50,7 +100,10 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["//#db:up"]
+      "dependsOn": [
+        "api-server#seed:dev",
+        "//#doctor:stack"
+      ]
     },
     "drizzle:check": {
       "cache": false
@@ -60,7 +113,10 @@
     },
     "drizzle:migrate": {
       "cache": false,
-      "dependsOn": ["//#db:up"]
+      "dependsOn": [
+        "//#db:up",
+        "api-server#db:provision"
+      ]
     },
     "drizzle:push": {
       "cache": false
@@ -72,10 +128,16 @@
     "start": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["build", "//#db:up"]
+      "dependsOn": [
+        "build",
+        "//#db:up"
+      ]
     },
     "test": {
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*"
+      ],
       "outputs": []
     }
   }

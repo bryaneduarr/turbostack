@@ -1,0 +1,11 @@
+{
+  "extends": "@workspace/typescript/bundler",
+  "compilerOptions": {
+    "paths": {
+      "@workspace/database/*": ["./src/*"]
+    },
+    "types": ["node"]
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
+}

@@ -20,15 +20,9 @@ export const ruleExceptions: readonly RuleException[] = [
       "Comments preserve the generated upstream status snapshot verbatim.",
   },
   {
-    ruleId: "role-placement",
-    path: "apps/server/src/db/tables/users/profile/user-profile.table.ts",
-    reason:
-      "Temporary: the table moves to packages/database in the template port's database step.",
-  },
-  {
     ruleId: "type-placement",
-    path: "apps/server/src/db/tables/users/profile/user-profile.table.ts",
+    path: "scripts/verify-workspace.script.ts",
     reason:
-      "Temporary: the table moves to packages/database in the template port's database step.",
+      "Root scripts are standalone files with no package alias to import a types/ file through.",
   },
 ];

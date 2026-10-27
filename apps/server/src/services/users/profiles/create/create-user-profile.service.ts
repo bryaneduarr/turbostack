@@ -1,9 +1,9 @@
+import { usersProfile } from "@workspace/database/tables/users/profile/user-profile.table";
 import type {
   UserProfile,
   UserProfileNames,
 } from "@workspace/schemas/server/routes/users/profiles/user-profile.interface";
-import { db } from "@/db/config/connection/database-connection.config";
-import { usersProfile } from "@/db/tables/users/profile/user-profile.table";
+import { db } from "@/config/database/database-connection.config";
 import { serializeUserProfile } from "@/services/users/profiles/serialize-user-profile.service";
 
 export async function createUserProfile(

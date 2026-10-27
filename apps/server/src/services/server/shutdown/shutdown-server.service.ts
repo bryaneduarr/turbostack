@@ -1,7 +1,7 @@
 import { setTimeout as delay } from "node:timers/promises";
 import app from "@/application.module";
+import { client } from "@/config/database/database-connection.config";
 import env from "@/config/environment/server-env.config";
-import { client } from "@/db/config/connection/database-connection.config";
 import logger from "@/services/logging/output/logger.config";
 import { startServerDraining } from "@/services/server/lifecycle/server-draining-state.service";
 

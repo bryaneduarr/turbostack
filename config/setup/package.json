@@ -1,0 +1,29 @@
+{
+  "name": "@workspace/setup",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf node_modules/ .turbo/",
+    "check-types": "tsc --noEmit",
+    "db:up": "bun src/services/start-local-services.script.ts",
+    "dev-entry": "bun src/dev/dev.script.ts",
+    "doctor": "bun src/doctor/doctor.script.ts",
+    "doctor:stack": "bun src/doctor/stack/doctor-stack.script.ts",
+    "format": "biome format --write .",
+    "generate:session-keys": "bun src/session-keys/print-session-keys.script.ts",
+    "lint": "biome lint .",
+    "setup:env": "bun src/environment/setup-environment.script.ts",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@workspace/schemas": "workspace:*",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.3"
+  },
+  "exports": {
+    "./*": "./src/*.ts"
+  }
+}

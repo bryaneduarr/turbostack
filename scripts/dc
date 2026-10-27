@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+# Runs any command inside the project container, starting it first when needed.
+set -eu
+
+root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+HOST_UID=$(id -u)
+HOST_GID=$(id -g)
+export HOST_UID HOST_GID
+
+env_file="$root/apps/server/.env"
+[ -f "$env_file" ] || env_file="$root/apps/server/.env.example"
+
+compose() {
+  docker compose --env-file "$env_file" -f "$root/.devcontainer/docker-compose.yml" "$@"
+}
+
+is_ready() {
+  compose exec -T workspace test -f /tmp/workspace-ready </dev/null >/dev/null 2>&1
+}
+
+is_listening() {
+  (exec 3<>"/dev/tcp/127.0.0.1/$1") 2>/dev/null
+}
+
+published_port() {
+  compose port "$1" "$2" 2>/dev/null | sed 's/.*://' || true
+}
+
+chosen_ports=" "
+
+# Keeps the ports of a container that already exists; otherwise takes the first free port from the wanted one.
+pick_port() {
+  local variable=$1 service=$2 container_port=$3 port
+  port=$(published_port "$service" "$container_port")
+  if [ -z "$port" ]; then
+    port=${!variable:-$4}
+    while is_listening "$port" || [[ "$chosen_ports" == *" $port "* ]]; do
+      port=$((port + 1))
+    done
+  fi
+  chosen_ports="$chosen_ports$port "
+  printf -v "$variable" %s "$port"
+  export "${variable?}"
+}
+
+pick_ports() {
+  pick_port DEVCONTAINER_CLIENT_PORT workspace 3000 3000
+  pick_port DEVCONTAINER_API_PORT workspace 3001 3001
+}
+
+print_urls() {
+  local client api
+  client=$(published_port workspace 3000)
+  if [ -z "$client" ]; then
+    echo "The container is not running." >&2
+    return 1
+  fi
+  api=$(published_port workspace 3001)
+  echo "client http://localhost:$client"
+  echo "api http://localhost:$api"
+}
+
+start() {
+  pick_ports
+  compose up -d "$@"
+  echo "Waiting for the workspace to install dependencies and create the env files..." >&2
+  local seconds=0
+  until is_ready; do
+    if [ -z "$(compose ps --status running --services workspace)" ] || [ "$seconds" -ge 600 ]; then
+      compose logs --no-color --tail 40 workspace >&2
+      echo "The workspace did not become ready." >&2
+      exit 1
+    fi
+    sleep 2
+    seconds=$((seconds + 2))
+  done
+  print_urls >&2
+}
+
+usage() {
+  cat >&2 <<'USAGE'
+Usage: scripts/dc <command> [args...]   run a command inside the container
+       scripts/dc up [--build]          start the container and its services
+       scripts/dc down [-v]             stop everything (-v also deletes the data)
+       scripts/dc status                list the running services
+       scripts/dc ports                 print the URL of each service on this machine
+       scripts/dc shell                 open an interactive shell inside the container
+USAGE
+  exit 2
+}
+
+[ "$#" -gt 0 ] || usage
+
+case "$1" in
+  up)
+    shift
+    start --build "$@"
+    ;;
+  down)
+    shift
+    compose down "$@"
+    ;;
+  status)
+    compose ps
+    ;;
+  ports)
+    print_urls
+    ;;
+  shell)
+    is_ready || start
+    compose exec workspace bash
+    ;;
+  *)
+    is_ready || start
+    case "$PWD" in
+      "$root"|"$root"/*) directory=/workspace${PWD#"$root"} ;;
+      *) directory=/workspace ;;
+    esac
+    if [ -t 0 ]; then
+      compose exec -w "$directory" workspace "$@"
+    else
+      compose exec -T -w "$directory" workspace "$@"
+    fi
+    ;;
+esac

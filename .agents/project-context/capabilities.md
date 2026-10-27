@@ -1,6 +1,6 @@
 # Capability map
 
-Evidence: 2026-10-26 UTC; `31c5212` plus steps 1 and 2 of the [template port](../plans/template-port/plan.md) (instructions, rule enforcement, design tokens). Paths source-inspected; no runtime checks for this map.
+Evidence: 2026-10-26 UTC; `31c5212` plus steps 1 to 3 of the [template port](../plans/template-port/plan.md) (instructions, rule enforcement, tokens, database, Docker, devcontainer, setup). Paths source-inspected; no runtime checks for this map.
 
 Planner use: reuse what Features lists, build what Known gaps names, then open the linked topic notes. Owners are the paths to recheck when a line looks stale.
 
@@ -12,13 +12,15 @@ Planner use: reuse what Features lists, build what Known gaps names, then open t
 - **Status codes**: `packages/utils/src/http/status-codes/http-status-code.constant.ts`.
 - **Rule enforcement**: `config/rules/`, `config/biome/plugins/`. Note: [rule enforcement](development/rule-enforcement.md).
 - **Design tokens**: neutral light and dark tokens, motion utilities, Lucide icons. Owner: `config/tailwind/globals.css`.
+- **Database**: `packages/database` with migrator, runtime, and read-only roles, grant tests, test database, `seed:dev`. Note: [database](packages/database.md).
+- **One-command setup and devcontainer**: `config/setup` (env files, `doctor`, `doctor:stack`), `.devcontainer/`, `scripts/dc`, `bun run verify`. Note: [devcontainer](development/devcontainer-workflow.md).
 - **Detached dev stack**: `bun run dev:start`, `dev:status`, `dev:stop`. Owner: `scripts/dev-stack.script.ts`.
 
 ## Feature slice
 
 User profiles is the example. Add files in each layer, reading only the named example when the exact shape matters.
 
-- **Table and migration**: `apps/server/src/db/tables/users/profile/user-profile.table.ts`, `apps/server/src/db/migrations/`.
+- **Table, migration, grant**: `packages/database/src/tables/users/profile/user-profile.table.ts`, `packages/database/src/migrations/0002_grant_user_profile_roles.sql`, expectations in `apps/server/src/db/testing/grants/expectations/`.
 - **Route definition and schemas**: `packages/schemas/src/server/routes/users/profiles/create/create-user-profile.route.ts` and `user-profile.schema.ts`.
 - **Server contract, handler, service**: `apps/server/src/routes/users/profiles/create/`, `apps/server/src/services/users/profiles/create/create-user-profile.service.ts`.
 - **Router and tests**: `apps/server/src/routes/users/profiles/user-profiles.router.ts`, `user-profiles.test.ts` beside it.
@@ -27,6 +29,5 @@ User profiles is the example. Add files in each layer, reading only the named ex
 
 ## Known gaps
 
-- Rules and skills now describe tooling that steps 3 to 5 of the [template port](../plans/template-port/plan.md) still add: `config/setup` and one-command `bun run dev` (moved from step 2 because it needs the database roles), `packages/database`, the devcontainer and `scripts/dc`, `verify`, Playwright, `useClientFormValidation`, base components, support error codes, and `docs/`.
-- Temporary rule exceptions for `apps/server/src/db/tables/users/profile/user-profile.table.ts` until it moves in step 3.
+- Rules and skills now describe tooling that steps 4 and 5 of the [template port](../plans/template-port/plan.md) still add: Playwright, `useClientFormValidation`, base components, support error codes, and `docs/`.
 - Product domain is not chosen: [current scope](product/current-scope.md).

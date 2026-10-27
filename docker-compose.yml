@@ -8,13 +8,18 @@ services:
   postgres:
     image: postgres:18-alpine
     environment:
-      POSTGRES_USER: ${DB_USER:?DB_USER is required}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      POSTGRES_USER: ${DB_ADMIN_USER:?DB_ADMIN_USER is required}
+      POSTGRES_PASSWORD: ${DB_ADMIN_PASSWORD:?DB_ADMIN_PASSWORD is required}
       POSTGRES_DB: ${DB_NAME:?DB_NAME is required}
+      # The init scripts set these role passwords on the volume's first start.
+      DB_MIGRATOR_PASSWORD: ${DB_MIGRATOR_PASSWORD:?DB_MIGRATOR_PASSWORD is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      DB_CLI_PASSWORD: ${DB_CLI_PASSWORD:?DB_CLI_PASSWORD is required}
     ports:
       - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql
+      - ./apps/server/src/db/provision/initdb:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
@@ -53,6 +58,7 @@ services:
       context: .
       dockerfile: apps/client/Dockerfile
     image: web-client:local
+    env_file: apps/client/.env
     environment:
       SERVER_URL: http://api-server:3001
     ports:
