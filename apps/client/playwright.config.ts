@@ -31,14 +31,16 @@ export default defineConfig({
   testDir: "./src/e2e",
   testMatch: /.*\.e2e\.ts$/,
   fullyParallel: true,
-  // Measured 2026-10-28: 3 to 12 workers all finish the 7 tests in about 3 s, and 3 is the
-  // smallest within 5 % of the best time, peaking at 23 % of the container memory limit.
-  workers: 3,
+  // Measured on a 119-test suite in the 8 GiB container: 10 workers peak at 6.1 GiB
+  // (76 %); 12 saved 2 s at 87 %. GitHub runners have 4 cores, so CI keeps 4.
+  workers: process.env.CI === undefined ? 10 : 4,
   forbidOnly: process.env.CI !== undefined,
   retries: 0,
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
     baseURL: E2E_CLIENT_URL,
+    // Without it a click on a missing element waits out the whole test timeout.
+    actionTimeout: 5_000,
     trace: "retain-on-failure",
     video: "retain-on-failure",
     screenshot: "only-on-failure",
@@ -48,7 +50,12 @@ export default defineConfig({
     {
       name: "chromium",
       testIgnore: apiContractTests,
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        // Headless pages draw nothing on screen, and the software GPU process cost
+        // a third of a 119-test run: 142 s with it, 97 s without.
+        launchOptions: { args: ["--disable-gpu"] },
+      },
     },
     {
       name: "firefox",
