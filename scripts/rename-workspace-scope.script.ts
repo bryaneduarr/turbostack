@@ -84,8 +84,10 @@ async function renameScope(): Promise<void> {
 
   const from = `@${currentScope}/`;
   const to = `@${NEW_SCOPE}/`;
+  const escapedFrom = `@${currentScope}\\/`;
+  const escapedTo = `@${NEW_SCOPE}\\/`;
   const changedFiles = await replaceInTrackedFiles((_path, content) =>
-    content.replaceAll(from, to),
+    content.replaceAll(from, to).replaceAll(escapedFrom, escapedTo),
   );
   console.info(`Renamed ${from} to ${to} in ${changedFiles} files.`);
 }
