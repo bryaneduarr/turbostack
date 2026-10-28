@@ -4,17 +4,17 @@ Read only your kind's section, after the [subagent rules](subagent-rules.md).
 
 ## setup
 
-Create the one worktree and branch, and report the absolute worktree path.
+Create the one worktree and branch, start its stack, and report the absolute worktree path.
 
 ```sh
-repo="$(git rev-parse --show-toplevel)"
-root="$repo/../$(basename "$repo").worktrees"
+repo="$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"
+root="$HOME/worktrees/$(basename "$repo")"
+mkdir -p "$root"
 git -C "$repo" worktree add -b "<feature>" "$root/<feature>" main
-for app in server client; do cp "$repo/apps/$app/.env" "$root/<feature>/apps/$app/.env"; done
-bun install --cwd "$root/<feature>" --frozen-lockfile
+cd "$root/<feature>" && scripts/dc bun --version > "$root/<feature>-setup.log" 2>&1 &
 ```
 
-Never print or commit `.env` files. Reuse an existing worktree when resuming.
+The first `scripts/dc` call builds or reuses the shared image, starts the stack, and installs packages, which can take minutes. Start it detached as above and poll the log with short checks until the version prints; never block on it. Install nothing on the host and copy no `.env` file: the stack creates them. Reuse an existing worktree when resuming. If Docker is missing, report `blocked`.
 
 ## implement
 
@@ -36,7 +36,7 @@ Report the PR URL and number, and the commits.
 
 ## verify
 
-Edit and commit no file. Modes `test` (test stage) and `final` (final test stage). Run every command in `testing.md` in order, locked ones under `flock`. Continue past a failure unless the next command lists it under Needs. Include `bun run check` and `bun run verify` as the last row says. A failing command is a result to report, never a question. Use the project-context notes of the packages and tasks behind each failure to name its owning task.
+Edit and commit no file. Modes `test` (test stage) and `final` (final test stage). Run every command in `testing.md` in order, each through `scripts/dc` in the delivery's worktree, long ones detached with output in a log file that you poll. `scripts/dc` queues heavy and database commands itself. Continue past a failure unless the next command lists it under Needs. Include `bun run check` and `bun run verify` as the last row says. A failing command is a result to report, never a question. Use the project-context notes of the packages and tasks behind each failure to name its owning task.
 
 - Any fail: post one PR review as the user's authenticated GitHub account through `gh api repos/{owner}/{repo}/pulls/<number>/reviews`, event `COMMENT`. Put one inline comment on each diff line or block a failure implicates (`start_line` and `line` for a block): which command fails, its first error lines, and the likely fix. Put failures with no diff line in the review body. Report `result: fail`, the comment URLs, and a numbered failure list. Each entry holds the command, the package, the first error lines (at most 15), the files it implicates, and the owning task id. Put failures that share a file in one group, so groups never share a file, and list `groups: <group -> failure numbers>`.
 - All pass in `test` mode: report `result: pass`.
@@ -44,7 +44,7 @@ Edit and commit no file. Modes `test` (test stage) and `final` (final test stage
 
 ## fix
 
-Input: one failure group and the verify comments for it. Apply the simplest change the rules allow, to that group's files only. Add or correct the test a failure implicates. Run only the one failed command, scoped to the affected package and locked as `testing.md` says. Report the changed lines per file, so a review can check them. Do not commit.
+Input: one failure group and the verify comments for it. Apply the simplest change the rules allow, to that group's files only. Add or correct the test a failure implicates. Run only the one failed command, scoped to the affected package, through `scripts/dc`. Report the changed lines per file, so a review can check them. Do not commit.
 
 ## review
 
@@ -63,4 +63,4 @@ Modes:
 
 - `resume`: read the plan folder in the order its `README.md` gives, compare `delivery.md` with `git worktree list`, `git branch --list '<feature>'`, and `gh pr list --state open --search 'head:<feature>'`, and report the finished and unfinished stages, the tasks and slices still to do, and any blocker.
 - `update`: edit `delivery.md` in the worktree to match the facts in the brief, including each `decided:` line under Decisions made during delivery.
-- `close`: write each `tasks/<task-id>/<feature>-plan.md` handoff (at most 120 words), follow the `project-context` skill using the `learned` and `decided` lines in the brief, commit the docs through `commit-changes`, run `bun run check:rules` and `bunx biome ci .`, and push. Report the facts for the final report: PR URL and labels, test rounds with their failures and fixes, review rounds with comment counts, the final run, the `examples` from the final verify, the decisions made during delivery, and anything blocked or not tested.
+- `close`: write each `tasks/<task-id>/<feature>-plan.md` handoff (at most 120 words), follow the `project-context` skill using the `learned` and `decided` lines in the brief, commit the docs through `commit-changes`, run `scripts/dc bun run check:rules` and `scripts/dc bunx biome ci .`, push, and then stop the delivery's stack with `scripts/dc stop`. Report the facts for the final report: PR URL and labels, test rounds with their failures and fixes, review rounds with comment counts, the final run, the `examples` from the final verify, the decisions made during delivery, and anything blocked or not tested.

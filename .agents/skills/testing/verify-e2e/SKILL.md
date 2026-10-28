@@ -11,25 +11,27 @@ its own evidence.
 
 ## Prerequisites
 
-- `apps/server/.env` and `apps/client/.env` exist (`bun run setup:env`); Docker
-  is running for `db:up`.
-- Browsers are installed once with `bun run test:e2e:install` (Chromium and
-  Firefox).
-- Ports 3100 (client) and 3101 (API) are free. Dev servers on 3000/3001 are fine.
-- NixOS: the Playwright config builds the browser libraries with Nix and caches
-  their path, so no export is needed. WebKit is skipped there because it needs
-  older libraries.
+- Docker is running. Everything runs through `scripts/dc` in this work tree's
+  stack ([run-in-container skill](../../workflow/run-in-container/SKILL.md)); nothing
+  runs on the host. Without Docker, report the run as blocked.
+- The stack provides the `.env` files, PostgreSQL, the Playwright libraries, and
+  Chromium and Firefox. Install nothing by hand.
+- `scripts/dc` runs e2e commands one at a time per stack, so ports 3100 and 3101
+  are never shared. The config skips WebKit in the container.
 
 ## Run
 
 ```sh
-bun run verify                                  # every check, e2e (api, chromium) last
-bun run test:e2e                                # every project
-bun run test:e2e -- --project=api --project=chromium
-bun run test:e2e:changed                        # fast loop: specs changed since origin/main
-bun run test:e2e -- --grep "profile"            # one scenario
-bun run --cwd apps/client test:e2e:report       # open the HTML report
+scripts/dc bun run verify                       # every check, e2e (api, chromium) last
+scripts/dc bun run test:e2e                     # api, chromium, firefox
+scripts/dc bun run test:e2e -- --project=api --project=chromium
+scripts/dc bun run test:e2e:changed             # fast loop: specs changed since origin/main
+scripts/dc bun run test:e2e -- --grep "profile" # one scenario
 ```
+
+Run them detached with output in a log file and poll it; a full run takes minutes.
+The HTML report is written to `apps/client/playwright-report/` in the shared
+folder.
 
 `test:e2e` builds the apps and recreates the test database first. Use
 `test:e2e:changed` while iterating and the full `bun run verify` before pushing.
@@ -38,8 +40,9 @@ Tests use unique names, and the test database starts empty on every run.
 ## Read a failure
 
 1. Read the assertion diff in the terminal output.
-2. Open `apps/client/test-results/<test>/trace.zip` with
-   `bunx playwright show-trace`; it shows each `test.step`, DOM, network, and console.
+2. Read the screenshot and video under `apps/client/test-results/<test>/`, and
+   the trace (each `test.step`, DOM, network, console) in the HTML report. The
+   container has no screen, so open the report from the host only when needed.
 3. Decide whether the app or the test is wrong. Never weaken an assertion to pass;
    report real findings such as accessibility violations with the evidence.
 
