@@ -26,6 +26,8 @@ bun run test:e2e
 
 The suite builds both apps, recreates the test database, and runs Playwright on the API, Chromium, and Firefox projects. It uses ports 3100 and 3101, so it can run while `bun run dev` is up. You should see the Playwright summary at the end with no failed tests.
 
+In the [dev container](devcontainer.md), run `scripts/dc bun run test:e2e` instead. The stack installs Chromium and Firefox itself, so skip the install step, and WebKit is not run there.
+
 Pass Playwright options after `--`, for example `bun run test:e2e -- --project=chromium` to run one browser. Open the last HTML report with `bun run --cwd apps/client test:e2e:report`.
 
 ## Every check at once
