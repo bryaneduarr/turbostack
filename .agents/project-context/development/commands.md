@@ -6,4 +6,5 @@ Evidence: 2026-10-26; `9800020` plus uncommitted step 3; `check`, `verify`, `doc
 - First run: `bun run dev` (setup, doctor, database, seed, apps). Agents use `dev:start`/`dev:status`/`dev:stop`.
 - Checks: `check` (Biome, boundaries, `check:rules`, `check:compose`, types, tests, build); `verify` adds frozen lockfile, migration drift, and e2e (api, chromium).
 - E2E: `test:e2e` (all browsers), `test:e2e:changed`.
+- Upgrade all: `update-dependencies` skill (`bun update --latest --recursive`, `update:toolchain`, fixes, checks, one commit). Message from `scripts/dependency-commit-message.script.ts`, checked 2026-10-28 on uncommitted changes. Skill not yet run end to end.
 - Database: `db:up`, `db:provision`, `drizzle:*`, `seed:dev`.

@@ -27,7 +27,7 @@ This file says where everything is, when to use it, and what it produces. Apart 
 | `coding/` | `typescript-best-practices`, `zod-validation-utilities`, `react-patterns`, `vercel-react-best-practices`, `nextjs-performance`, `tailwind-css-patterns`, `drizzle-orm-patterns`, `turborepo` | Library and framework patterns while writing code |
 | `github/` | `commit-changes`, `pr` | Commits and pull request bodies |
 | `testing/` | `verify-e2e`, `agent-browser`, `use-browser` | End-to-end verification, browser automation, and choosing the browser tool |
-| `workflow/` | `project-context`, `thinking-distill`, `deliver-plan`, `run-in-container` | Session recaps, plans, clarifying what to build, delivering an approved plan, and running commands in the devcontainer |
+| `workflow/` | `project-context`, `thinking-distill`, `deliver-plan`, `run-in-container`, `update-dependencies` | Session recaps, plans, clarifying what to build, delivering an approved plan, running commands in the devcontainer, and upgrading every dependency |
 
 ## Before you start
 
@@ -76,7 +76,7 @@ Output: updated topic notes in `.agents/project-context/` recording what was imp
 
 ## Commits
 
-Every commit goes through the [commit-changes skill](.agents/skills/github/commit-changes/SKILL.md), with no exceptions. Output: dependency-ordered Conventional Commits with their messages, created without waiting for plan approval.
+Every commit goes through the [commit-changes skill](.agents/skills/github/commit-changes/SKILL.md), with no exceptions. Output: dependency-ordered Conventional Commits with their messages, created without waiting for plan approval. The one exception is a dependency upgrade, which the [update-dependencies skill](.agents/skills/workflow/update-dependencies/SKILL.md) commits once with its own message format.
 
 ## Repository layout notes
 

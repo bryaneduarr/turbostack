@@ -5,7 +5,10 @@ description: "Use for every commit, without exception: organizes project changes
 
 # Commit changes
 
-Every commit made in this repository goes through this skill. Turn the
+Every commit made in this repository goes through this skill, except a
+dependency upgrade, which the
+[update-dependencies skill](../../workflow/update-dependencies/SKILL.md)
+commits once with its own message format. Turn the
 requested changes into purpose-driven, dependency-ordered commits.
 Read repository instructions first. This skill does not authorize source or test edits,
 browser automation, history rewriting, or pushing.
