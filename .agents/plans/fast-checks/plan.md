@@ -93,5 +93,5 @@ Delivered 2026-10-28 on `chore/fast-checks`, then merged into `main` with the br
 
 Changes from the steps, decided during delivery:
 
-- Step 4: `--failed` reruns a lockfile, compose, or migrations step unless it passed last time (the record keeps `passedSteps`). It adds `--last-failed` only when the browser step failed; otherwise it runs the full browser step, so a run that stopped early never skips browser tests.
+- Step 4: `--failed` reruns a lockfile, compose, or migrations step unless it passed last time (the record keeps `passedSteps`). It adds `--last-failed` only when the browser step failed and Playwright's `.last-run.json` still lists failures; otherwise it runs the full browser step, so it never passes without running tests.
 - Step 5: no `PLAYWRIGHT_WORKERS` variable. Playwright's own `--workers=N` flag covers measurement and one-off runs, so the config keeps a fixed, measured value (3; with 7 tests more workers gave no gain).

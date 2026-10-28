@@ -5,6 +5,7 @@ const resultDirectory = ".turbo/verify";
 const resultPath = `${resultDirectory}/last-result.json`;
 const browserCommand =
   "bunx turbo run test:e2e -- --project=api --project=chromium";
+const lastRunPath = "apps/client/test-results/.last-run.json";
 
 /** A verification step; fix-loop-only steps run again unless they passed last time. */
 interface VerificationStep {
@@ -60,24 +61,34 @@ async function checkMigrationsMatchTables(): Promise<boolean> {
   return true;
 }
 
-// A missing or damaged record makes the fix loop behave like a first run.
+// A missing or damaged file reads as no record, like a first run.
+async function readRecord(path: string): Promise<object | null> {
+  const record: unknown = await Bun.file(path)
+    .json()
+    .catch(() => null);
+  return typeof record === "object" ? record : null;
+}
+
 async function readPreviousResult(): Promise<VerificationResult> {
-  const empty: VerificationResult = { failedStep: null, passedSteps: [] };
-  try {
-    const record: unknown = await Bun.file(resultPath).json();
-    if (typeof record !== "object" || record === null) return empty;
-    const failedStep =
-      "failedStep" in record && typeof record.failedStep === "string"
-        ? record.failedStep
-        : null;
-    const passedSteps =
-      "passedSteps" in record && Array.isArray(record.passedSteps)
-        ? record.passedSteps.filter((id) => typeof id === "string")
-        : [];
-    return { failedStep, passedSteps };
-  } catch {
-    return empty;
-  }
+  const record = await readRecord(resultPath);
+  if (record === null) return { failedStep: null, passedSteps: [] };
+  const failedStep =
+    "failedStep" in record && typeof record.failedStep === "string"
+      ? record.failedStep
+      : null;
+  const passedSteps =
+    "passedSteps" in record && Array.isArray(record.passedSteps)
+      ? record.passedSteps.filter((id) => typeof id === "string")
+      : [];
+  return { failedStep, passedSteps };
+}
+
+// Any later Playwright run rewrites this list, so the fix loop reruns only
+// failures it can still see and otherwise runs every browser test.
+async function hasRecordedBrowserFailures(): Promise<boolean> {
+  const lastRun = await readRecord(lastRunPath);
+  if (lastRun === null || !("failedTests" in lastRun)) return false;
+  return Array.isArray(lastRun.failedTests) && lastRun.failedTests.length > 0;
 }
 
 async function recordResult(result: VerificationResult): Promise<void> {
@@ -129,11 +140,9 @@ const fixLoop = Bun.argv.includes("--failed");
 const previous: VerificationResult = fixLoop
   ? await readPreviousResult()
   : { failedStep: null, passedSteps: [] };
-const allSteps = createSteps(
-  previous.failedStep === "browser"
-    ? " --last-failed --pass-with-no-tests"
-    : "",
-);
+const rerunFailedOnly =
+  previous.failedStep === "browser" && (await hasRecordedBrowserFailures());
+const allSteps = createSteps(rerunFailedOnly ? " --last-failed" : "");
 const plan = allSteps.filter(
   (step) =>
     !fixLoop ||
