@@ -12,6 +12,10 @@ done
 
 main() {
   [ "$#" -gt 0 ] || usage
+  if ! command -v flock >/dev/null 2>&1; then
+    echo "dc: flock is missing. scripts/dc runs on Linux and WSL2; on macOS open the repository in VS Code Dev Containers." >&2
+    exit 69
+  fi
   if ! docker info >/dev/null 2>&1; then
     echo "dc: Docker is not running or not installed. Checks that need the container are blocked; nothing runs on the host." >&2
     exit 69

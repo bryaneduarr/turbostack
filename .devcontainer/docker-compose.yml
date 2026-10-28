@@ -17,6 +17,9 @@ services:
     # The host user owns every file the container writes; scripts/dc exports HOST_UID and HOST_GID.
     user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     init: true
+    # The marker lets scripts/dc manage this stack and no other devcontainer project's stack.
+    labels:
+      dc.managed: "true"
     shm_size: 1gb
     mem_limit: ${DEVCONTAINER_WORKSPACE_MEMORY:-6g}
     memswap_limit: ${DEVCONTAINER_WORKSPACE_MEMORY:-6g}

@@ -2,7 +2,7 @@
 # shellcheck disable=SC2153
 # One workspace image per Dockerfile, start script, and Playwright version, built once under a lock.
 
-SHARED_VOLUMES=(app-bun-cache app-playwright-browsers)
+SHARED_VOLUMES=("$PROJECT_PREFIX-bun-cache" "$PROJECT_PREFIX-playwright-browsers")
 
 playwright_version() {
   sed -n 's/.*"@playwright\/test": \["@playwright\/test@\([0-9][0-9.]*\)".*/\1/p' "$ROOT/bun.lock" | head -1
@@ -22,7 +22,7 @@ prepare_image() {
 }
 
 image_exists() {
-  docker image inspect "app-workspace:$DEVCONTAINER_IMAGE_TAG" >/dev/null 2>&1
+  docker image inspect "$PROJECT_PREFIX-workspace:$DEVCONTAINER_IMAGE_TAG" >/dev/null 2>&1
 }
 
 ensure_shared_volumes() {
@@ -37,24 +37,24 @@ ensure_image() {
   [ "${1:-}" = --force ] || ! image_exists || return 0
   wait_for_lock lock "$STATE/image.lock" -x "the image build lock"
   if [ "${1:-}" = --force ] || ! image_exists; then
-    echo "dc: building the workspace image app-workspace:$DEVCONTAINER_IMAGE_TAG (shared by every stack)." >&2
-    docker build -t "app-workspace:$DEVCONTAINER_IMAGE_TAG" --build-arg "PLAYWRIGHT_VERSION=$PLAYWRIGHT_VERSION" "$ROOT/.devcontainer" >&2
+    echo "dc: building the workspace image $PROJECT_PREFIX-workspace:$DEVCONTAINER_IMAGE_TAG (shared by every stack)." >&2
+    docker build -t "$PROJECT_PREFIX-workspace:$DEVCONTAINER_IMAGE_TAG" --build-arg "PLAYWRIGHT_VERSION=$PLAYWRIGHT_VERSION" "$ROOT/.devcontainer" >&2
   fi
   lock_release "$lock"
 }
 
 # Lists tags of the workspace image that this work tree does not use; docker refuses to remove any a container uses.
 older_image_tags() {
-  docker images app-workspace --format '{{.Tag}}' | grep -vxE "local|$DEVCONTAINER_IMAGE_TAG" || true
+  docker images "$PROJECT_PREFIX-workspace" --format '{{.Tag}}' | grep -vxE "local|$DEVCONTAINER_IMAGE_TAG" || true
 }
 
 prune_images() {
   local tag
   for tag in $(older_image_tags); do
     if [ "${1:-}" = --dry-run ]; then
-      echo "would remove image app-workspace:$tag"
+      echo "would remove image $PROJECT_PREFIX-workspace:$tag"
     else
-      docker rmi "app-workspace:$tag" >/dev/null 2>&1 && echo "removed image app-workspace:$tag"
+      docker rmi "$PROJECT_PREFIX-workspace:$tag" >/dev/null 2>&1 && echo "removed image $PROJECT_PREFIX-workspace:$tag"
     fi
   done
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# State directory, settings, clocks, and file locks shared by every stack.
+# State directory, settings, clocks, and file locks shared by every stack of every project; the v1 folder keeps incompatible versions apart.
 
 setting() {
   local variable="DC_$1"
@@ -15,7 +15,7 @@ now() {
 }
 
 state_init() {
-  STATE=${DC_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/app-dc}
+  STATE=${DC_STATE_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/dc/v1}
   mkdir -p "$STATE/stacks"
 }
 

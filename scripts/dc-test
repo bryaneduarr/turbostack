@@ -41,19 +41,35 @@ classes_of() {
 }
 
 echo "stack names"
-expect "the primary tree keeps the fixed project name" app-devcontainer "$(stack_name_for /home/user/app 1)"
+expect "the primary tree keeps the fixed project name" "$PROJECT_PREFIX-devcontainer" "$(stack_name_for /home/user/app 1)"
 name=$(stack_name_for /home/user/worktrees/app/example-feature 0)
-expect "a linked tree gets slug and path hash" app-example-feature "${name%-??????}"
+expect "a linked tree gets slug and path hash" "$PROJECT_PREFIX-example-feature" "${name%-??????}"
 expect "the same path gives the same name" "$name" "$(stack_name_for /home/user/worktrees/app/example-feature 0)"
 other=$(stack_name_for /home/other/worktrees/app/example-feature 0)
 fails "another path with the same folder name gets another name" test "$name" = "$other"
 expect "a messy folder name becomes a safe slug" "my-feature-2" "$(slugify 'My Feature_2!')"
 
 echo "legacy stacks"
-lines=$'example-feature|/w/feature/.devcontainer\napp-s2|/w/main/.devcontainer\napp-devcontainer|/w/main/.devcontainer'
-expect "a hand-made project name is reused" example-feature "$(printf '%s\n' "$lines" | legacy_project_for /w/feature app-feature-abc123)"
-expect "the canonical name wins over other matches" app-devcontainer "$(printf '%s\n' "$lines" | legacy_project_for /w/main app-devcontainer)"
-expect "no stack for the root gives nothing" "" "$(printf '%s\n' "$lines" | legacy_project_for /w/none app-none-123456)"
+lines="example-feature|/w/feature/.devcontainer
+$PROJECT_PREFIX-s2|/w/main/.devcontainer
+$PROJECT_PREFIX-devcontainer|/w/main/.devcontainer"
+expect "a hand-made project name is reused" example-feature "$(printf '%s\n' "$lines" | legacy_project_for /w/feature "$PROJECT_PREFIX-feature-abc123")"
+expect "the canonical name wins over other matches" "$PROJECT_PREFIX-devcontainer" "$(printf '%s\n' "$lines" | legacy_project_for /w/main "$PROJECT_PREFIX-devcontainer")"
+expect "no stack for the root gives nothing" "" "$(printf '%s\n' "$lines" | legacy_project_for /w/none "$PROJECT_PREFIX-none-123456")"
+
+echo "shared setup"
+repository=$(dirname "$LIBRARY")/..
+expect "the default state folder is shared and versioned" "$STATE/xdg/dc/v1" "$(unset DC_STATE_DIR; export XDG_STATE_HOME=$STATE/xdg; state_init; echo "$STATE")"
+mkdir -p "$STATE/tree/.devcontainer"
+succeeds "a name recorded for another existing tree is refused" name_belongs_to_another_tree "$STATE/tree" /elsewhere
+fails "the same tree may reuse its name" name_belongs_to_another_tree "$STATE/tree" "$STATE/tree"
+fails "a recorded tree that is gone frees the name" name_belongs_to_another_tree "$STATE/missing" /elsewhere
+fails "a name nobody recorded is free" name_belongs_to_another_tree "" /elsewhere
+succeeds "the compose file carries the marker label" grep -q 'dc.managed: "true"' "$repository/.devcontainer/docker-compose.yml"
+for name in "devcontainer" "workspace:" "bun-cache" "playwright-browsers"; do
+  succeeds "the compose file names $name with the prefix" grep -q "$PROJECT_PREFIX-$name" "$repository/.devcontainer/docker-compose.yml"
+done
+succeeds "devcontainer.json creates the prefixed cache volumes" grep -q "volume create $PROJECT_PREFIX-bun-cache && docker volume create $PROJECT_PREFIX-playwright-browsers" "$repository/.devcontainer/devcontainer.json"
 
 echo "command classes"
 expect "build is heavy" "heavy" "$(classes_of bun run build)"
@@ -91,7 +107,7 @@ day=86400
 succeeds "a gone work tree unused for 8 days is pruned" should_prune app-x-1 "$STATE/gone" 0 $((8 * day))
 fails "a gone work tree unused for 2 days is kept" should_prune app-x-1 "$STATE/gone" $((6 * day)) $((8 * day))
 fails "an existing work tree is kept" should_prune app-x-1 "$STATE/exists" 0 $((30 * day))
-fails "the primary stack is kept" should_prune app-devcontainer "$STATE/gone" 0 $((30 * day))
+fails "the primary stack is kept" should_prune "$PRIMARY_PROJECT" "$STATE/gone" 0 $((30 * day))
 fails "an unknown work tree is kept" should_prune app-x-1 "" 0 $((30 * day))
 DC_PRUNE_DAYS=1 succeeds "the prune age is a setting" should_prune app-x-1 "$STATE/gone" 0 $((2 * day))
 
