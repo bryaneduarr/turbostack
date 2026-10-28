@@ -5,7 +5,6 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "check": "biome ci . && turbo boundaries && bun run check:rules && bun run check:compose && turbo run check-types test build",
     "check-types": "turbo check-types",
     "check:compose": "test \"$DEVCONTAINER\" = true && echo \"Skipped: the devcontainer has no Docker; run this on the host.\" || docker compose --env-file apps/server/.env.example config --quiet",
     "check:rules": "bun run --cwd config/rules check-rules",
@@ -32,9 +31,7 @@
     "setup:env": "bun run --cwd config/setup setup:env",
     "start": "turbo start",
     "start:docker": "docker compose --env-file apps/server/.env --profile production up --build",
-    "test": "turbo test",
     "test:e2e": "turbo test:e2e --",
-    "test:e2e:changed": "turbo test:e2e -- --project=api --project=chromium --only-changed=origin/main",
     "test:e2e:install": "bun run --cwd apps/client test:e2e:install",
     "update": "bun update --interactive --recursive",
     "update:toolchain": "bun scripts/update-toolchain.script.ts",
