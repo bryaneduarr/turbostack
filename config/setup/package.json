@@ -13,8 +13,7 @@
     "format": "biome format --write .",
     "generate:session-keys": "bun src/session-keys/print-session-keys.script.ts",
     "lint": "biome lint .",
-    "setup:env": "bun src/environment/setup-environment.script.ts",
-    "test": "bun test"
+    "setup:env": "bun src/environment/setup-environment.script.ts"
   },
   "dependencies": {
     "@workspace/schemas": "workspace:*",

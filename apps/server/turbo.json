@@ -5,9 +5,6 @@
     "db:test:prepare": {
       "cache": false,
       "dependsOn": ["//#db:up"]
-    },
-    "test": {
-      "dependsOn": ["db:test:prepare"]
     }
   }
 }

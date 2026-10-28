@@ -26,7 +26,6 @@
       "devDependencies": {
         "@playwright/test": "^1.64.1",
         "@tailwindcss/postcss": "^4.3.3",
-        "@types/bun": "^1.4.4",
         "@types/node": "^26.6.5",
         "@types/react": "^19.3.0",
         "@types/react-dom": "^19.3.0",
@@ -107,9 +106,6 @@
         "@workspace/utils": "workspace:*",
         "zod": "^4.6.7",
       },
-      "devDependencies": {
-        "@types/bun": "^1.4.4",
-      },
     },
     "packages/database": {
       "name": "@workspace/database",
@@ -131,9 +127,6 @@
         "@workspace/utils": "workspace:*",
         "zod": "^4.6.7",
       },
-      "devDependencies": {
-        "@types/bun": "^1.4.4",
-      },
     },
     "packages/ui": {
       "name": "@workspace/ui",
@@ -147,7 +140,6 @@
         "zod": "^4.6.7",
       },
       "devDependencies": {
-        "@types/bun": "^1.4.4",
         "@types/node": "^26.6.5",
         "@types/react": "^19.3.0",
         "@types/react-dom": "^19.3.0",

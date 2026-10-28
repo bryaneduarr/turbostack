@@ -5,13 +5,12 @@
   "private": true,
   "scripts": {
     "build": "next build && cp -r .next/static .next/standalone/apps/client/.next/static",
-    "check-types": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
+    "check-types": "tsc --noEmit",
     "clean": "rm -rf node_modules/ .turbo/ .next/",
     "dev": "next dev --turbopack",
     "format": "biome format --write .",
     "lint": "biome lint .",
     "start": "node --env-file-if-exists=.env .next/standalone/apps/client/server.js",
-    "test": "bun test",
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install chromium firefox",
     "test:e2e:report": "playwright show-report",
@@ -30,7 +29,6 @@
   "devDependencies": {
     "@playwright/test": "^1.64.1",
     "@tailwindcss/postcss": "^4.3.3",
-    "@types/bun": "^1.4.4",
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

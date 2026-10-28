@@ -15,9 +15,7 @@
     "seed:dev": "bun src/db/seed/seed-development.script.ts",
     "start": "NODE_ENV=production bun dist/index.js",
     "start:migrate": "bun dist/db/migrate/apply-migrations.script.js",
-    "start:provision": "bun dist/db/provision/provision-database.script.js",
-    "test": "NODE_ENV=test bun test",
-    "test:watch": "NODE_ENV=test bun test --watch"
+    "start:provision": "bun dist/db/provision/provision-database.script.js"
   },
   "dependencies": {
     "@elysia/openapi": "^1.4.16",

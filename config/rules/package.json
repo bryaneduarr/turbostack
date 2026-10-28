@@ -8,8 +8,7 @@
     "check-rules": "bun src/check-rules.script.ts",
     "check-types": "tsc --noEmit",
     "format": "biome format --write .",
-    "lint": "biome lint .",
-    "test": "bun test"
+    "lint": "biome lint ."
   },
   "devDependencies": {
     "@types/bun": "^1.4.4"

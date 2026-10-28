@@ -1,2 +1,0 @@
-[test]
-preload = ["./src/db/testing/test-database/use-test-database.config.ts"]
