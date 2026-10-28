@@ -1,8 +1,18 @@
 import { lstatSync } from "node:fs";
 
 const NEW_SCOPE = "workspace";
+const NEW_CONTAINER_PREFIX = "app";
 
 const npmScopePattern = /^[a-z0-9][a-z0-9._-]*$/;
+const containerPrefixPattern = /^[a-z0-9][a-z0-9-]*$/;
+const prefixAssignmentPattern = /^PROJECT_PREFIX=([a-z0-9][a-z0-9-]*)$/m;
+const prefixFile = "scripts/dc-lib/names.sh";
+const containerNameSuffixes = [
+  "devcontainer",
+  "workspace",
+  "bun-cache",
+  "playwright-browsers",
+];
 const configPackagePattern = /^@([a-z0-9][a-z0-9._-]*)\/biome$/;
 
 function readCurrentScope(manifest: unknown): string {
@@ -41,33 +51,82 @@ function listTrackedFiles(): string[] {
     });
 }
 
-if (!npmScopePattern.test(NEW_SCOPE)) {
-  throw new Error(`"${NEW_SCOPE}" is not a valid npm scope.`);
+async function replaceInTrackedFiles(
+  replace: (path: string, content: string) => string,
+): Promise<number> {
+  let changedFiles = 0;
+
+  for (const path of listTrackedFiles()) {
+    const bytes = await Bun.file(path).bytes();
+    if (bytes.includes(0)) continue;
+
+    const content = new TextDecoder().decode(bytes);
+    const replaced = replace(path, content);
+    if (replaced === content) continue;
+
+    await Bun.write(path, replaced);
+    changedFiles += 1;
+  }
+
+  return changedFiles;
 }
 
-const currentScope = readCurrentScope(await Bun.file("package.json").json());
+async function renameScope(): Promise<void> {
+  if (!npmScopePattern.test(NEW_SCOPE)) {
+    throw new Error(`"${NEW_SCOPE}" is not a valid npm scope.`);
+  }
 
-if (currentScope === NEW_SCOPE) {
-  console.info(`The workspace scope is already @${NEW_SCOPE}.`);
-  process.exit(0);
+  const currentScope = readCurrentScope(await Bun.file("package.json").json());
+  if (currentScope === NEW_SCOPE) {
+    console.info(`The workspace scope is already @${NEW_SCOPE}.`);
+    return;
+  }
+
+  const from = `@${currentScope}/`;
+  const to = `@${NEW_SCOPE}/`;
+  const changedFiles = await replaceInTrackedFiles((_path, content) =>
+    content.replaceAll(from, to),
+  );
+  console.info(`Renamed ${from} to ${to} in ${changedFiles} files.`);
 }
 
-const from = `@${currentScope}/`;
-const to = `@${NEW_SCOPE}/`;
-let changedFiles = 0;
+async function renameContainerPrefix(): Promise<void> {
+  if (!containerPrefixPattern.test(NEW_CONTAINER_PREFIX)) {
+    throw new Error(`"${NEW_CONTAINER_PREFIX}" is not a valid name prefix.`);
+  }
 
-for (const path of listTrackedFiles()) {
-  const bytes = await Bun.file(path).bytes();
-  if (bytes.includes(0)) continue;
+  const currentPrefix = prefixAssignmentPattern.exec(
+    await Bun.file(prefixFile).text(),
+  )?.[1];
+  if (currentPrefix === undefined) {
+    throw new Error(`${prefixFile} has no PROJECT_PREFIX assignment.`);
+  }
+  if (currentPrefix === NEW_CONTAINER_PREFIX) {
+    console.info(`The container prefix is already ${NEW_CONTAINER_PREFIX}.`);
+    return;
+  }
 
-  const content = new TextDecoder().decode(bytes);
-  if (!content.includes(from)) continue;
-
-  await Bun.write(path, content.replaceAll(from, to));
-  changedFiles += 1;
+  const containerNamePattern = new RegExp(
+    `(?<![\\w./-])${currentPrefix}-(?=(?:${containerNameSuffixes.join("|")})\\b)`,
+    "g",
+  );
+  const changedFiles = await replaceInTrackedFiles((path, content) => {
+    if (path === prefixFile) {
+      return content.replace(
+        prefixAssignmentPattern,
+        `PROJECT_PREFIX=${NEW_CONTAINER_PREFIX}`,
+      );
+    }
+    if (path.startsWith(".agents/plans/")) return content;
+    return content.replace(containerNamePattern, `${NEW_CONTAINER_PREFIX}-`);
+  });
+  console.info(
+    `Renamed the container prefix ${currentPrefix} to ${NEW_CONTAINER_PREFIX} in ${changedFiles} files.`,
+  );
 }
 
-console.info(`Renamed ${from} to ${to} in ${changedFiles} files.`);
+await renameScope();
+await renameContainerPrefix();
 
 for (const command of [
   ["bun", "install"],

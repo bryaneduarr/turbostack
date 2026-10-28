@@ -289,7 +289,7 @@ Run every script from the project root with [Bun](https://bun.sh/):
 | `bun run format` / `lint` | Format and fix, or lint, with Biome |
 | `bun run outdated` / `update` | List or interactively apply dependency updates |
 | `bun run update:toolchain` | Pin the latest Bun and Turbo everywhere they appear |
-| `bun run rename-scope` | Rename the `@workspace` package scope; set `NEW_SCOPE` in [the script](./scripts/rename-workspace-scope.script.ts) first |
+| `bun run rename-scope` | Rename the `@workspace` package scope and the container name prefix; set `NEW_SCOPE` and `NEW_CONTAINER_PREFIX` in [the script](./scripts/rename-workspace-scope.script.ts) first |
 | `bun run clean` | Remove build output and `node_modules` |
 
 ## License

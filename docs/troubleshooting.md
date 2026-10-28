@@ -36,6 +36,10 @@ lsof -nP -iTCP:3000-3001 -sTCP:LISTEN
 
 Stop each listed `PID` with `kill <pid>`.
 
+## `scripts/dc` says a stack name already belongs to another checkout
+
+**Symptom:** `scripts/dc` exits with code 78 and names another folder. **Cause:** two checkouts use the same container prefix, so they would share one database. **Fix:** set `NEW_CONTAINER_PREFIX` in `scripts/rename-workspace-scope.script.ts` to a name unique to this project, then run `bun run rename-scope` once.
+
 ## A browser fails to launch in the end-to-end tests
 
 **Symptom:** Playwright reports a missing shared library such as `libglib-2.0.so.0`. **Cause:** on NixOS, the config could not build the browser libraries with Nix; its warning is earlier in the log. **Fix:** make sure `nix` works with flakes, then run the suite again. On other systems, run `bunx playwright install --with-deps chromium firefox` from `apps/client`.
