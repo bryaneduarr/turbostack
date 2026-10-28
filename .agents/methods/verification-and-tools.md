@@ -2,7 +2,7 @@
 
 Pick the row or section that matches the task. This guide chooses methods; it adds no coding rules. Permission to act comes from the task, not from this file.
 
-The commands below run exactly as written inside the devcontainer. On a host with Docker, prefix them with `scripts/dc`; the [run-in-container skill](../skills/workflow/run-in-container/SKILL.md) says how to tell.
+Run every command below through `scripts/dc` in the work tree's devcontainer stack (inside the container, run it as written). Nothing runs on the host; without Docker, report the check as blocked. The [run-in-container skill](../skills/workflow/run-in-container/SKILL.md) says how to tell where you are.
 
 ## Find things
 
@@ -53,9 +53,9 @@ Notes:
 
 - Read the log with `grep -E "Ready in|server.started|seed:dev" .turbo/dev-stack/dev-stack.log`, and `grep -iE "error|failed"` for problems.
 - After `dev:stop`, confirm ports 3000-3001 are free (`ss -ltn`).
-- A local PostgreSQL already listening on the database port blocks `db:up`; stop it first. See [setup pitfalls](../project-context/development/setup-pitfalls.md).
+- PostgreSQL already runs in the work tree's stack; `scripts/dc ports` prints the URLs. See [setup pitfalls](../project-context/development/setup-pitfalls.md).
 - Point a browser at this stack. Use `agent-browser` only when the user names it; a plain request for "the browser" or Chrome means the `agent-chrome` tools. Follow the [use-browser skill](../skills/testing/use-browser/SKILL.md) and the Browser automation section below.
-- The e2e suite runs its own stack on ports 3100-3101. Run `bun run test:e2e` detached with output going to a log file, and poll that file with short checks instead of blocking on it. Install browsers once with `bun run test:e2e:install`. On NixOS the Playwright config builds the browser libraries with Nix itself; a launch error naming a missing library means `nix` failed, so check its warning in the log.
+- The e2e suite runs its own servers on ports 3100-3101 inside the stack. Run `scripts/dc bun run test:e2e` detached with output going to a log file, and poll that file with short checks instead of blocking on it. The stack installs Chromium and Firefox itself; WebKit is skipped in the container.
 
 ## Investigating without changing code
 

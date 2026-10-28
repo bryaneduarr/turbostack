@@ -25,4 +25,8 @@ A terminal view lists each service with its live logs. When startup finishes, th
 
 Press Ctrl+C in the terminal. The apps stop, and the database container keeps running. Stop it with `bun run db:down`.
 
+## More than one project
+
+A single project needs nothing more. If you keep two or more projects made from this template on one machine, give each its own container prefix and check that they share one limit: [multiple projects](multiple-projects.md).
+
 If startup stops early with a line naming a problem, follow the fix it prints and run `bun run dev` again. Common cases are in [troubleshooting](troubleshooting.md).

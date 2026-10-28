@@ -3,9 +3,9 @@ import { SUPPORT_ERROR_CODE } from "@workspace/schemas/support/errors/codes/supp
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
-mock.module("next/font/google", () => ({
-  Geist: () => ({ variable: "geist-test-font" }),
-}));
+const geistFontMock = () => ({ variable: "geist-test-font" });
+
+mock.module("next/font/google", () => ({ Geist: geistFontMock }));
 
 const { default: GlobalError } = await import("@/app/global-error");
 

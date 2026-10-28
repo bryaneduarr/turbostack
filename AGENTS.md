@@ -10,6 +10,7 @@ This file says where everything is, when to use it, and what it produces. Apart 
 | [TypeScript and Zod validation](.agents/rules/types-and-validation.md)                                               | Writing schemas, interfaces, route definitions, forms, nullable values   | Schema-derived contracts, boundary validation, typed routes  |
 | [React and Next.js](.agents/rules/react-and-nextjs.md)                                                               | Writing components, Server Actions, caching                              | Server/client split, mutation and cache behavior             |
 | [Code quality](.agents/rules/code-quality.md)                                                                        | Any code change, test, comment, README, commit, PR, or completion report | Simple scoped code, status constants, tests, delivery report |
+| [Isolated environment](.agents/rules/code-quality.md#isolated-environment)                                           | Before building, installing, testing, or running anything; when a stack is idle, full, or busy | Every command through `scripts/dc` in the work tree's stack, none on the host |
 | [UI and styling](.agents/rules/ui-and-styling.md)                                                                    | Any UI in `apps/` or `packages/ui/`                                      | Token-only styling, base and composite components            |
 | [Verification and tools guide](.agents/methods/verification-and-tools.md)                                            | Choosing a search tool, check, test approach, running the app, or debugging step       | Methods only; it adds no rules                               |
 | [Startup index](.agents/project-context/start-here.md) and [capability map](.agents/project-context/capabilities.md) | Starting any task; planning a feature                                    | Pointers to topic notes, reuse items, owners, known gaps     |
@@ -26,7 +27,7 @@ This file says where everything is, when to use it, and what it produces. Apart 
 | `coding/` | `typescript-best-practices`, `zod-validation-utilities`, `react-patterns`, `vercel-react-best-practices`, `nextjs-performance`, `tailwind-css-patterns`, `drizzle-orm-patterns`, `turborepo` | Library and framework patterns while writing code |
 | `github/` | `commit-changes`, `pr` | Commits and pull request bodies |
 | `testing/` | `verify-e2e`, `agent-browser`, `use-browser` | End-to-end verification, browser automation, and choosing the browser tool |
-| `workflow/` | `project-context`, `thinking-distill`, `deliver-plan`, `run-in-container` | Session recaps, plans, clarifying what to build, delivering an approved plan, and running commands in the devcontainer |
+| `workflow/` | `project-context`, `thinking-distill`, `deliver-plan`, `run-in-container`, `update-dependencies` | Session recaps, plans, clarifying what to build, delivering an approved plan, running commands in the devcontainer, and upgrading every dependency |
 
 ## Before you start
 
@@ -40,6 +41,7 @@ This file says where everything is, when to use it, and what it produces. Apart 
 
 ## While working
 
+- Build, install, test, and run only through `scripts/dc` in the work tree's devcontainer stack, never on the host. If Docker is missing, report the checks as blocked. Act on idle stacks, a full stack cap, or a busy slot through `scripts/dc` at once, without asking the user.
 - Follow every applicable rule unless a higher-priority instruction overrides it. If instructions are missing or conflict, report that before making the affected change.
 - Rules override skills, tutorials, templates, and general examples. Adapt their examples to the rules.
 - Load a skill by reading its `SKILL.md` with the host's file reader. Resolve its links from that skill's directory and load only resources that exist. Do not assume a `Skill` tool exists.
@@ -74,7 +76,7 @@ Output: updated topic notes in `.agents/project-context/` recording what was imp
 
 ## Commits
 
-Every commit goes through the [commit-changes skill](.agents/skills/github/commit-changes/SKILL.md), with no exceptions. Output: dependency-ordered Conventional Commits with their messages, created without waiting for plan approval.
+Every commit goes through the [commit-changes skill](.agents/skills/github/commit-changes/SKILL.md), with no exceptions. Output: dependency-ordered Conventional Commits with their messages, created without waiting for plan approval. The one exception is a dependency upgrade, which the [update-dependencies skill](.agents/skills/workflow/update-dependencies/SKILL.md) commits once with its own message format.
 
 ## Repository layout notes
 

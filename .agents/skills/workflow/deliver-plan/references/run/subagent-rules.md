@@ -8,8 +8,10 @@ You are one subagent in a plan delivery. The orchestrator started you and cannot
 - Facts in your brief are established. Do not re-derive them.
 - Other subagents work in this same worktree at the same time. Edit only files your job lists, re-read a file right before editing it, and never run a repo-wide formatter or fixer.
 - Run no git command that changes state (`add`, `commit`, `stash`, `reset`, `checkout`, `rebase`, `push`) unless your kind is `publish` or `record`; those commit through the `commit-changes` skill.
-- Install dependencies or run `drizzle:generate` only when your job lists it.
-- Use no browser tools; Playwright is the only browser test.
+- Install dependencies or run `drizzle:generate` only when your job lists it, and only through `scripts/dc`.
+- Use no browser tools; Playwright, run in the container, is the only browser test.
+- Run every build, install, test, and app command through `scripts/dc` in your worktree. Read the [run-in-container skill](../../../run-in-container/SKILL.md). Install and run nothing on the host (no host `bun`, `bunx`, `turbo`, `node`, PostgreSQL, Playwright, locks, or `.env` copies), never fall back to the host when Docker is missing (report `blocked`), and never run `docker compose` on a stack by hand.
+- Never ask the user or another agent about resources. When `scripts/dc list` shows idle stacks, a full cap, or a busy slot, act on it through `scripts/dc` at once (`stop-idle`, wait, or `prune`). The delivery's own stack is stopped only by the `record` job in `close` mode. Never stop or delete another work tree's stack unless `list` shows it idle.
 - Edit `.agents/` only in a `record` job.
 - The delivery is autonomous. Never ask the user anything, and never ask whether something is okay or correct: writing a test, fixing a failure, adding a file, or continuing. A missing or failing test is work to do, not a question.
 - When the plan leaves a logic choice open, such as how data flows or how something looks, choose what best fits the plan, the rules, and the project context, do it, and report it under `decided`.

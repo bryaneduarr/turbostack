@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1
 
-ARG BUN_VERSION=1.4.0
+ARG BUN_VERSION=1.4.4
 ARG NODE_VERSION=24
 # Updated with the root package.json by `bun run update:toolchain`.
-ARG TURBO_VERSION=2.11.8
+ARG TURBO_VERSION=2.11.10
 
 FROM oven/bun:${BUN_VERSION} AS prune
 ARG TURBO_VERSION

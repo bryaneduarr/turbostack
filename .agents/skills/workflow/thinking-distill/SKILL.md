@@ -18,7 +18,7 @@ The request is a starting point, not a final spec. Find the real goal, show what
 1. Read `.agents/project-context/capabilities.md` first. Open only the topic notes the goal touches.
 2. List what to **reuse**, what to **build**, and what is a **gap**, each with its owner path.
 3. If `.agents/plans/<slug>/` exists for this goal, read it and continue from its open points.
-4. Never ask what the project already answers. Treat it as an assumption.
+4. Never ask what the project already answers. Treat it as an assumption. That includes the environment: read the [run-in-container skill](../run-in-container/SKILL.md); all building, installing, testing, and running happens in the work tree's devcontainer stack through `scripts/dc`, and resources are managed automatically, never asked.
 
 ## Ask
 
@@ -58,9 +58,9 @@ The plan must be specific enough to build without questions. It holds, in this o
 4. **Decisions:** every user choice, with the reason and the rejected options.
 5. **Scope:** what is in, what is out, and each addition marked now, later, or skipped.
 6. **Risks:** each risk with its fix, or marked accepted by the user.
-7. **Steps:** ordered, concrete steps. Each names the files or owner paths it touches and how to verify it.
+7. **Steps:** ordered, concrete steps. Each names the files or owner paths it touches and how to verify it, in the `scripts/dc` form.
 
-Every user request, decision, and goal must appear in the plan. Nothing the user said may be missing.
+Every user request, decision, and goal must appear in the plan. Nothing the user said may be missing. A plan that changes code also holds the Environment decision, and its first step creates the work tree and the first `scripts/dc` call: see the [environment note](references/environment.md).
 
 ## Finish
 

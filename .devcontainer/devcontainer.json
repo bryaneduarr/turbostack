@@ -2,6 +2,7 @@
   "name": "App",
   "dockerComposeFile": "docker-compose.yml",
   "service": "workspace",
+  "initializeCommand": "docker volume create app-bun-cache && docker volume create app-playwright-browsers",
   "workspaceFolder": "/workspace",
   "postCreateCommand": "until test -f /tmp/workspace-ready; do sleep 1; done",
   "portsAttributes": {

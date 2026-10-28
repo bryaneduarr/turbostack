@@ -1,6 +1,6 @@
 # Delivery: <feature>
 
-Branch `<feature>` from `main`, one PR against `main`. Worktree: `<absolute path once setup reports it>`. PR: `<URL once publish reports it>`. Only record jobs edit this file.
+Branch `<feature>` from `main`, one PR against `main`. Worktree: `<absolute path under ~/worktrees/<repo>/ once setup reports it>`, with its own container stack (`scripts/dc`), stopped at close. PR: `<URL once publish reports it>`. Only record jobs edit this file.
 
 Task status values: `pending`, `ready`, `writing`, `done`, `blocked`.
 

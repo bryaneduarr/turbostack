@@ -13,7 +13,7 @@ Planner use: reuse what Features lists, build what Known gaps names, then open t
 - **Rule enforcement**: `config/rules/`, `config/biome/plugins/`. Note: [rule enforcement](development/rule-enforcement.md).
 - **Design tokens**: neutral light and dark tokens, motion utilities, Lucide icons. Owner: `config/tailwind/globals.css`.
 - **Database**: `packages/database` with migrator, runtime, and read-only roles, grant tests, test database, `seed:dev`. Note: [database](packages/database.md).
-- **One-command setup and devcontainer**: `config/setup` (env files, `doctor`, `doctor:stack`), `.devcontainer/`, `scripts/dc`, `bun run verify`. Note: [devcontainer](development/devcontainer-workflow.md).
+- **One-command setup and devcontainer**: `config/setup` (env files, `doctor`, `doctor:stack`), `.devcontainer/`, `scripts/dc` (a stack per work tree), `bun run verify`. Note: [devcontainer](development/devcontainer-workflow.md).
 - **Support error codes**: `SUPPORT_ERROR_CODE` in `packages/schemas/src/support/errors/codes/`, request IDs on every API error, `describeSupportReference` and `describeFailedMutation` in `packages/api-client/src/results/`, shown by `ErrorReference`, `FailureAlert`, `ApiFailureAlert`, and the error pages.
 - **Base UI components**: typography, links, buttons, fields, layout, feedback, toasts, data display, navigation (`AppBar`), dialog, motion in `packages/ui/src/components/`; shared class maps in `packages/ui/src/config/`.
 - **Browser form validation**: `useClientFormValidation` and `useActionToast` in `packages/ui/src/hooks/`.
@@ -37,5 +37,5 @@ User profiles is the example. Add files in each layer, reading only the named ex
 ## Known gaps
 
 - No hosted CI by choice; `bun run verify` is the gate before pushing.
-- WebKit is not run on NixOS hosts.
+- WebKit is not run on NixOS hosts or in the container.
 - Product domain is not chosen: [current scope](product/current-scope.md).

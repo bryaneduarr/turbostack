@@ -17,7 +17,7 @@ Development needs only three tools on the machine: git, Bun, and Docker. Postgre
 ## Operating systems
 
 - **Linux**: supported.
-- **macOS**: supported.
+- **macOS**: supported. `scripts/dc` needs `flock`, which macOS lacks, so use the devcontainer through VS Code.
 - **Windows**: supported only through WSL2. Run every command inside a WSL2 Linux distribution. Windows without WSL2 is not supported.
 - **NixOS**: supported on the host, or through the [devcontainer](devcontainer.md).
 
