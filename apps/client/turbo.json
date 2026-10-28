@@ -7,6 +7,15 @@
     "browser"
   ],
   "tasks": {
+    "build": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*",
+        "!src/e2e/**",
+        "!src/types/e2e/**",
+        "!playwright.config.ts"
+      ]
+    },
     "test:e2e": {
       "dependsOn": [
         "build",

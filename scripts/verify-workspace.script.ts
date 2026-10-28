@@ -3,8 +3,11 @@ import { mkdir } from "node:fs/promises";
 const migrationsPath = "packages/database/src/migrations";
 const resultDirectory = ".turbo/verify";
 const resultPath = `${resultDirectory}/last-result.json`;
+// Turbo adds arguments after `--` to the build's cache key too, so the tests run
+// with `--only` after the types and builds step has built every app.
 const browserCommand =
-  "bunx turbo run test:e2e -- --project=api --project=chromium";
+  "bunx turbo run test:e2e --only -- --project=api --project=chromium";
+const prepareTestDatabase = "bunx turbo run api-server#db:test:prepare";
 const lastRunPath = "apps/client/test-results/.last-run.json";
 
 /** A verification step; fix-loop-only steps run again unless they passed last time. */
@@ -26,21 +29,17 @@ interface VerificationResult {
   passedSteps: string[];
 }
 
-async function runCommand(command: string): Promise<boolean> {
-  const child = Bun.spawn(command.split(" "), {
-    stdout: "inherit",
-    stderr: "inherit",
-  });
-  return (await child.exited) === 0;
+// Runs the commands in order and stops at the first that fails.
+async function runCommand(...commands: string[]): Promise<boolean> {
+  for (const command of commands) {
+    const child = Bun.spawn(command.split(" "), { stdout: "inherit" });
+    if ((await child.exited) !== 0) return false;
+  }
+  return true;
 }
 
-async function readMigrationsStatus(): Promise<string> {
-  const status = Bun.spawn(
-    ["git", "status", "--porcelain", "--untracked-files=all", migrationsPath],
-    { stdout: "pipe", stderr: "inherit" },
-  );
-  return new Response(status.stdout).text();
-}
+const readMigrationsStatus = (): Promise<string> =>
+  Bun.$`git status --porcelain --untracked-files=all ${migrationsPath}`.text();
 
 // Generating must leave the migrations folder unchanged; any new or edited
 // file means the tables changed without a committed migration.
@@ -128,11 +127,12 @@ function createSteps(browserArgs: string): VerificationStep[] {
       "Types and builds",
       "bunx turbo run check-types build",
     ),
-    commandStep(
-      "browser",
-      "Browser tests (API and Chromium)",
-      `${browserCommand}${browserArgs}`,
-    ),
+    {
+      id: "browser",
+      name: "Browser tests (API and Chromium)",
+      run: () => runCommand(prepareTestDatabase, browserCommand + browserArgs),
+      rerunOnlyAfterFailure: false,
+    },
   ];
 }
 
