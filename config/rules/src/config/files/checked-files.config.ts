@@ -10,6 +10,8 @@ export const ignoredPathPatterns: readonly RegExp[] = [
 
 export const testFilePattern = /\.(test|e2e)\.tsx?$/;
 
+export const unitTestFilePattern = /\.(test|spec)\.tsx?$/;
+
 export const testSupportPattern = /\/(e2e|fixtures)\//;
 
 export const maximumSourceLines = 200;

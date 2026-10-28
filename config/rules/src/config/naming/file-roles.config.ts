@@ -21,7 +21,6 @@ export const fileRoles: ReadonlySet<string> = new Set([
   "script",
   "service",
   "table",
-  "test",
 ]);
 
 export const nextAppFileNames: ReadonlySet<string> = new Set([
@@ -40,7 +39,6 @@ export const nextRootFileNames: ReadonlySet<string> = new Set([
   "instrumentation-client.ts",
   "instrumentation.ts",
   "proxy.ts",
-  "proxy.test.ts",
 ]);
 
 export const nextAppPattern = /^apps\/[a-z-]+\/src\/app\//;

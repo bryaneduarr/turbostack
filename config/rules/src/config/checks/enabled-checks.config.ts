@@ -19,7 +19,7 @@ import { rolePlacementCheck } from "@workspace/rules/checks/placement/role-place
 import { routeDefinitionCheck } from "@workspace/rules/checks/routes/route-definition.check";
 import { fileLengthCheck } from "@workspace/rules/checks/size/file-length.check";
 import { folderFileCountCheck } from "@workspace/rules/checks/size/folder-file-count.check";
-import { testRunnerCheck } from "@workspace/rules/checks/testing/test-runner.check";
+import { unitTestBanCheck } from "@workspace/rules/checks/testing/unit-test-ban.check";
 import type { RuleCheck } from "@workspace/rules/types/checks/rule-check.interface";
 
 export const enabledChecks: readonly RuleCheck[] = [
@@ -37,7 +37,7 @@ export const enabledChecks: readonly RuleCheck[] = [
   commentStyleCheck,
   suppressionCommentCheck,
   exampleDataCheck,
-  testRunnerCheck,
+  unitTestBanCheck,
   rootDependenciesCheck,
   workspaceProtocolCheck,
   aliasExportCheck,
