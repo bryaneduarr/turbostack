@@ -21,8 +21,9 @@ services:
     labels:
       dc.managed: "true"
     shm_size: 1gb
-    mem_limit: ${DEVCONTAINER_WORKSPACE_MEMORY:-6g}
-    memswap_limit: ${DEVCONTAINER_WORKSPACE_MEMORY:-6g}
+    # Ten browser test workers peak at about 6 GiB.
+    mem_limit: ${DEVCONTAINER_WORKSPACE_MEMORY:-8g}
+    memswap_limit: ${DEVCONTAINER_WORKSPACE_MEMORY:-8g}
     cpus: ${DEVCONTAINER_WORKSPACE_CPUS:-8}
     logging: *logging
     command: ["sh", ".devcontainer/start-workspace.sh"]

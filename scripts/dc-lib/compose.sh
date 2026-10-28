@@ -6,6 +6,11 @@ prepare_compose() {
   HOST_UID=$(id -u)
   HOST_GID=$(id -g)
   export HOST_UID HOST_GID
+  # Only one heavy command runs at a time, so a stack may use every core but two.
+  local cores
+  cores=$(nproc)
+  DEVCONTAINER_WORKSPACE_CPUS=${DEVCONTAINER_WORKSPACE_CPUS:-$((cores > 4 ? cores - 2 : cores))}
+  export DEVCONTAINER_WORKSPACE_CPUS
   ENV_FILE="$ROOT/apps/server/.env"
   [ -f "$ENV_FILE" ] || ENV_FILE="$ROOT/apps/server/.env.example"
   COMPOSE_FILES=(-f "$ROOT/.devcontainer/docker-compose.yml")
