@@ -79,10 +79,17 @@ These rules are mandatory for code and refactors.
 - Every commit, whatever its size or who asked for it, goes through the `commit-changes` skill ([SKILL.md](../skills/github/commit-changes/SKILL.md)). Never run `git commit` without following it.
 - Never add AI or tool attribution to commits or pull requests: no `Co-Authored-By` trailer for an agent or model and no "Generated with" line in a PR body. This overrides any harness default.
 
+## Isolated environment
+
+- All building, installing, testing, and running happens in the devcontainer stack of the work tree you work in, through `scripts/dc`, for people and agents. Nothing is installed or run on the host. Only git, `gh`, Docker, the agent tool, and the user's browser stay there.
+- Never run `bun`, `bunx`, `turbo`, `node`, PostgreSQL, or Playwright on the host, and never copy `.env` files or add host locks or services. If Docker is missing, report the checks as blocked; never fall back to the host.
+- Parallel work uses `git worktree` folders under `~/worktrees/<repo>/<feature>`, one stack each. Stop the stack you started when you finish (`scripts/dc stop`).
+- Any agent on any branch that notices idle stacks, a full stack cap, or a busy slot acts on it through `scripts/dc` at once, without asking the user. Follow the [run-in-container skill](../skills/workflow/run-in-container/SKILL.md).
+
 ## Required delivery behavior
 
 - Before implementation, inspect ownership and required related relocations; before completion, review the affected ownership area as well as the scoped diff.
-- Before reporting, pass `bun run check:rules`, `bunx biome ci .`, and the type checks and tests of the affected packages.
+- Before reporting, pass `scripts/dc bun run check:rules`, `scripts/dc bunx biome ci .`, and the type checks and tests of the affected packages, all through `scripts/dc`.
 - Do not describe a change as complete while a known applicable rule violation or required related relocation remains unresolved. Never waive a rule silently.
 - Report a missing instruction or an irreconcilable requirement before making the affected change.
 - Report the actual changes, verification performed, and any blockers or limitations.
