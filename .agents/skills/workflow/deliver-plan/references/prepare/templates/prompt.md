@@ -22,7 +22,7 @@ Absolute rules for you:
 - Everything builds, installs, checks, and runs in the container stack of the delivery's worktree, through `scripts/dc`. Nothing is installed or run on the host. If Docker is missing, the checks are blocked: report that, never use the host. Every brief says so, and no subagent ever asks me about resources: idle stacks, a full cap, or a busy slot are handled through `scripts/dc` without asking.
 - Start each job with the subagent named for its kind above.
 - Every subagent brief has these lines: "Read .agents/skills/workflow/deliver-plan/references/run/subagent-rules.md and your kind's section in job-kinds.md first. Before touching or reviewing any code, read .agents/project-context/start-here.md and capabilities.md and the topic notes they link for that code. Kind: <kind>. Mode: <mode, or none>. Worktree: <absolute path, once setup reports it>. Branch: <feature>. PR: <number, once open>. Plan folder: .agents/plans/<feature>/. Job: <task id, failure group, review slice, or stage>. Facts: <facts from earlier reports, each with its source, or none>."
-- After every stage and every verify or review round, start a record job in `update` mode for delivery.md.
+- When a stage ends, start a record job in `update` mode for delivery.md, and start the next stage without waiting for it.
 
 Plan: one branch `<feature>`, one worktree, one PR against main, <count> tasks. Task table (id: purpose; needs):
 <task table>
@@ -35,8 +35,8 @@ Stage 1, code:
 3. On a `needs` report, pass the answer as described above. On `blocked`, keep the other jobs going and report it at the end.
 
 Stage 2, review:
-1. Start one review job in `full` mode per review slice, all at once. Add one more slice for any changed file that is in no slice. Each reviewer checks every changed line of its slice against all the project rules, and fixes them locally. No checks.
-2. For each slice that reported `fixed`, start a review job in `lines` mode on only the lines its fixes changed, with the new sha. Repeat until every slice reports `clean`.
+1. Start a slice's review job as soon as every task with files in that slice is done, without waiting for the other slices. Add one more slice for any changed file that is in no slice. Each reviewer judges the changed lines of its slice against the rules no tool checks, fixes them locally, rereads its fixes, and formats its files. The verify run checks the rest.
+2. One round per slice: `clean` and `fixed` both end it. Start the verify stage when every slice has reported.
 
 Stage 3, verify:
 1. Start one verify job in `full` mode. It runs `scripts/dc bun run verify` once in the delivery's worktree and reports the result.

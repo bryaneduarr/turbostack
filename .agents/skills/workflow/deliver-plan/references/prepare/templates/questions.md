@@ -10,7 +10,7 @@
 3. <Repeat question 2 for each Done when line.>
 4. Which browser scenario covers each new behavior, and does it assert the parsed contract?
 5. Did `scripts/dc bun run verify` pass on the work tree, or `scripts/dc bun run verify --failed` after the last fix?
-6. Did every review slice report clean?
+6. Did every review slice finish its round, clean or fixed?
 7. Is the PR open against `main` with commit-changes commits, labels, and the author assigned?
 8. Did every project command run through `scripts/dc` in the delivery's worktree, with nothing installed or run on the host, and was the stack stopped at close?
 

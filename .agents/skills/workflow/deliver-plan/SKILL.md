@@ -10,7 +10,7 @@ This skill writes only the plan folder. It never edits code, creates branches, o
 The delivery has one branch (`<feature>`), one worktree at `~/worktrees/<repo>/<feature>` with its own container stack, and one PR, in these stages, always in this order:
 
 1. **Code**: every task writes its logic and any browser scenario in parallel, with no checks.
-2. **Review**: reviewers read every changed line of their slice against the rules and fix what they find locally, until every reviewer reports clean. No checks.
+2. **Review**: one reviewer per slice, started as soon as that slice's tasks are done, judges its changed lines against the rules no tool checks, fixes what it finds, rereads its fixes, and formats its files. One round; no checks.
 3. **Verify**: run `scripts/dc bun run verify` once on the work tree.
 4. **Fix loop**: after a failure, fix the cause and run `scripts/dc bun run verify --failed` until it passes.
 5. **Publish**: after a passing verify, commit through `commit-changes`, push the branch, and open the PR; its Checked section lists the passing run.
@@ -47,5 +47,5 @@ Standing rules that bind this skill and every agent it starts:
 - **Name the subagents first.** No delivery job starts until the user has named the subagent (type or model) for every job kind. The orchestrator asks for missing ones once, before the setup job, and waits.
 - **Run autonomously after that.** Never ask the user anything during delivery: not about logic, scenarios, fixes, files, or continuing. Decide by the plan, the rules, and the project context, record each decision the plan did not make, and keep going until the close stage ends or a stop limit is reached.
 - **Code first, one check.** Code stages write logic and browser scenarios with no checks. The one `verify` run and its fix loop are the only checks, and they run after the review.
-- **Review against the rules.** Reviewers judge only lines changed in the local Git diff, against every applicable rule in `.agents/rules/` and the project-context notes, and fix only those lines.
-- **Use the project context.** Before any agent surveys, implements, reviews, verifies, or fixes code, it reads `.agents/project-context/start-here.md` and `capabilities.md`, then the linked topic notes for the code it touches.
+- **Review against the rules.** Reviewers judge only lines changed in the local Git diff, against the rules in `.agents/rules/` and the project-context notes that no tool checks, and fix only those lines. The verify run checks the rest in seconds.
+- **Use the project context.** Before any agent surveys, implements, reviews, or fixes code, it reads `.agents/project-context/start-here.md` and `capabilities.md`, then the linked topic notes for the code it touches.

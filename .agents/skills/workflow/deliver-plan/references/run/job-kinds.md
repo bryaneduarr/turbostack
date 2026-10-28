@@ -22,17 +22,20 @@ Code stage. Write the Code files in `tasks/<task-id>/task.md`, all the logic the
 
 ## review
 
-Input: one review slice (its files) and a mode. Mode `full` reviews every line the local Git diff changes in the slice's files. Mode `lines` reviews only the lines changed since the sha the brief names, such as a fix round's lines. Never review or change a line outside that diff.
+Input: one review slice (its files). Review every line the local Git diff changes in the slice's files, and never a line outside that diff. One round per slice: your report covers your own fixes, so no second review follows.
 
-1. Read all five rules in `.agents/rules/` completely, and the project-context notes for the slice's owners. Read the diff with `git diff main -- <files>` and `git diff -- <files>` for uncommitted lines.
-2. Check every changed line against every applicable rule and note: structure, naming, aliases, size, contracts and validation, React and Next.js, code quality, comments, status constants, UI tokens and components, and the Tests section.
-3. Apply every fix locally in the slice's files, changing only the flagged lines and what the fix needs to compile, such as an import. Run no check. Do not commit and post nothing outside the worktree.
+The verify run checks these by tool in seconds, so spend no time on them: formatting, import order, file and folder names, placement, file length, folder size, alias imports, comment and suppression style, interface and schema field docs, route definitions, optional chaining, zero fallbacks, dependencies, unit test files, type errors, direct API requests, environment reads, hard-coded HTTP statuses, double type assertions, loose Zod schemas, manual memoization, and form event types.
+
+1. Read all five rules in `.agents/rules/` completely, and the project-context notes for the slice's owners. Read the diff in one command: `git diff main -- <files>; git diff -- <files>`.
+2. Judge every changed line on what only a reader can see: it does what `task.md` and the plan ask, its logic and edge cases are right, input is validated at its boundary, the server and client split, Server Actions, and caching follow the rules, permissions are checked, status values use constants, UI uses tokens and existing components, existing helpers are reused, names and comments say what and why, and browser scenarios cover the task and follow the Tests rules.
+3. Apply every fix locally in the slice's files, changing only the flagged lines and what the fix needs to compile, such as an import. Then read your fixed lines once more against the same rules.
+4. Run `scripts/dc bunx biome check --write <the slice's changed files>` once, so formatting and import order never fail the verify. Run no other check. Do not commit and post nothing outside the worktree.
 
 Report `result: clean` when no violation was found, or `result: fixed` with, per file, the changed lines and the rule each fix answers.
 
 ## verify
 
-Edit and commit no file. Modes `full` (the one run after review) and `failed` (the fix loop). Run `scripts/dc bun run verify` in `full` mode, or `scripts/dc bun run verify --failed` in `failed` mode, in the delivery's worktree. Run it detached with output in a log file that you poll. The run stops at the first failing step; a failing step is a result to report, never a question.
+Edit and commit no file. Modes `full` (the one run after review) and `failed` (the fix loop). Run `scripts/dc bun run verify` in `full` mode, or `scripts/dc bun run verify --failed` in `failed` mode, in the delivery's worktree. Send its output to a log file and wait for it with your shell tool's longest timeout (a full run takes about a minute); if the tool cannot wait that long, run it detached and check the log every 30 seconds. The run stops at the first failing step; a failing step is a result to report, never a question.
 
 - Any fail: report `result: fail`, the failing step name, its first error lines (at most 15), the files it implicates, and the owning task id. Use the project-context notes of the packages and tasks behind the failure to name the owner. Put failures that share a file in one group, and list `groups: <group -> failure numbers>`.
 - Pass: report `result: pass`, the mode, and the step times the summary prints.

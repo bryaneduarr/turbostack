@@ -29,7 +29,7 @@ Stage status values: `pending`, `running`, `done`, `blocked`.
 | Stage | Status | Evidence |
 | --- | --- | --- |
 | code | pending | <commits or changed files> |
-| review | pending | <round number and fixed lines per slice> |
+| review | pending | <fixed lines per slice> |
 | verify | pending | <run number, mode, and the failing step of each failed run> |
 | publish | pending | <PR URL and the passing verify run> |
 | close | pending | |

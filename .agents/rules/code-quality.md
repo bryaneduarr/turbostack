@@ -65,6 +65,9 @@ These rules are mandatory for code and refactors.
 ## Tests
 
 - Browser tests are the only tests. When behavior needs verification (user flows, request and response workflows, validation and error messages, permissions, state transitions, and bug fixes), write a Playwright scenario: a `<responsibility>.e2e.ts` file under `apps/client/src/e2e/`. Contracts that need no page go in the `api` project.
+- When signing in is only setup, start the scenario's session through the API and set the session cookie with one shared helper in `apps/client/src/e2e/`; a form sign-in costs ten times as long. Use the sign-in form only when the scenario is about signing in.
+- Never wait on the real clock: no fixed sleeps and no waits for a new minute. Rewind the stored time or rate limit window in the database, or drive browser timers with Playwright's `page.clock`. Wait only when the time window itself is under test.
+- Scenarios run in parallel, so keep each independent: create its own accounts and records, and filter shared lists, such as an audit log, by them.
 - Do not write unit tests (`*.test.ts`, `*.test.tsx`, `*.spec.ts`) unless the user asks for them in the current request; `bun run check:rules` rejects them.
 - Do not test trivial code such as configuration, constants, types, or simple pass-through functions, and do not aim for a test per page.
 - The suite runs the `api` and `chromium` projects by default. Run Firefox (`--project=firefox`) or WebKit only when the user asks.

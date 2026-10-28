@@ -28,7 +28,7 @@ scripts/dc bun run test:e2e -- --project=firefox # other browsers, only when the
 scripts/dc bun run test:e2e -- --project=chromium --grep "profile" # one scenario
 ```
 
-Run them detached with output in a log file and poll it; a full run takes minutes.
+Send the output to a log file; a full `verify` takes about a minute.
 The HTML report is written to `apps/client/playwright-report/` in the shared
 folder.
 
@@ -51,6 +51,9 @@ Tests use unique names, and the test database starts empty on every run.
   and API contract specs under `apps/client/src/e2e/api-contracts/`, importing
   `test` and `expect` from `@playwright/test`.
 - Drive the UI with role and label locators; name each layer check with `test.step`.
+- Keep it fast and independent, as the Tests rules in `.agents/rules/code-quality.md`
+  say: a session from the API when signing in is only setup, no waits on the real
+  clock, and only the scenario's own records in shared lists.
 - Call the API through `requestE2eApi` with shared route definitions and
   `requireApiSuccess`, and use the status constants. Query the database only
   through `@workspace/database` tables when a check needs it. No casts or `any`.

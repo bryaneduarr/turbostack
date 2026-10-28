@@ -31,7 +31,7 @@ This file says where everything is, when to use it, and what it produces. Apart 
 
 ## Before you start
 
-1. Read all five rule files completely before investigating, creating, changing, reviewing, or verifying anything.
+1. Read all five rule files completely before investigating, creating, changing, or reviewing code. A plan-delivery subagent whose job writes or judges no code (setup, verify, publish, record) reads only what the [subagent rules](.agents/skills/workflow/deliver-plan/references/run/subagent-rules.md) list for its kind.
 2. Read the startup index and your task's handoff. Claude Code imports the two files below automatically; other harnesses open them by path.
 3. Open only the linked topics the task needs, never the whole context folder.
 4. Before planning a feature, answer from the capability map's Features, Feature slice, and Known gaps first. Open source only to confirm a named reuse item. Avoid repo-wide `git ls-files` or grep sweeps.
