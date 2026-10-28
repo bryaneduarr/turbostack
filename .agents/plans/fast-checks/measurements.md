@@ -38,3 +38,16 @@ PASS     Browser tests (API and Chromium) (5.9s)
 
 All 8 checks passed.
 ```
+
+## Faster checks
+
+Measured 2026-10-28 (28 cores, WSL2). Before: `origin/main` (8 CPUs, 6 GiB, 3 workers). After: `perf/faster-checks` (26 CPUs, 8 GiB, 10 workers, `--disable-gpu`, 5 s `actionTimeout`).
+
+| Run | Before | After |
+| --- | -----: | ----: |
+| First verify in a fresh work tree | 12.5 s | 9.9 s |
+| Repeat verify, nothing changed | 7.6 s | 7.7 s |
+| One broken test, full verify | 37.8 s | 9.8 s |
+| Fix loop, `verify --failed` | 7.0 s | 5.5 s |
+
+With 7 tests, the worker count changes nothing. The settings carry over Veyra's measurements (119 tests: 177.6 s to 62.5 s), so projects built from the template start fast. The broken-test gain comes from `actionTimeout`: before it, a click on a missing button waited out the 30 s default.

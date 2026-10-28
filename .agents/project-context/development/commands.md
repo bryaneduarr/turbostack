@@ -4,6 +4,6 @@ Evidence: 2026-10-28; `chore/fast-checks` on `759ac4e`; `scripts/dc bun run veri
 
 - Toolchain: Git, Bun (`packageManager`), Docker. `update:toolchain` pins Bun/Turbo.
 - First run: `bun run dev`. Agents use `dev:start`/`dev:status`/`dev:stop`.
-- One check: [verify](../../../scripts/verify-workspace.script.ts) runs lockfile, Biome, boundaries, rules, compose, migrations, types and builds, then e2e (api, chromium); it stops at the first failure and records `.turbo/verify/last-result.json`. `verify --failed` is the fix loop.
+- One check: [verify](../../../scripts/verify-workspace.script.ts) runs lockfile, Biome, boundaries, rules, compose, migrations, types and builds, then e2e (api, chromium); it stops at the first failure and records `.turbo/verify/last-result.json`. `verify --failed` is the fix loop. The browser step prepares the test database, then runs `turbo run test:e2e --only`, so the client is not built a second time under a different cache key; `apps/client/turbo.json` leaves `src/e2e` and the Playwright config out of the build inputs. Reviewers in [deliver-plan](../../skills/workflow/deliver-plan/SKILL.md) run one round and skip what `verify` checks by tool.
 - User decided 2026-10-28: no unit tests; code first, then review, then one `verify`. Rejected: `check`, `test`, `test:e2e:changed`.
 - Database: `db:up`, `db:provision`, `drizzle:*`, `seed:dev`.
