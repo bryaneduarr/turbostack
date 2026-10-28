@@ -1,6 +1,6 @@
 ---
 name: deliver-plan
-description: "Turn an approved plan at .agents/plans/<feature>/plan.md into a delivery folder beside it (code-only parallel tasks, one branch, one PR, then a test loop, a rules review, and a final test run) and a ready-to-paste prompt for an autonomous, delegate-only orchestrator session. Use when the user points to a plan to prepare its delivery."
+description: "Turn an approved plan at .agents/plans/<feature>/plan.md into a delivery folder beside it (code-only parallel tasks, a review by reading the diff, one verify run with a fix loop, then one PR) and a ready-to-paste prompt for an autonomous, delegate-only orchestrator session. Use when the user points to a plan to prepare its delivery."
 ---
 
 # Prepare a plan delivery
@@ -9,17 +9,18 @@ This skill writes only the plan folder. It never edits code, creates branches, o
 
 The delivery has one branch (`<feature>`), one worktree at `~/worktrees/<repo>/<feature>` with its own container stack, and one PR, in these stages, always in this order:
 
-1. **Code**: every task writes its logic in parallel, with no tests. Then publish: commit through `commit-changes`, push the branch, and open the PR from it.
-2. **Test**: write every planned test, run every check, comment each failure on the PR, fix it, and rerun until all pass. Then publish the tests and fixes.
-3. **Review**: reviewers check every changed line of the PR against the rules, comment on the exact lines or blocks that break one, and fix them locally, until every reviewer reports clean. Then publish the fixes.
-4. **Final test**: rerun every check on the committed tree. A failure goes back through the test loop and a review of the fix lines, then the final run repeats.
-5. **Close**: update the PR, reply to every comment with its fix commit, record notes and handoffs, and stop the stack (`scripts/dc stop`).
+1. **Code**: every task writes its logic and any browser scenario in parallel, with no checks.
+2. **Review**: reviewers read every changed line of their slice against the rules and fix what they find locally, until every reviewer reports clean. No checks.
+3. **Verify**: run `scripts/dc bun run verify` once on the work tree.
+4. **Fix loop**: after a failure, fix the cause and run `scripts/dc bun run verify --failed` until it passes.
+5. **Publish**: after a passing verify, commit through `commit-changes`, push the branch, and open the PR; its Checked section lists the passing run.
+6. **Close**: record notes and handoffs, then stop the stack (`scripts/dc stop`).
 
 Steps:
 
 1. Read the five rules, the [run-in-container skill](../run-in-container/SKILL.md), the startup index, the capability map, the topic notes the plan touches, and the plan. Stop if the plan lacks Done when, Decisions, or Steps, or contradicts itself, and suggest `thinking-distill`. Never invent a logic decision.
 2. Survey in parallel: one read-only subagent per plan step that touches existing code, each reading the project context first. Each asks which files the step edits, which it mirrors, and which shared files it touches (routers, catalogs, grants, migrations, `bun.lock`).
-3. Cut tasks with the [split rules](references/prepare/split-rules.md): few, focused, and parallel, each with its code files and, separately, its test files.
+3. Cut tasks with the [split rules](references/prepare/split-rules.md): few, focused, and parallel, each with its code files and, when its behavior needs verification, its browser scenario.
 4. Write this tree from the [templates](references/prepare/templates/):
 
 ```text
@@ -28,10 +29,10 @@ Steps:
 ├── README.md               start here: reading order
 ├── prompt.md               the prompt for the new session
 ├── delivery.md             every task with its needs, the review slices, the stages, and status
-├── testing.md              `scripts/dc` commands in order, e2e scenarios, skips
+├── testing.md              `scripts/dc bun run verify` commands, e2e scenarios, skips
 ├── questions.md            one acceptance question per Done when line
 └── tasks/<task-id>/
-    └── task.md             scope, code files, test files, agreed interfaces, and the brief
+    └── task.md             scope, code files, browser scenario, agreed interfaces, and the brief
 ```
 
 5. Check that every plan step sits in one task, that every Done when line sits in `questions.md`, that tasks without a `needs` link between them share no file, and that every task file sits in exactly one review slice.
@@ -44,7 +45,7 @@ Standing rules that bind this skill and every agent it starts:
 
 - **Run in the container.** Every build, install, test, and run goes through `scripts/dc` in the delivery's work tree stack. Nothing is installed or run on the host: no host `bun`, `bunx`, `turbo`, `node`, PostgreSQL, Playwright, locks, or copied `.env`. Without Docker, report the checks as blocked, never run them on the host. Any agent that notices idle stacks, a full cap, or a busy slot acts on it through `scripts/dc` at once, without asking the user.
 - **Name the subagents first.** No delivery job starts until the user has named the subagent (type or model) for every job kind. The orchestrator asks for missing ones once, before the setup job, and waits.
-- **Run autonomously after that.** Never ask the user anything during delivery: not about logic, tests, fixes, files, or continuing. Decide by the plan, the rules, and the project context, record each decision the plan did not make, and keep going until the close stage ends or a stop limit is reached.
-- **Write code before tests.** The code stage writes logic only. Tests come only in the test stage, after the PR is open.
-- **Review against the rules.** Reviewers judge only lines changed in the PR or the local Git diff, against every applicable rule in `.agents/rules/` and the project-context notes, and fix only those lines.
-- **Use the project context.** Before any agent surveys, implements, tests, reviews, or fixes code, it reads `.agents/project-context/start-here.md` and `capabilities.md`, then the linked topic notes for the code it touches.
+- **Run autonomously after that.** Never ask the user anything during delivery: not about logic, scenarios, fixes, files, or continuing. Decide by the plan, the rules, and the project context, record each decision the plan did not make, and keep going until the close stage ends or a stop limit is reached.
+- **Code first, one check.** Code stages write logic and browser scenarios with no checks. The one `verify` run and its fix loop are the only checks, and they run after the review.
+- **Review against the rules.** Reviewers judge only lines changed in the local Git diff, against every applicable rule in `.agents/rules/` and the project-context notes, and fix only those lines.
+- **Use the project context.** Before any agent surveys, implements, reviews, verifies, or fixes code, it reads `.agents/project-context/start-here.md` and `capabilities.md`, then the linked topic notes for the code it touches.

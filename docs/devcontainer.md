@@ -16,8 +16,7 @@ The first start builds the image, installs the packages, and creates the `apps/*
 `scripts/dc <command>` runs any command inside the container and starts the container first when it is down. Examples:
 
 ```sh
-scripts/dc bun run test
-scripts/dc bun run check
+scripts/dc bun run verify
 scripts/dc shell
 ```
 

@@ -5,7 +5,7 @@ These rules are mandatory for code creation, changes, refactoring, review, and v
 ## Keep responsibilities clear
 
 - Keep files focused on one responsibility, preferably one main function per file.
-- A source file, including scripts and test files (`.test.ts`, `.e2e.ts`), must not exceed 200 lines. Generated files (migrations and their snapshots, framework-generated declarations such as `next-env.d.ts`) are exempt. There are no overruns beyond the reviewed exceptions in `config/rules`; `bun run check:rules` enforces this.
+- A source file, including scripts and browser test files (`.e2e.ts`), must not exceed 200 lines. Generated files (migrations and their snapshots, framework-generated declarations such as `next-env.d.ts`) are exempt. There are no overruns beyond the reviewed exceptions in `config/rules`; `bun run check:rules` enforces this.
 - When a file nears 200 lines, split it by responsibility into descriptive subfolders before adding more.
 - A folder must not hold more than 10 files directly; subfolders do not count. When adding a file would exceed 10, group the files into descriptively named subfolders by responsibility, each one an actual ownership boundary. Do not create `misc/`, `shared/`, `common/`, or catch-all `utils/` buckets, and do not use barrel or `index.ts` files to hold them. Exempt only generated output (`packages/database/src/migrations` and its `meta/` folder), symlink entries, repository and app root folders, and reviewed exceptions in `config/rules`; `bun run check:rules` enforces this.
 - Keep schemas and interfaces grouped by feature, operation, or route under `packages/schemas/src/`. Each responsibility must have its own descriptive interface file containing only its related contracts.
@@ -61,7 +61,7 @@ This is an acceptance condition for all project-owned frontend, backend, schema,
 
 - Before implementation, inspect the existing architectural roots, related files, consumers, and ownership boundaries. Determine where new responsibilities belong and which existing files must move or adapt.
 - Make straightforward placements using established ownership. Ask the user before proceeding when plausible alternatives imply materially different domain boundaries or architectural changes; do not guess or ask for permission for every folder.
-- Before completion, review the scoped diff and affected ownership area for meaningful depth, specific naming, complete relocations, and preserved runtime boundaries. Use the appropriate static checks for affected packages; instruction-only changes require documentation checks rather than TypeScript compilation.
+- Before completion, review the scoped diff and affected ownership area for meaningful depth, specific naming, complete relocations, and preserved runtime boundaries. Then run `scripts/dc bun run verify` once; instruction-only changes require documentation checks rather than TypeScript compilation.
 - Do not declare affected work complete while a known applicable structural violation or required relocation remains unresolved. Report blockers and verification limits explicitly. Correctness and type safety take precedence over cosmetic nesting.
 
 ## Keep changes scoped

@@ -3,7 +3,7 @@
 Fast, deterministic checks for the project rules in `.agents/rules/` that Biome
 cannot express: file and folder naming, role placement, file size, type
 placement, contract and schema documentation, route definitions, comment style,
-suppressions, example data, test runner use, and dependencies.
+suppressions, example data, unit test files, and dependencies.
 
 ## Usage
 
@@ -15,7 +15,7 @@ bun run check:rules
 
 It reads every tracked and new, unignored file, prints each violation as
 `path:line  [rule-id]  message`, and exits non-zero when any remain. It also runs
-in `bun run check` and `bun run verify`.
+in `bun run verify`.
 
 ## Structure
 
@@ -35,5 +35,5 @@ config/rules/src/
 - **New role suffix.** Adding one to `src/config/naming/file-roles.config.ts` is
   an architecture decision; record it in the structure rules too.
 - **New check.** Add `src/checks/<area>/<rule>.check.ts`, register it in
-  `src/config/checks/enabled-checks.config.ts`, and cover its matching logic
-  with a `bun:test` file next to it.
+  `src/config/checks/enabled-checks.config.ts`, and confirm it fails on a file
+  that breaks the rule.

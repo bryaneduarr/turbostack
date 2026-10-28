@@ -3,8 +3,8 @@
 Drizzle table definitions, committed migrations, and Drizzle Kit commands for the
 API server's PostgreSQL database. The server owns the runtime connection pool;
 other consumers, such as end-to-end tests, open their own connection with the
-exported credentials and query through the same tables. Drizzle Kit, migrations,
-and test fixtures connect with the migrator credentials, which own the schema.
+exported credentials and query through the same tables. Drizzle Kit and migrations
+connect with the migrator credentials, which own the schema.
 
 Import directly from exported modules:
 
@@ -48,8 +48,8 @@ only the `DB_*` variables.
 
 Grants are migrations too. Generate an empty one with
 `bun --env-file=../../apps/server/.env drizzle-kit generate --custom --name=<name>`
-and grant each role only the tables and columns it needs; the server's database
-grant test fails until its expectations list every table for every role. The runner holds a PostgreSQL advisory lock, so
+and grant each role only the tables and columns it needs. The runner holds a
+PostgreSQL advisory lock, so
 concurrent deployments wait instead of applying the same migrations twice, and
 sets `lock_timeout` so a migration cannot queue behind a long query and block
 traffic to that table. Do not automatically run migrations on every server

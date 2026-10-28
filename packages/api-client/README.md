@@ -43,6 +43,5 @@ means the server broke its contract.
 ## Scripts
 
 - **bun run check-types** - Type-check without emitting files
-- **bun run test** - Run the Bun tests
 - **bun run lint** - Lint with Biome
 - **bun run format** - Format with Biome

@@ -23,22 +23,18 @@ A missing search result calls for a narrower query or `git status` (hidden, igno
 | Change | Run |
 | --- | --- |
 | Docs or instructions | `git diff --check -- <path>`; read new files directly; confirm links resolve |
-| Any code, quick structural check | `bun run check:rules` and `bunx biome ci .` |
-| TypeScript in one package | `bun run --cwd <package> check-types` |
-| Contracts or exports shared across packages | The same command in each consumer, such as `bun run --cwd packages/schemas check-types` then `bun run --cwd apps/server check-types` |
-| Behavior fix or refactor | Scoped `git diff`, direct consumers, then the affected package checks and tests |
-| Aliases, exports, or framework wiring | Also `bun run build` |
-| Tables or migrations | `bun run verify` (it fails when `drizzle:generate` leaves uncommitted migrations) |
-| Tests | `bun run --cwd <package> test`, or `bun run test` for every affected package |
-| User flows across browser, API, and database | `bun run test:e2e` (all) or `bun run test:e2e:changed` (Chromium and API only) |
-| Everything before a push | `bun run check`, then `bun run verify` |
+| Code, any size | Nothing while writing. When the code is complete, review the scoped diff, then run `scripts/dc bun run verify` once |
+| Behavior fix or refactor | Scoped `git diff` and direct consumers while reviewing; the same `verify` run covers them |
+| Tables or migrations | `verify` (it fails when `drizzle:generate` leaves uncommitted migrations) |
+| User flows, validation, permissions, and bug fixes | A Playwright scenario under `apps/client/src/e2e/`, run by `verify` (`api` and `chromium`) |
+| Firefox or WebKit | `scripts/dc bun run test:e2e -- --project=firefox`, only when the user asks |
+| After a failed `verify` | Fix the cause, then `scripts/dc bun run verify --failed` |
 
 Notes:
 
 - Inspect `git status` before editing to separate user changes from yours.
 - A passing type check proves compilation, not runtime behavior.
-- Server route tests send real requests through `app.handle(new Request(...))`; HTTP clients use a local `Bun.serve`. Assert on parsed contracts, not raw text.
-- The server test task starts PostgreSQL with Docker and applies migrations. Tests that write data delete their rows afterwards.
+- The e2e suite uses the test database that `api-server#db:test:prepare` prepares.
 - Canvas or other browser-only rendering needs a real browser test. Propose Playwright for the owning app instead of adding it speculatively.
 
 ## Running the app
@@ -78,12 +74,12 @@ After connecting, `agent-browser snapshot -i` or `chrome-devtools list_pages` gi
 
 ## Rules review
 
-`bun run check:rules` and `bunx biome ci .` cover the mechanical rules in under a second each, and their messages name the fix. Judgment rules (deepest owner, forwarding wrappers) are reviewed once per PR by reading the diff against the files in `.agents/rules/`; `turbo boundaries`, `bun run check:rules`, and `bunx biome ci .` check the mechanical part. When a review finds the same mechanical problem twice, add a check to `config/rules` or a GritQL plugin in `config/biome/plugins/`.
+`bun run check:rules` and `bunx biome ci .` cover the mechanical rules, and their messages name the fix. Judgment rules (deepest owner, forwarding wrappers) are reviewed by reading the diff against the files in `.agents/rules/` before the one `verify` run; `turbo boundaries`, `bun run check:rules`, and `bunx biome ci .` check the mechanical part, and `verify` runs them. When a review finds the same mechanical problem twice, add a check to `config/rules` or a GritQL plugin in `config/biome/plugins/`.
 
 ## Delivering a pull request
 
-1. Run `bun run check`, then `bun run verify`. Push only when both pass.
-2. There is no hosted CI. Run what the change touches that `check` skips, such as `bun run test:e2e` or `bun run start:docker`, before pushing.
+1. Pass `scripts/dc bun run verify` (or `scripts/dc bun run verify --failed` after a fix). Push only when it passes.
+2. There is no hosted CI. Run what the change touches that `verify` skips, such as `bun run start:docker`, before pushing.
 3. Never open a PR on top of a PR whose checks fail.
 
 ## When a test fails

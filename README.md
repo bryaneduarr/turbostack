@@ -67,15 +67,14 @@ The [documentation index](./docs/README.md) covers the details, including the
 
 ## Quality Checks
 
-`bun run check` runs Biome (lint, formatting, import order, and the project's
-GritQL rule plugins), Turborepo boundaries, the project structure rules, the
-Compose file check, type checks, tests, and builds.
-
-`bun run verify` is the single local gate before pushing. It runs every check in
-order (lockfile, Biome, boundaries, structure rules, migrations against tables,
-type checks, unit tests, builds, and the Playwright suite on the API and
-Chromium), continues past failures, and ends with a pass/fail summary; it exits
-non-zero if any check failed. There is no hosted CI, so run it locally.
+`bun run verify` is the single local gate. It runs, in order and stopping at the
+first failure: the lockfile check, Biome (lint, formatting, import order, and the
+project's GritQL rule plugins), Turborepo boundaries, the project structure rules,
+the Compose file check, the migration check against the tables, type checks and
+builds, and the Playwright browser tests for the API and Chromium. It prints each
+step's time and a summary, and exits non-zero on failure. After a failure, fix the
+cause and run `bun run verify --failed`, which repeats the fast checks and builds
+and only the browser tests that failed. There is no hosted CI, so run it locally.
 
 The rules in `.agents/rules/` are enforced in two layers. Everything mechanical
 fails the build: `config/biome/plugins/` holds the code-pattern rules, and
@@ -115,7 +114,7 @@ their structure when adding a feature:
 |---|---|---|
 | Database | `packages/database/src/tables/users/profile/` and its migrations | Required columns, a listing index, and a grant migration for the runtime role |
 | Contracts | `packages/schemas/src/server/routes/users/profiles/` | Shared schemas and one route definition per operation |
-| Server | `apps/server/src/routes/users/profiles/` and `src/services/users/profiles/` | Handlers, database services, `NOT_FOUND` failures, and a database-backed workflow test |
+| Server | `apps/server/src/routes/users/profiles/` and `src/services/users/profiles/` | Handlers, database services, and `NOT_FOUND` failures |
 | Client | `apps/client/src/app/profiles/` and `src/actions/users/profiles/` | Server Components that read through the api-client, and Server Actions with browser and server validation |
 | End to end | `apps/client/src/e2e/users/profiles/` and `src/e2e/api-contracts/` | A browser flow and an API contract test |
 
@@ -128,20 +127,21 @@ feature when your project has its own domain.
 
 Each process connects as its own role: migrations as `app_migrator`, which owns
 the schema; the API as `app_runtime`, which holds only the grants that migrations
-give it; and manual inspection as the read-only `app_cli`. A grant test fails
-until every table lists its expected privileges for every role. See the
+give it; and manual inspection as the read-only `app_cli`. See the
 [database package](./packages/database/README.md) and the
 [server database notes](./apps/server/src/db/README.md).
 
 ## Tests
 
-Tests use Bun's built-in runner (`bun:test`) and live next to the code as
-`<responsibility>.test.ts`. Server route tests send requests through
-`app.handle(new Request(...))`, so no port is opened. Write tests for workflows
-and logic that need verification, not for every function.
+Browser tests are the only tests. They live in `apps/client/src/e2e/` as
+`<responsibility>.e2e.ts` files. Write one for each behavior that needs
+verification, such as user flows, validation and error messages, permissions, and
+bug fixes, not for every function. Unit test files (`*.test.ts`) are rejected by
+`bun run check:rules`.
 
-The server's `test` task recreates a separate `<DB_NAME>_test` database with the
-same roles and migrations first, so tests never touch development data.
+The browser tests start from a separate `<DB_NAME>_test` database that the
+server's `db:test:prepare` task recreates with the same roles and migrations, so
+tests never touch development data.
 
 ### End-to-End Tests
 
@@ -151,7 +151,8 @@ run beside `bun run dev`.
 
 ```sh
 bun run test:e2e:install                   # once: Chromium and Firefox
-bun run test:e2e                           # build, migrate, test
+bun run verify                             # every check, then the api and chromium browser tests
+bun run test:e2e -- --project=firefox      # other browsers, when needed
 bun run --cwd apps/client test:e2e:report  # open the last report
 ```
 
@@ -278,12 +279,10 @@ Run every script from the project root with [Bun](https://bun.sh/):
 | `bun run db:provision` | Create the database roles with the admin credentials |
 | `bun run drizzle:generate` / `drizzle:migrate` | Generate a migration from the tables, or apply migrations |
 | `bun run seed:dev` | Add example profiles to an empty development database |
-| `bun run check` | Biome, boundaries, structure rules, Compose file, types, tests, and builds |
 | `bun run check:rules` | Check naming, placement, size, documentation, comments, and dependencies |
-| `bun run verify` | Every check, including migration drift and end-to-end tests, with a summary |
-| `bun run test` | Bun tests in every package that defines them |
+| `bun run verify` | Every check, including migration drift, types, builds, and the API and Chromium browser tests, with a summary |
+| `bun run verify --failed` | After a failed run: repeat the fast checks and builds, and only the browser tests that failed |
 | `bun run test:e2e` | Build both apps and run the Playwright suite |
-| `bun run test:e2e:changed` | Playwright on the API and Chromium for specs changed since `origin/main` |
 | `bun run build` / `start` | Build every app, or run the built apps |
 | `bun run start:docker` | Build and run the production containers |
 | `bun run format` / `lint` | Format and fix, or lint, with Biome |

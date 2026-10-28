@@ -199,14 +199,14 @@ before continuing.
   staged for later commits or excluded work. Check `git diff --cached --check`.
 - Count actual message characters before committing: title <= 50; every body
   and footer line <= 72. Validate type, syntax, blank lines, and a factual reason.
-- Run applicable static checks using the owning packages' existing commands.
-  Instruction-only commits require documentation checks, not TypeScript checks.
-  Run the affected packages' tests; do not write or modify tests here.
+- Rely on the last passing `scripts/dc bun run verify`; do not run it again or
+  write tests here. Instruction-only commits require documentation checks, not
+  TypeScript checks.
 - Review each proposed index-tree snapshot and its committed ancestors for
   missing code providers, broken imports, and incomplete contract transitions.
-  Run applicable static checks against the final working tree using the updated
-  installed project dependencies. Do not require disposable installations of
-  historical third-party versions merely to reconstruct earlier commit states.
+  The last passing `verify` run covers the final working tree. Do not require
+  disposable installations of historical third-party versions merely to
+  reconstruct earlier commit states.
   Report whether intermediate commits received source review or executable
   verification; final-tree checks do not prove each intermediate commit passes.
 - Stop on incomplete groups, failed checks, or failed hooks. Explain the blocker

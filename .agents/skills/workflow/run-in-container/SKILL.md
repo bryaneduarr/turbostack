@@ -21,13 +21,13 @@ test "${DEVCONTAINER:-}" = true && echo inside || { docker info >/dev/null 2>&1 
 
 | Result | Meaning | Run project commands |
 | --- | --- | --- |
-| `inside` | You are in a `workspace` container (`/workspace`) | Directly: `bun run test` |
+| `inside` | You are in a `workspace` container (`/workspace`) | Directly: `bun run verify` |
 | `host-with-docker` | Host, Docker works | Through `scripts/dc`, always |
 | `blocked` | Docker is missing or stopped | Nowhere. Report every check as blocked and name the missing Docker. Never fall back to the host: no host `bun install`, `bun run`, `turbo`, `node`, PostgreSQL, or Playwright |
 
 ## On the host with Docker
 
-- Prefix every `bun`, `bunx`, `turbo`, and `node` command with `scripts/dc`: `scripts/dc bun run check:rules`, `scripts/dc bunx biome ci .`, `scripts/dc bun run --cwd apps/server check-types`, `scripts/dc bun run test`, `scripts/dc bun run test:e2e`.
+- Prefix every `bun`, `bunx`, `turbo`, and `node` command with `scripts/dc`: `scripts/dc bun run verify`, `scripts/dc bun run verify --failed`, `scripts/dc bun run test:e2e -- --project=firefox`.
 - `scripts/dc` starts this work tree's stack when it is down. The first call builds the shared image and installs packages (minutes); later calls and second work trees reuse them. Run long commands detached with output in a log file, and poll the file.
 - `scripts/dc` keeps your subdirectory, forwards standard input, and returns the command's exit code. Killing it kills the command inside.
 - Work trees live under `~/worktrees/<repo>/<feature>`. Create one with `git worktree add`, then call `scripts/dc` inside it. No `.env` copying and no host install.

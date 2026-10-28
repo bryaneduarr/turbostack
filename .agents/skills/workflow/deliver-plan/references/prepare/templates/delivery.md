@@ -6,11 +6,11 @@ Task status values: `pending`, `ready`, `writing`, `done`, `blocked`.
 
 ## Tasks
 
-| Task | Purpose | Needs | Code | Tests |
-| --- | --- | --- | --- | --- |
-| t01 | <contracts> | none | pending | pending |
-| t02 | <database table> | none | pending | pending |
-| t03 | <migration> | t02 | pending | pending |
+| Task | Purpose | Needs | Code |
+| --- | --- | --- | --- |
+| t01 | <contracts> | none | pending |
+| t02 | <database table> | none | pending |
+| t03 | <migration> | t02 | pending |
 
 Starts at once: <task ids without needs>.
 
@@ -28,10 +28,10 @@ Stage status values: `pending`, `running`, `done`, `blocked`.
 
 | Stage | Status | Evidence |
 | --- | --- | --- |
-| code | pending | <commits> |
-| test | pending | <round number and failing commands per round> |
-| review | pending | <round number and comment count per slice> |
-| final test | pending | <round number and result> |
+| code | pending | <commits or changed files> |
+| review | pending | <round number and fixed lines per slice> |
+| verify | pending | <run number, mode, and the failing step of each failed run> |
+| publish | pending | <PR URL and the passing verify run> |
 | close | pending | |
 
 ## Decisions made during delivery

@@ -74,8 +74,8 @@ to every page response.
 `bun run test:e2e` from the repository root builds both apps, recreates the test
 database, and runs [Playwright](./playwright.config.ts) against its own stack on
 ports 3100 (client) and 3101 (API). Tests live in `src/e2e/` as `*.e2e.ts`; API
-contract tests go under `src/e2e/api-contracts/`. `bun run test:e2e:changed` runs
-only the API and Chromium projects. Install browsers once with
+contract tests go under `src/e2e/api-contracts/`. `bun run verify` runs the API and
+Chromium projects with the other checks. Install browsers once with
 `bun run test:e2e:install`. On NixOS the config builds the libraries the
 browsers need with Nix and caches their path, so no export is needed; WebKit is
 skipped there.
@@ -103,6 +103,5 @@ docker run --rm -e SERVER_URL=http://host.docker.internal:3001 -p 3000:3000 web-
 - **bun run format** - Format code with Biome
 - **bun run lint** - Lint code with Biome
 - **bun run start** - Run the standalone production server
-- **bun run test** - Run the unit tests
 - **bun run test:e2e** - Run Playwright against built apps (use the root script)
 - **bun run test:e2e:report** - Open the last Playwright report

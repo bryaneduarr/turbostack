@@ -25,7 +25,7 @@ Run every command through `scripts/dc` ([run-in-container](../run-in-container/S
    - Run `scripts/dc bunx biome migrate --write` when Biome changed its version.
    - Read the changelog of each major bump and the lint output, and migrate newly deprecated APIs in the same change ([code quality](../../../rules/code-quality.md), Deprecated APIs).
    - Fix a lint or type error the smallest correct way. Never suppress a rule or lower its level.
-6. Pass the checks of [code quality](../../../rules/code-quality.md), Required delivery behavior: `check:rules`, `biome ci .`, `turbo boundaries`, and `turbo run check-types test build`, all through `scripts/dc`. Restore `apps/client/next-env.d.ts` with `git checkout` if the build rewrote it.
+6. Pass `scripts/dc bun run verify` once the fixes are done, or `scripts/dc bun run verify --failed` after a fix, as the [code quality](../../../rules/code-quality.md) Work order and Required delivery behavior describe. Restore `apps/client/next-env.d.ts` with `git checkout` if the build rewrote it.
 7. Commit with [commit message](references/commit-message.md), then run `scripts/dc stop`.
 
 ## Stop instead of committing
@@ -35,4 +35,4 @@ Run every command through `scripts/dc` ([run-in-container](../run-in-container/S
 
 ## Report
 
-Show the commit message in a Markdown code block so the user can copy it. State the checks that passed and any that were not run, such as the end-to-end tests.
+Show the commit message in a Markdown code block so the user can copy it. State the checks that passed and any that were not run, such as the Firefox or WebKit tests.

@@ -51,8 +51,8 @@ If you already started a stack before renaming, run `scripts/dc down -v` first. 
 ### 3. Start each project
 
 ```sh
-cd shop && scripts/dc bun run check
-cd ../blog && scripts/dc bun run check
+cd shop && scripts/dc bun run verify
+cd ../blog && scripts/dc bun run verify
 ```
 
 The first start builds the shared image and downloads the packages; the second project reuses them where it can.

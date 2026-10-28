@@ -49,7 +49,7 @@ This file says where everything is, when to use it, and what it produces. Apart 
 
 ## Before reporting
 
-Finish with the checks in [Code quality, Required delivery behavior](.agents/rules/code-quality.md). Use the [verification guide](.agents/methods/verification-and-tools.md) to choose how to check.
+Write all the code first, then finish with the work order and checks in [Code quality, Work order and Required delivery behavior](.agents/rules/code-quality.md). Use the [verification guide](.agents/methods/verification-and-tools.md) to choose how to check.
 
 ## Chat report format
 

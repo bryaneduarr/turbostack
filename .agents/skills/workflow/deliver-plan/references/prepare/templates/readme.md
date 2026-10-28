@@ -20,4 +20,4 @@ The delivery works in `~/worktrees/<repo>/<feature>`, which gets its own contain
 
 ## Delivery
 
-One branch `<feature>`, one PR against `main`, <count> tasks, <count> review slices: [delivery](delivery.md). Stages: code, test, review, final test, close.
+One branch `<feature>`, one PR against `main`, <count> tasks, <count> review slices: [delivery](delivery.md). Stages: code, review, verify, fix loop, publish, close.

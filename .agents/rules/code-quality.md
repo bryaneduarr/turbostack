@@ -64,10 +64,10 @@ These rules are mandatory for code and refactors.
 
 ## Tests
 
-- Write tests when behavior needs verification: request and response workflows, validation and error handling, data transformations, integrations, state transitions, and bug fixes.
-- Do not test trivial code such as configuration, constants, types, or simple pass-through functions, and do not aim for a test per function.
-- Use Bun's test runner (`bun:test`) with `<responsibility>.test.ts` files next to the code.
-- Run the affected packages' tests before reporting completion.
+- Browser tests are the only tests. When behavior needs verification (user flows, request and response workflows, validation and error messages, permissions, state transitions, and bug fixes), write a Playwright scenario: a `<responsibility>.e2e.ts` file under `apps/client/src/e2e/`. Contracts that need no page go in the `api` project.
+- Do not write unit tests (`*.test.ts`, `*.test.tsx`, `*.spec.ts`) unless the user asks for them in the current request; `bun run check:rules` rejects them.
+- Do not test trivial code such as configuration, constants, types, or simple pass-through functions, and do not aim for a test per page.
+- The suite runs the `api` and `chromium` projects by default. Run Firefox (`--project=firefox`) or WebKit only when the user asks.
 
 ## Browser automation
 
@@ -86,10 +86,17 @@ These rules are mandatory for code and refactors.
 - Parallel work uses `git worktree` folders under `~/worktrees/<repo>/<feature>`, one stack each. Stop the stack you started when you finish (`scripts/dc stop`).
 - Any agent on any branch that notices idle stacks, a full stack cap, or a busy slot acts on it through `scripts/dc` at once, without asking the user. Follow the [run-in-container skill](../skills/workflow/run-in-container/SKILL.md).
 
+## Work order
+
+- Write all the code the request needs first. Run no checks, tests, builds, or type checks while writing; finished code is checked once.
+- Then review the full diff by reading it against these rules, and fix what the review finds.
+- Then run `scripts/dc bun run verify` once. It runs the lockfile, Biome, boundary, rule, compose, migration, type, build, and browser checks in order and stops at the first failure.
+- After a failure, fix the cause and run `scripts/dc bun run verify --failed`. It repeats the fast checks, the type checks and builds (Turbo skips unchanged packages), and only the browser tests that failed, or every remaining step when an earlier step failed. Repeat until it passes.
+
 ## Required delivery behavior
 
 - Before implementation, inspect ownership and required related relocations; before completion, review the affected ownership area as well as the scoped diff.
-- Before reporting, pass `scripts/dc bun run check:rules`, `scripts/dc bunx biome ci .`, and the type checks and tests of the affected packages, all through `scripts/dc`.
+- Before reporting, pass `scripts/dc bun run verify`, or `scripts/dc bun run verify --failed` after fixing a failed run, following the work order above.
 - Do not describe a change as complete while a known applicable rule violation or required related relocation remains unresolved. Never waive a rule silently.
 - Report a missing instruction or an irreconcilable requirement before making the affected change.
 - Report the actual changes, verification performed, and any blockers or limitations.

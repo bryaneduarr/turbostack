@@ -12,7 +12,6 @@ A type-safe **backend** built with [Elysia](https://elysiajs.com/), TypeScript, 
 | Zod | Environment and reusable response schemas |
 | Pino | Logging |
 | Drizzle / Postgres | Database access |
-| Bun test runner | Tests |
 
 ## Getting Started
 
@@ -117,27 +116,9 @@ message.
 - **bun run start**: Run the bundled server
 - **bun run start:migrate**: Apply committed migrations using the bundled runner
 - **bun run start:provision**: Create the database roles using the bundled script
-- **bun run test**: Run the Bun tests once
-- **bun run test:watch**: Run the Bun tests in watch mode
 
 Drizzle Kit commands (`drizzle:generate`, `drizzle:migrate`, `drizzle:check`,
 `drizzle:studio`) live in the [database package](../../packages/database/README.md).
-
-## Testing
-
-Tests use Bun's built-in runner (`bun:test`), the same runtime the server runs on,
-and live next to the code they cover as `<responsibility>.test.ts`. Bun resolves
-the `@/` aliases and loads `apps/server/.env`; the `test` script sets
-`NODE_ENV=test`, and importing the app validates the environment, so a missing or
-invalid variable fails immediately. Leave `LOG_LEVEL` unset to keep test logs
-silent. Send requests with `app.handle(new Request(...))`; no port is opened.
-The `test` task in [`turbo.json`](./turbo.json) depends on `db:test:prepare`,
-which starts PostgreSQL and recreates `<DB_NAME>_test` with the roles and
-migrations, and [`bunfig.toml`](./bunfig.toml) points every test at that
-database. Tests that write data delete their rows afterwards, as
-[`user-profiles.test.ts`](./src/routes/users/profiles/user-profiles.test.ts) does.
-Test files share one process, so state such as server draining persists between
-tests in a run.
 
 ## Logging
 

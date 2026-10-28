@@ -16,13 +16,13 @@ Written in the code stage.
 
 Shared files owned: <routers, catalogs, migrations, `bun.lock`, or none>.
 
-## Test files
+## Browser scenario
 
-Written in the test stage, after the PR is open.
+Written in the code stage when the task's behavior needs verification; omit the table when none.
 
 | Path | Action | Proves |
 | --- | --- | --- |
-| `<path>.test.ts` | add | <behavior or Done when line> |
+| `apps/client/src/e2e/<area>/<name>.e2e.ts` | add | <behavior or Done when line> |
 
 ## Agreed interfaces
 
@@ -33,6 +33,6 @@ Written in the test stage, after the PR is open.
 
 - Read: `<file to mirror>` for <the shape>; <skill paths, or none>.
 - Code: <per code file, the exact behavior>.
-- Tests: <per test file, the cases and assertions>.
-- Done when: <checkable conditions; test file, case, and assertion>.
+- Scenario: <per browser scenario, the steps and assertions, or none>.
+- Done when: <checkable conditions; file and behavior>.
 - Run: <only commands that generate files, such as `drizzle:generate`, or none>.

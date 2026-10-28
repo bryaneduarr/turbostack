@@ -44,12 +44,12 @@ Rules:
 - Keep the whole body under 150 words. Cut anything that is not needed to review the change.
 - Plain, third-person sentences. Define project-specific terms once. No file inventories, diagrams, or commit logs.
 - `How` names behavior and decisions, not files. Link a file only when it is the one place a reviewer must look.
-- `Checked` lists only what ran, such as `bun run check`, `bun run verify`, or a CI link. Never write a check as done when it was not. Say what was not checked when it matters.
+- `Checked` lists only what ran, such as `scripts/dc bun run verify` or a CI link. Never write a check as done when it was not. Say what was not checked when it matters.
 - Never add AI or tool attribution or a "Generated with" line.
 
 ## Open the PR
 
-1. Run `bun run check`, then `bun run verify`. Push only when both pass.
+1. Pass `scripts/dc bun run verify`, or `scripts/dc bun run verify --failed` after a fix. Push only when it passes.
 2. Choose labels from `gh label list`. Always set:
    - one type label: `enhancement`, `bug`, `refactor`, `documentation`, `chore`, or `dependencies`;
    - one `area: ...` label for each area touched (`area: client`, `area: server`, `area: packages`, `area: tooling`).

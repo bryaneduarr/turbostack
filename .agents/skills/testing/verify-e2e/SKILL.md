@@ -22,19 +22,18 @@ its own evidence.
 ## Run
 
 ```sh
-scripts/dc bun run verify                       # every check, e2e (api, chromium) last
-scripts/dc bun run test:e2e                     # api, chromium, firefox
-scripts/dc bun run test:e2e -- --project=api --project=chromium
-scripts/dc bun run test:e2e:changed             # fast loop: specs changed since origin/main
-scripts/dc bun run test:e2e -- --grep "profile" # one scenario
+scripts/dc bun run verify                       # every check; browser tests (api, chromium) last
+scripts/dc bun run verify --failed              # fix loop: failed browser tests and the checks before them
+scripts/dc bun run test:e2e -- --project=firefox # other browsers, only when the user asks
+scripts/dc bun run test:e2e -- --project=chromium --grep "profile" # one scenario
 ```
 
 Run them detached with output in a log file and poll it; a full run takes minutes.
 The HTML report is written to `apps/client/playwright-report/` in the shared
 folder.
 
-`test:e2e` builds the apps and recreates the test database first. Use
-`test:e2e:changed` while iterating and the full `bun run verify` before pushing.
+`verify` builds the apps and recreates the test database first, and it runs the
+browser tests for `api` and `chromium` by default.
 Tests use unique names, and the test database starts empty on every run.
 
 ## Read a failure
@@ -55,7 +54,8 @@ Tests use unique names, and the test database starts empty on every run.
 - Call the API through `requestE2eApi` with shared route definitions and
   `requireApiSuccess`, and use the status constants. Query the database only
   through `@workspace/database` tables when a check needs it. No casts or `any`.
-- Run the new spec on at least `chromium`, then the full suite.
+- Do not run the new spec while writing code. The one `verify` run covers it. To
+  debug a failing scenario, run it alone with `--project=chromium --grep`.
 
 ## Report
 
