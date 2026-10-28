@@ -12,7 +12,7 @@ Planner use: reuse what Features lists, build what Known gaps names, then open t
 - **Status codes**: `packages/utils/src/http/status-codes/http-status-code.constant.ts`.
 - **Rule enforcement**: `config/rules/`, `config/biome/plugins/`. Note: [rule enforcement](development/rule-enforcement.md).
 - **Design tokens**: neutral light and dark tokens, motion utilities, Lucide icons. Owner: `config/tailwind/globals.css`.
-- **Database**: `packages/database` with migrator, runtime, and read-only roles, grant tests, test database, `seed:dev`. Note: [database](packages/database.md).
+- **Database**: `packages/database` with migrator, runtime, and read-only roles, test database, `seed:dev`. Note: [database](packages/database.md).
 - **One-command setup and devcontainer**: `config/setup` (env files, `doctor`, `doctor:stack`), `.devcontainer/`, `scripts/dc` (a stack per work tree), `bun run verify`. Note: [devcontainer](development/devcontainer-workflow.md).
 - **Support error codes**: `SUPPORT_ERROR_CODE` in `packages/schemas/src/support/errors/codes/`, request IDs on every API error, `describeSupportReference` and `describeFailedMutation` in `packages/api-client/src/results/`, shown by `ErrorReference`, `FailureAlert`, `ApiFailureAlert`, and the error pages.
 - **Base UI components**: typography, links, buttons, fields, layout, feedback, toasts, data display, navigation (`AppBar`), dialog, motion in `packages/ui/src/components/`; shared class maps in `packages/ui/src/config/`.
@@ -26,10 +26,10 @@ Planner use: reuse what Features lists, build what Known gaps names, then open t
 
 User profiles is the example. Add files in each layer, reading only the named example when the exact shape matters.
 
-- **Table, migration, grant**: `packages/database/src/tables/users/profile/user-profile.table.ts`, `packages/database/src/migrations/0002_grant_user_profile_roles.sql`, expectations in `apps/server/src/db/testing/grants/expectations/`.
+- **Table, migration, grant**: `packages/database/src/tables/users/profile/user-profile.table.ts`, `packages/database/src/migrations/0002_grant_user_profile_roles.sql`.
 - **Route definition and schemas**: `packages/schemas/src/server/routes/users/profiles/create/create-user-profile.route.ts` and `user-profile.schema.ts`.
 - **Server contract, handler, service**: `apps/server/src/routes/users/profiles/create/`, `apps/server/src/services/users/profiles/create/create-user-profile.service.ts`.
-- **Router and tests**: `apps/server/src/routes/users/profiles/user-profiles.router.ts`, `user-profiles.test.ts` beside it.
+- **Router**: `apps/server/src/routes/users/profiles/user-profiles.router.ts`.
 - **Client page, action, form parser**: `apps/client/src/app/profiles/page.tsx`, `apps/client/src/actions/users/profiles/create/`, `apps/client/src/services/users/profiles/form/parse-user-profile-form.service.ts`.
 - **Form and toasts**: `apps/client/src/components/users/profiles/form/user-profile-form.component.tsx`, `describe-user-profile-toast.service.ts` beside the parser.
 - **E2E**: `apps/client/src/e2e/api-contracts/users/profiles/`, `apps/client/src/e2e/users/profiles/`.

@@ -86,3 +86,12 @@ Workers: W1 implements (Haiku 5.5 high), W2 reviews by reading (a new Haiku 5.5 
 9. **W3, measure workers.** With no other e2e run: `PLAYWRIGHT_WORKERS=N scripts/dc bun run test:e2e -- --project=chromium` for N = 4, 6, 8, 10, 12 until a run fails or memory passes the limit, sampling `docker stats --no-stream` on the workspace container. Record wall time, peak memory, and failures per N in `.agents/plans/fast-checks/measurements.md`. Set the default to the fastest safe N, then `scripts/dc bun run verify --failed`. With only 4 e2e files the gain may be small; Veyra measures its own value.
 10. **Equal rules.** When Veyra reaches its step 11, `diff -r` `.agents/rules`, `.agents/skills`, and `.agents/methods` between both work trees; only project names and project-only items may differ.
 11. **Record and commit.** Follow the project-context skill (`development/commands.md`, `development/e2e-tests.md`, `development/rule-enforcement.md`, `start-here.md`), commit through the commit-changes skill on `chore/fast-checks`, and stop the stack with `scripts/dc stop`. No PR, no push.
+
+## 8. Status
+
+Delivered 2026-10-28 on `chore/fast-checks`, then merged into `main` with the branch deleted, as the user asked. Checked: `scripts/dc bun run verify` passed 8/8, `verify --failed` passed, the unit-test guard failed on a throwaway `x.test.ts`, and Firefox passed 5/5. Measurements: [measurements.md](measurements.md).
+
+Changes from the steps, decided during delivery:
+
+- Step 4: `--failed` reruns a lockfile, compose, or migrations step unless it passed last time (the record keeps `passedSteps`). It adds `--last-failed` only when the browser step failed; otherwise it runs the full browser step, so a run that stopped early never skips browser tests.
+- Step 5: no `PLAYWRIGHT_WORKERS` variable. Playwright's own `--workers=N` flag covers measurement and one-off runs, so the config keeps a fixed, measured value (3; with 7 tests more workers gave no gain).
