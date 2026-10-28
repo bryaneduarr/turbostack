@@ -8,6 +8,10 @@ tmp=$(mktemp -d)
 export DC_STATE_DIR="$tmp/state" DC_MAX_STACKS=2
 tree_a="$tmp/a" tree_b="$tmp/b" tree_c="$tmp/c"
 base=$((20000 + $$ % 20000))
+is_listening() { (exec 3<>"/dev/tcp/127.0.0.1/$1") 2>/dev/null; }
+while is_listening "$base" || is_listening $((base + 1)) || is_listening $((base + 2)) || is_listening $((base + 10)); do
+  base=$((base + 20))
+done
 failures=0
 background=()
 
