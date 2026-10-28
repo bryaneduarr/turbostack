@@ -43,11 +43,11 @@ A machine with little memory stays usable because `scripts/dc` keeps the load sm
 | `scripts/dc stop-idle` | Stops every idle stack |
 | `scripts/dc prune [--dry-run]` | Removes stacks whose work tree folder is gone after 7 days, and unused older images |
 
-`scripts/dc` only manages stacks that carry its marker label (`dc.managed`), so it never lists, stops, or removes another project's dev container. Every project made from this template shares one notes folder, `~/.local/state/dc/v1` (set `DC_STATE_DIR` to change it), so they share the stack cap, the idle timer, and the heavy-command slot. The `v1` part keeps a future incompatible version from reading these notes.
+`scripts/dc` only manages stacks that carry its marker label (`dc.managed`), so it never lists, stops, or removes another project's dev container. Every project made from this template shares one notes folder, `~/.local/state/dc/v1`, so they share the stack cap, the idle timer, and the heavy-command slot. The `v1` part keeps a future incompatible version from reading these notes. [Multiple projects](multiple-projects.md) shows the setup with an example and how to verify it.
 
 ### Name your containers once
 
-Container, image, and volume names start with `app`. Before you start a second project made from this template, set `NEW_CONTAINER_PREFIX` (and `NEW_SCOPE`) in `scripts/rename-workspace-scope.script.ts` and run `bun run rename-scope`. If two checkouts share a name, `scripts/dc` stops with exit code 78 and tells you the same thing, so one project never reuses another's database.
+Container, image, and volume names start with `app`. Before you start a second project made from this template, set `NEW_CONTAINER_PREFIX` (and `NEW_SCOPE`) in `scripts/rename-workspace-scope.script.ts`, then run `bun run rename-scope` and `bun run clean`. If two checkouts share a name, `scripts/dc` stops with exit code 78 and tells you the same thing, so one project never reuses another's database.
 
 Change the defaults with `DC_MAX_STACKS`, `DC_IDLE_MINUTES`, `DC_HEAVY_SLOTS`, `DC_WAIT_MINUTES`, `DC_PRUNE_DAYS`, `DEVCONTAINER_WORKSPACE_MEMORY`, and `DEVCONTAINER_WORKSPACE_CPUS`. On WSL2 the stacks share the memory that `.wslconfig` gives the virtual machine, so raise `memory` there if builds run out of it.
 

@@ -38,7 +38,7 @@ Stop each listed `PID` with `kill <pid>`.
 
 ## `scripts/dc` says a stack name already belongs to another checkout
 
-**Symptom:** `scripts/dc` exits with code 78 and names another folder. **Cause:** two checkouts use the same container prefix, so they would share one database. **Fix:** set `NEW_CONTAINER_PREFIX` in `scripts/rename-workspace-scope.script.ts` to a name unique to this project, then run `bun run rename-scope` once.
+**Symptom:** `scripts/dc` exits with code 78 and names another folder. **Cause:** two checkouts use the same container prefix, so they would share one database. **Fix:** set `NEW_CONTAINER_PREFIX` in `scripts/rename-workspace-scope.script.ts` to a name unique to this project, then run `bun run rename-scope` and `bun run clean` once. [Multiple projects](multiple-projects.md) has the full steps.
 
 ## A browser fails to launch in the end-to-end tests
 
