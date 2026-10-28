@@ -1,6 +1,6 @@
 {
   "root": false,
-  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.3/schema.json",
   "formatter": {
     "enabled": true,
     "lineWidth": 80,
@@ -17,7 +17,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "complexity": {
         "useOptionalChain": "off"
       },
@@ -28,9 +28,7 @@
           "options": {
             "patterns": [
               {
-                "group": [
-                  ":PATH:"
-                ],
+                "group": [":PATH:"],
                 "message": "Use @workspace/<package>/... for package modules or @/... for app-local modules instead of filesystem imports."
               },
               {
@@ -66,9 +64,7 @@
           "options": {
             "strictCase": true,
             "requireAscii": true,
-            "filenameCases": [
-              "kebab-case"
-            ]
+            "filenameCases": ["kebab-case"]
           }
         }
       },
