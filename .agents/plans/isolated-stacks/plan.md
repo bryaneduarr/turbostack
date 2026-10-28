@@ -40,6 +40,7 @@ Labels: **user** is a choice the user made in the source project; **default** wa
 7. **Automatic and silent (user).** Any agent on any branch that notices idle stacks, a full cap, or a busy slot acts through `scripts/dc` without asking.
 8. **Defaults (default).** No background daemon (the reaper runs inside `scripts/dc`); no Docker socket in the container; `flock` is the lock tool (Linux and WSL2, not macOS); work trees live in `~/worktrees/<repo>/<feature>`; the primary checkout keeps the project name `app-devcontainer`; WebKit is CI only.
 9. **Naming (default, template).** Neutral names: `app-devcontainer`, `app-workspace`, `app-bun-cache`, `app-playwright-browsers`, `DEVCONTAINER` and `DEVCONTAINER_*_PORT`, and `DC_*` settings.
+10. **Reliability for people who clone the template (user, 2026-10-28).** Linux and WSL2 only; `scripts/dc` stops with a clear message when Docker or `flock` is missing. It manages only containers with the `dc.managed` label, so other devcontainer projects are never touched. All projects made from the template share one versioned notes folder (`dc/v1`), so they share the cap and the heavy slot. `bun run rename-scope` also renames the container prefix, and `scripts/dc` exits 78 when two checkouts share a stack name. Rejected: a macOS fallback lock; separate notes per project.
 
 ## Scope
 
@@ -51,7 +52,7 @@ Labels: **user** is a choice the user made in the source project; **default** wa
 
 ### Out
 
-- Pushing, a pull request, macOS, native Windows, WebKit locally, Docker-in-Docker, a shared database, a background daemon, and running the agent inside a container.
+- Pushing, a pull request, a macOS fallback for `flock`, native Windows, WebKit locally, Docker-in-Docker, a shared database, a background daemon, and running the agent inside a container.
 
 ### Defaults
 
@@ -62,14 +63,15 @@ Labels: **user** is a choice the user made in the source project; **default** wa
 | Heavy slots | 1 | `DC_HEAVY_SLOTS` |
 | Longest wait for a stack or slot | 45 minutes, then exit 75 | `DC_WAIT_MINUTES` |
 | Age before an orphaned stack is deleted | 7 days | `DC_PRUNE_DAYS` |
-| State directory | `${XDG_STATE_HOME:-$HOME/.local/state}/app-dc` | `DC_STATE_DIR` |
+| State directory | `${XDG_STATE_HOME:-$HOME/.local/state}/dc/v1` | `DC_STATE_DIR` |
 | Workspace memory and CPUs | 6 GB and 8 | `DEVCONTAINER_WORKSPACE_MEMORY`, `DEVCONTAINER_WORKSPACE_CPUS` |
 
 Heavy commands are build, check, verify, e2e, and Playwright. Database commands are tests, `db:*`, `drizzle:*`, `seed:dev`, and `dev:start`. `DC_LOCK=none|stack|heavy` overrides the choice for one call.
 
 ## Risks
 
-- **Two tools share Docker labels, not state.** Stacks are found by Compose labels, so a stack started by another project's `scripts/dc` counts toward the cap and can be stopped as idle, because this tool keeps its own last-use records. Fix: set both projects' state directory to one folder, or keep the cap and idle settings high while both are in use.
+- **Another project's stacks.** Only containers with the `dc.managed` label are managed, so an unrelated devcontainer project is never listed or stopped. A project that copied an older `scripts/dc` without the label is ignored, not managed.
+- **Two copies of the tool with different versions.** They share `dc/v1` and must stay compatible; an incompatible change moves to `dc/v2`.
 - **Memory overload.** Fix: heavy slot, cap, and container limits from [measurements](measurements.md).
 - **The reaper stops something in use.** Fix: the use lock and the process check; `down` keeps data, so the worst case is a short resume.
 - **First use downloads about 1.5 GB (image layers, browsers).** Accepted: one time, shared by every stack.
@@ -83,3 +85,4 @@ Heavy commands are build, check, verify, e2e, and Playwright. Database commands 
 4. Record the project notes through the project-context skill.
 5. Commit through commit-changes in dependency order (tooling, client config, then `.agents` and `docs`), with no push.
 6. Check a second work tree on the committed code, then stop every stack this work started.
+7. Reliability for a cloned template: the `dc.managed` label, the shared versioned notes folder, the `flock` check, the container prefix rename, and the name-collision guard. Verify: `scripts/dc-test`, `scripts/dc-smoke-test`, and a fresh clone that renames its prefix and passes `check` and e2e.

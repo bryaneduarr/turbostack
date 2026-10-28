@@ -1,6 +1,6 @@
 # Isolated stacks: measurements
 
-Machine: WSL2, 15.5 GB RAM, 28 CPUs, Docker 29.9.2. Date (UTC): 2026-10-28. Code: branch `template/06-isolated-stacks` at `9336cc7`. Memory comes from one `docker stats --no-stream` sample, so it includes reclaimable file cache.
+Machine: WSL2, 15.5 GB RAM, 28 CPUs, Docker 29.9.2. Date (UTC): 2026-10-28. Code: branch `template/06-isolated-stacks` at `932c1ea`. Memory comes from one `docker stats --no-stream` sample, so it includes reclaimable file cache.
 
 ## Measured in this template
 
@@ -12,6 +12,9 @@ Machine: WSL2, 15.5 GB RAM, 28 CPUs, Docker 29.9.2. Date (UTC): 2026-10-28. Code
 | Full e2e in the container | `scripts/dc bun run test:e2e -- --project=api --project=chromium --project=firefox` | 12 passed, 5.8 s of tests, 10.6 s in all |
 | Idle, one fresh stack | 20 s after start | workspace 65 MiB, PostgreSQL 39 MiB, CPU about 0% |
 | Image | `docker image ls app-workspace` | 1.49 GB, shared by every stack |
+| Full smoke test | `scripts/dc-smoke-test` | 39 of 39 checks pass, about 2 minutes, with an unrelated stack running |
+| Fresh clone as a stranger | clone, `scripts/dc` (exit 78), set `NEW_CONTAINER_PREFIX`, `bun run rename-scope`, `scripts/dc bun run check` | refusal named the other checkout; rename changed 5 files; `check` passed 20 of 20 tasks; e2e passed 12 |
+| Shared cap across two projects | a third stack with default settings | the least recently used stack of the other project was stopped; the unlabeled stack was untouched |
 | Kill a host command | `timeout 3 scripts/dc sleep 300` | no `sleep` left in the container after 5 s |
 
 ## Taken from the source project, not measured here
@@ -25,5 +28,5 @@ The source project measured these with a larger stack (its own PostgreSQL, mail,
 
 ## Not run
 
-- `scripts/dc-smoke-test`: it refuses to run while other stacks run, and a stack of another project was running.
-- A third start that triggers the cap with a real stack: covered only by `scripts/dc-test` (least recently used choice).
+- macOS, native Windows, and the VS Code Dev Containers path with the new compose file.
+- Docker missing (exit 69): the message is in the code but the case was not triggered.

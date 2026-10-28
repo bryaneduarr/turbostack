@@ -26,7 +26,8 @@ Contract from the [isolated stacks plan](../../../../plans/isolated-stacks/plan.
 
 - Starting a third stack stops the least recently used idle one. A stack with a running command or any extra process (dev server, shell, editor server) is never idle.
 - Build, check, verify, e2e, and Playwright commands run one at a time across all stacks. Database and e2e commands run one at a time inside a stack. `DC_LOCK=none|stack|heavy` overrides the choice for one call.
-- Exit 69: Docker is not running. Exit 75: waited the full limit for a stack or slot.
+- Exit 69: Docker or `flock` is missing. Exit 75: waited the full limit for a stack or slot. Exit 78: the stack name already belongs to another checkout; set `NEW_CONTAINER_PREFIX` in the rename script and run `bun run rename-scope`.
+- Only stacks with the `dc.managed` label are managed. Every project made from the template shares `~/.local/state/dc/v1` (`DC_STATE_DIR`), so they share the cap and the heavy slot.
 
 ## Dev stack
 
