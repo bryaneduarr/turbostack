@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+# Checks the decision logic of scripts/dc without Docker: names, classes, idle rules, choices, locks.
+set -eu
+
+SCRIPT=$(readlink -f "${BASH_SOURCE[0]}")
+LIBRARY=$(dirname "$SCRIPT")/dc-lib
+for module in state names classes stacks reaper compose image ports run commands; do
+  # shellcheck source=/dev/null
+  source "$LIBRARY/$module.sh"
+done
+
+STATE=$(mktemp -d)
+trap 'rm -rf "$STATE"' EXIT
+mkdir -p "$STATE/stacks"
+failures=0
+
+expect() {
+  local description=$1 wanted=$2 actual=$3
+  if [ "$wanted" = "$actual" ]; then
+    echo "ok   $description"
+  else
+    echo "FAIL $description: wanted '$wanted', got '$actual'"
+    failures=$((failures + 1))
+  fi
+}
+
+succeeds() {
+  local description=$1
+  shift
+  if "$@"; then expect "$description" yes yes; else expect "$description" yes no; fi
+}
+
+fails() {
+  local description=$1
+  shift
+  if "$@"; then expect "$description" no yes; else expect "$description" no no; fi
+}
+
+classes_of() {
+  command_classes "$@" | tr '\n' ' ' | sed 's/ $//'
+}
+
+echo "stack names"
+expect "the primary tree keeps the fixed project name" app-devcontainer "$(stack_name_for /home/user/app 1)"
+name=$(stack_name_for /home/user/worktrees/app/example-feature 0)
+expect "a linked tree gets slug and path hash" app-example-feature "${name%-??????}"
+expect "the same path gives the same name" "$name" "$(stack_name_for /home/user/worktrees/app/example-feature 0)"
+other=$(stack_name_for /home/other/worktrees/app/example-feature 0)
+fails "another path with the same folder name gets another name" test "$name" = "$other"
+expect "a messy folder name becomes a safe slug" "my-feature-2" "$(slugify 'My Feature_2!')"
+
+echo "legacy stacks"
+lines=$'example-feature|/w/feature/.devcontainer\napp-s2|/w/main/.devcontainer\napp-devcontainer|/w/main/.devcontainer'
+expect "a hand-made project name is reused" example-feature "$(printf '%s\n' "$lines" | legacy_project_for /w/feature app-feature-abc123)"
+expect "the canonical name wins over other matches" app-devcontainer "$(printf '%s\n' "$lines" | legacy_project_for /w/main app-devcontainer)"
+expect "no stack for the root gives nothing" "" "$(printf '%s\n' "$lines" | legacy_project_for /w/none app-none-123456)"
+
+echo "command classes"
+expect "build is heavy" "heavy" "$(classes_of bun run build)"
+expect "check is heavy and uses the database" "heavy stack" "$(classes_of bun run check)"
+expect "verify is heavy and uses the database" "heavy stack" "$(classes_of bun run verify)"
+expect "e2e is heavy and uses the database" "heavy stack" "$(classes_of bun run test:e2e -- --project=api)"
+expect "a package test uses the database" "stack" "$(classes_of bun run --cwd apps/server test)"
+expect "db commands use the database" "stack" "$(classes_of bun run --cwd apps/server db:test:prepare)"
+expect "dev:start uses the database" "stack" "$(classes_of bun run dev:start)"
+expect "playwright is heavy and uses the database" "heavy stack" "$(classes_of bunx playwright test)"
+expect "check-types takes no lock" "" "$(classes_of bun run check-types)"
+expect "check:rules takes no lock" "" "$(classes_of bun run check:rules)"
+expect "biome takes no lock" "" "$(classes_of bunx biome ci .)"
+expect "git takes no lock" "" "$(classes_of git rev-parse --show-toplevel)"
+expect "DC_LOCK=none removes every lock" "" "$(DC_LOCK=none classes_of bun run build)"
+expect "DC_LOCK=stack keeps only the stack lock" "stack" "$(DC_LOCK=stack classes_of sleep 1)"
+expect "DC_LOCK=heavy takes both locks" "heavy stack" "$(DC_LOCK=heavy classes_of sleep 1)"
+
+echo "idle rules"
+succeeds "an unused old stack is idle" decide_idle no 1000 2000 900
+fails "a recent stack is not idle" decide_idle no 1500 2000 900
+fails "a busy stack is never idle" decide_idle yes 0 99999 900
+succeeds "zero minutes makes any unused stack idle" decide_idle no 2000 2000 0
+expect "minutes become seconds" 900 "$(to_seconds 15)"
+expect "fractions of a minute work" 3 "$(to_seconds 0.05)"
+top=$'PID COMMAND\n1 /sbin/docker-init -- /usr/local/bin/docker-entrypoint.sh sh .devcontainer/start-workspace.sh\n7 sleep infinity\n9 test -f /tmp/workspace-ready'
+expect "an idle workspace has no extra process" "" "$(printf '%s\n' "$top" | extra_processes)"
+expect "a dev server is an extra process" "42 bun run dev" "$(printf '%s\n42 bun run dev\n' "$top" | extra_processes)"
+
+echo "choices"
+expect "the least recently used stack is chosen" app-b "$(printf '300 app-a\n100 app-b\n200 app-c\n' | pick_least_recently_used)"
+expect "no candidate gives nothing" "" "$(printf '' | pick_least_recently_used)"
+mkdir -p "$STATE/exists"
+day=86400
+succeeds "a gone work tree unused for 8 days is pruned" should_prune app-x-1 "$STATE/gone" 0 $((8 * day))
+fails "a gone work tree unused for 2 days is kept" should_prune app-x-1 "$STATE/gone" $((6 * day)) $((8 * day))
+fails "an existing work tree is kept" should_prune app-x-1 "$STATE/exists" 0 $((30 * day))
+fails "the primary stack is kept" should_prune app-devcontainer "$STATE/gone" 0 $((30 * day))
+fails "an unknown work tree is kept" should_prune app-x-1 "" 0 $((30 * day))
+DC_PRUNE_DAYS=1 succeeds "the prune age is a setting" should_prune app-x-1 "$STATE/gone" 0 $((2 * day))
+
+echo "locks"
+first=""
+third=""
+lock_try first "$STATE/a.lock" -x
+fails "a second exclusive lock waits" lock_try second "$STATE/a.lock" -x
+lock_release "$first"
+succeeds "the lock is free after release" lock_try third "$STATE/a.lock" -x
+lock_release "$third"
+lock_try shared_a "$STATE/b.lock" -s
+succeeds "shared locks coexist" lock_try shared_b "$STATE/b.lock" -s
+fails "an exclusive lock waits for shared ones" lock_try writer "$STATE/b.lock" -x
+busy_stack_names() { echo none; }
+status=0
+(DC_WAIT_MINUTES=0.02 wait_for "a test" false) 2>/dev/null || status=$?
+expect "waiting past the limit exits 75" 75 "$status"
+
+if [ "$failures" -gt 0 ]; then
+  echo "$failures checks failed."
+  exit 1
+fi
+echo "All checks passed."

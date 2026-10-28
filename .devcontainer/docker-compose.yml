@@ -1,31 +1,50 @@
 name: app-devcontainer
 
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: "3"
+
 services:
   workspace:
+    image: app-workspace:${DEVCONTAINER_IMAGE_TAG:-local}
     build:
-      context: ..
-      dockerfile: .devcontainer/Dockerfile
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PLAYWRIGHT_VERSION: ${PLAYWRIGHT_VERSION:-latest}
     # The host user owns every file the container writes; scripts/dc exports HOST_UID and HOST_GID.
     user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     init: true
+    shm_size: 1gb
+    mem_limit: ${DEVCONTAINER_WORKSPACE_MEMORY:-6g}
+    memswap_limit: ${DEVCONTAINER_WORKSPACE_MEMORY:-6g}
+    cpus: ${DEVCONTAINER_WORKSPACE_CPUS:-8}
+    logging: *logging
     command: ["sh", ".devcontainer/start-workspace.sh"]
     healthcheck:
       test: ["CMD", "test", "-f", "/tmp/workspace-ready"]
-      interval: 2s
-      retries: 150
+      interval: 30s
+      retries: 3
+      start_period: 600s
+      start_interval: 2s
     ports:
       - "127.0.0.1:${DEVCONTAINER_CLIENT_PORT:-3000}:3000"
       - "127.0.0.1:${DEVCONTAINER_API_PORT:-3001}:3001"
     # Service hostnames replace the localhost values in apps/*/.env; process values win over .env files.
     environment:
       DEVCONTAINER: "true"
+      PLAYWRIGHT_BROWSERS_PATH: /home/dev/.playwright-browsers
+      TURBO_CACHE_DIR: /workspace/.turbo/cache
       DB_HOST: postgres
       DB_PORT: "5432"
       CLIENT_URL: http://localhost:${DEVCONTAINER_CLIENT_PORT:-3000}
       SERVER_URL: http://localhost:3001
     volumes:
       - ..:/workspace
-      - workspace-bun-cache:/home/dev/.bun-cache
+      - bun-cache:/home/dev/.bun-cache
+      - playwright-browsers:/home/dev/.playwright-browsers
     depends_on:
       postgres:
         condition: service_healthy
@@ -43,12 +62,20 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql
       - ../apps/server/src/db/provision/initdb:/docker-entrypoint-initdb.d:ro
+    logging: *logging
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 5s
+      interval: 30s
       timeout: 5s
-      retries: 10
+      retries: 3
+      start_period: 60s
+      start_interval: 2s
 
 volumes:
   postgres-data:
-  workspace-bun-cache:
+  bun-cache:
+    external: true
+    name: app-bun-cache
+  playwright-browsers:
+    external: true
+    name: app-playwright-browsers

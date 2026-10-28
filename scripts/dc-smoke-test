@@ -1,121 +1,124 @@
 #!/usr/bin/env bash
-# Proves the container workflow end to end with only Docker, git, curl, and a terminal.
+# Proves the stack workflow end to end with only Docker, git, curl, flock, and a terminal.
 set -eu
 
-root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-dc="$root/scripts/dc"
-cd "$root"
-
+root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+dc=${DC:-$root/scripts/dc}
+tmp=$(mktemp -d)
+export DC_STATE_DIR="$tmp/state" DC_MAX_STACKS=2
+tree_a="$tmp/a" tree_b="$tmp/b" tree_c="$tmp/c"
 base=$((20000 + $$ % 20000))
-COMPOSE_PROJECT_NAME="app-smoke-$$"
-DEVCONTAINER_CLIENT_PORT=$base
-DEVCONTAINER_API_PORT=$((base + 10))
-export COMPOSE_PROJECT_NAME DEVCONTAINER_CLIENT_PORT DEVCONTAINER_API_PORT
-
 failures=0
+background=()
 
 check() {
-  description=$1
+  local description=$1
   shift
-  if "$@" >/dev/null 2>&1; then
-    echo "ok   $description"
-  else
-    echo "FAIL $description"
-    failures=$((failures + 1))
-  fi
+  if "$@" >/dev/null 2>&1; then echo "ok   $description"; else echo "FAIL $description"; failures=$((failures + 1)); fi
+}
+
+at() {
+  local tree=$1
+  shift
+  (cd "$tree" && "$dc" "$@")
 }
 
 cleanup() {
-  rm -f .dc-smoke-probe
+  local job tree
+  for job in "${background[@]}"; do kill "$job" 2>/dev/null || true; done
   docker rm -f "app-smoke-occupier-$$-$base" "app-smoke-occupier-$$-$((base + 1))" >/dev/null 2>&1 || true
-  "$dc" bun run dev:stop >/dev/null 2>&1 || true
-  "$dc" down -v >/dev/null 2>&1 || true
+  for tree in "$tree_a" "$tree_b" "$tree_c"; do
+    [ -d "$tree" ] && { at "$tree" down -v >/dev/null 2>&1 || true; git -C "$root" worktree remove --force "$tree" 2>/dev/null || true; }
+  done
+  rm -rf "$tmp"
 }
 trap cleanup EXIT
 
-bun_matches_package_manager() {
-  wanted=$(sed -n 's/.*"packageManager": "bun@\(.*\)".*/\1/p' package.json)
-  [ "$("$dc" bun --version | tr -d '\r')" = "$wanted" ]
-}
+if [ -n "$(docker ps -q --filter label=com.docker.compose.service=workspace)" ]; then
+  echo "Other stacks are running and count toward the stack cap. Run scripts/dc stop --all first." >&2
+  exit 2
+fi
 
-files_belong_to_host_user() {
-  "$dc" touch .dc-smoke-probe
-  [ -n "$(find .dc-smoke-probe -user "$(id -u)")" ]
-}
+for tree in "$tree_a" "$tree_b" "$tree_c"; do
+  git -C "$root" worktree add --detach "$tree" HEAD >/dev/null 2>&1
+done
 
-subdirectory_is_kept() {
-  [ "$(cd apps/server && "$dc" pwd | tr -d '\r')" = /workspace/apps/server ]
-}
+project_of() { "$dc" list | grep -F "$1" | awk '{ print $1 }'; }
+state_of() { "$dc" list | grep -F "$1" | awk '{ print $2 }'; }
+url_of() { at "$tree_a" ports | sed -n "s/^$1 //p"; }
+image_id_of() { docker inspect --format '{{.Image}}' "$(docker ps -q --filter "label=com.docker.compose.project=$(project_of "$1")" --filter label=com.docker.compose.service=workspace)"; }
+host_gets_200() { [ "$(curl -s -o /dev/null -w '%{http_code}' "$1")" = 200 ]; }
 
-stdin_is_forwarded() {
-  [ "$(echo forwarded | "$dc" cat | tr -d '\r')" = forwarded ]
-}
-
-exit_code_is_forwarded() {
-  status=0
-  "$dc" sh -c 'exit 7' || status=$?
-  [ "$status" -eq 7 ]
-}
-
-host_sees_dependencies() {
-  [ -x node_modules/.bin/turbo ] && [ -f apps/server/.env ]
-}
-
-occupy_first_client_ports() {
-  for port in "$base" $((base + 1)); do
-    docker run -d --rm --name "app-smoke-occupier-$$-$port" -p "127.0.0.1:$port:9" \
-      postgres:18-alpine sleep 3600
-  done
-}
-
-url_of() {
-  "$dc" ports | sed -n "s/^$1 //p"
-}
-
-client_skips_busy_ports() {
-  [ "$(url_of client)" = "http://localhost:$((base + 2))" ]
-}
-
-other_services_keep_wanted_ports() {
-  [ "$(url_of api)" = "http://localhost:$((base + 10))" ]
-}
-
-app_links_use_the_published_port() {
-  [ "$("$dc" printenv CLIENT_URL | tr -d '\r')" = "$(url_of client)" ]
-}
-
-second_start_keeps_the_ports() {
-  before=$("$dc" ports)
-  "$dc" up
-  [ "$before" = "$("$dc" ports)" ]
-}
-
-host_gets_200() {
-  [ "$(curl -s -o /dev/null -w '%{http_code}' "$1")" = 200 ]
-}
-
-host_reads_dev_stack_log() {
-  grep -q "Ready in" .turbo/dev-stack/dev-stack.log
-}
-
-check "two wanted ports are busy" occupy_first_client_ports
-check "scripts/dc up starts the container and its services" "$dc" up
-check "the client takes the next free port" client_skips_busy_ports
-check "the API keeps its wanted port" other_services_keep_wanted_ports
-check "app links use the published client port" app_links_use_the_published_port
-check "starting again keeps the same ports" second_start_keeps_the_ports
-check "bun in the container matches packageManager" bun_matches_package_manager
-check "files written in the container belong to the host user" files_belong_to_host_user
-check "commands run in the matching subdirectory" subdirectory_is_kept
-check "standard input reaches the command" stdin_is_forwarded
-check "the command exit code is returned" exit_code_is_forwarded
-check "the host sees node_modules and the env files" host_sees_dependencies
-check "bun run test passes inside the container" "$dc" bun run test
-check "bun run dev:start brings the stack up" "$dc" bun run dev:start
+echo "stack a: ports, files, signals"
+check "two wanted ports are busy" bash -c "for p in $base $((base + 1)); do docker run -d --rm --name app-smoke-occupier-$$-\$p -p 127.0.0.1:\$p:9 postgres:18-alpine sleep 3600; done"
+export DEVCONTAINER_CLIENT_PORT=$base DEVCONTAINER_API_PORT=$((base + 10))
+check "scripts/dc starts the stack of a work tree" at "$tree_a" true
+unset DEVCONTAINER_CLIENT_PORT DEVCONTAINER_API_PORT
+check "the client takes the next free port" test "$(url_of client)" = "http://localhost:$((base + 2))"
+check "the API keeps its wanted port" test "$(url_of api)" = "http://localhost:$((base + 10))"
+check "git works in a linked work tree and the root is /workspace" test "$(at "$tree_a" git rev-parse --show-toplevel | tr -d '\r')" = /workspace
+check "bun matches packageManager" test "$(at "$tree_a" bun --version | tr -d '\r')" = "$(sed -n 's/.*"packageManager": "bun@\(.*\)".*/\1/p' "$root/package.json")"
+check "files written in the container belong to the host user" bash -c "cd '$tree_a' && '$dc' touch .dc-probe && [ -n \"\$(find .dc-probe -user \$(id -u))\" ]"
+check "commands run in the matching subdirectory" test "$(cd "$tree_a/apps/server" && "$dc" pwd | tr -d '\r')" = /workspace/apps/server
+check "standard input reaches the command" test "$(echo forwarded | at "$tree_a" cat | tr -d '\r')" = forwarded
+check "the exit code is returned" test "$(at "$tree_a" sh -c 'exit 7' >/dev/null 2>&1; echo $?)" = 7
+check "the host sees node_modules and the env files" test -x "$tree_a/node_modules/.bin/turbo" -a -f "$tree_a/apps/server/.env"
+check "bun run check:rules passes inside" at "$tree_a" bun run check:rules
+check "a killed command leaves no process behind" bash -c "cd '$tree_a'; timeout 3 '$dc' sleep 300; sleep 5; [ \"\$('$dc' ps -eo args | grep -c '[s]leep 300')\" = 0 ]"
+check "bun run dev:start brings the stack up" at "$tree_a" bun run dev:start
 check "the host reaches the client" host_gets_200 "$(url_of client)/"
 check "the host reaches the API" host_gets_200 "$(url_of api)/health/live"
-check "the host reads the dev stack log" host_reads_dev_stack_log
-check "bun run dev:stop stops the stack" "$dc" bun run dev:stop
+check "a stack with a dev server is busy" bash -c "'$dc' list | grep -F '$tree_a' | grep -q ' yes '"
+check "bun run dev:stop stops it" at "$tree_a" bun run dev:stop
+
+echo "stack b: separate stacks, one image"
+check "a second work tree starts its own stack" at "$tree_b" true
+check "git works in the second work tree" test "$(at "$tree_b" git rev-parse --show-toplevel | tr -d '\r')" = /workspace
+check "the stacks have different names" test "$(project_of "$tree_a")" != "$(project_of "$tree_b")"
+check "both stacks use one image" test "$(image_id_of "$tree_a")" = "$(image_id_of "$tree_b")"
+check "the stacks have separate ports" test "$(at "$tree_a" ports | sed -n 's/^api //p')" != "$(at "$tree_b" ports | sed -n 's/^api //p')"
+check "list shows both stacks running" bash -c "[ \"\$('$dc' list | grep -cF running)\" -ge 2 ]"
+
+echo "locks"
+timestamps='date +%s.%N; sleep 3; date +%s.%N'
+overlapping_heavy_commands() {
+  (cd "$tree_a" && DC_LOCK=heavy "$dc" sh -c "$timestamps" >"$tmp/first.out") &
+  sleep 1
+  (cd "$tree_b" && DC_LOCK=heavy "$dc" sh -c "$timestamps" >"$tmp/second.out")
+  wait
+  [ "$(head -1 "$tmp/second.out" | tr -d '.')" -ge "$(tail -1 "$tmp/first.out" | tr -d '.')" ]
+}
+check "two heavy commands in two stacks run one after the other" overlapping_heavy_commands
+
+echo "cap and busy stacks"
+sleep 2
+check "a third start stops the least recently used idle stack" bash -c "cd '$tree_c' && '$dc' true && [ \"\$('$dc' list | grep -cF running)\" = 2 ]"
+survivor=$tree_a
+[ "$(state_of "$tree_a")" = running ] || survivor=$tree_b
+check "the new stack and one older stack run" test "$(state_of "$tree_c")" = running -a "$(state_of "$survivor")" = running
+(cd "$tree_c" && "$dc" sleep 300) >/dev/null 2>&1 &
+background+=($!)
+(cd "$survivor" && "$dc" sleep 300) >/dev/null 2>&1 &
+background+=($!)
+sleep 4
+stopped=$tree_a
+[ "$survivor" = "$tree_a" ] && stopped=$tree_b
+check "a busy stack is never reaped" bash -c "cd '$stopped' && DC_WAIT_MINUTES=0.05 '$dc' true; [ \$? = 75 ]"
+check "the refusal names the busy stacks" bash -c "cd '$stopped' && DC_WAIT_MINUTES=0.05 '$dc' true 2>&1 | grep -q '$(project_of "$tree_c")'"
+kill "${background[@]}" 2>/dev/null || true
+sleep 6
+check "killing the waiting commands frees the stacks" bash -c "[ \"\$('$dc' list | grep -F running | grep -c ' no ')\" = 2 ]"
+
+echo "idle stops and prune"
+check "stop-idle stops idle stacks" bash -c "DC_IDLE_MINUTES=0 '$dc' stop-idle && [ \"\$('$dc' list | grep -cF running)\" = 0 ]"
+check "a stopped stack keeps its data" bash -c "docker volume ls -q --filter label=com.docker.compose.project=$(project_of "$tree_c") | grep -q ."
+name_c=$(project_of "$tree_c")
+git -C "$root" worktree remove --force "$tree_c"
+rm -rf "$tree_c"
+check "prune --dry-run lists the stack of a deleted work tree" bash -c "DC_PRUNE_DAYS=0 '$dc' prune --dry-run | grep -q '$name_c'"
+check "prune --dry-run removes nothing" bash -c "docker volume ls -q --filter label=com.docker.compose.project=$name_c | grep -q ."
+check "prune removes the stack of a deleted work tree" bash -c "DC_PRUNE_DAYS=0 '$dc' prune && ! docker volume ls -q --filter label=com.docker.compose.project=$name_c | grep -q ."
+check "prune keeps stacks whose work tree exists" bash -c "docker volume ls -q --filter label=com.docker.compose.project=$(project_of "$tree_a") | grep -q ."
 
 if [ "$failures" -gt 0 ]; then
   echo "$failures checks failed."
