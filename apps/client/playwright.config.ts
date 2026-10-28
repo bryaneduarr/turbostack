@@ -31,6 +31,8 @@ export default defineConfig({
   testDir: "./src/e2e",
   testMatch: /.*\.e2e\.ts$/,
   fullyParallel: true,
+  // Measured 2026-10-28: 3 to 12 workers all finish the 7 tests in about 3 s, and 3 is the
+  // smallest within 5 % of the best time, peaking at 23 % of the container memory limit.
   workers: 3,
   forbidOnly: process.env.CI !== undefined,
   retries: 0,
