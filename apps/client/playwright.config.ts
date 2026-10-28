@@ -14,17 +14,18 @@ loadNixosBrowserLibraries();
 
 const apiContractTests = /api-contracts\/.*\.e2e\.ts$/;
 
-// Playwright's WebKit build needs older system libraries than nixpkgs ships,
-// so NixOS hosts skip it.
-const webkitProjects = existsSync("/etc/NIXOS")
-  ? []
-  : [
-      {
-        name: "webkit",
-        testIgnore: apiContractTests,
-        use: { ...devices["Desktop Safari"] },
-      },
-    ];
+// Playwright's WebKit build needs older system libraries than nixpkgs ships and
+// the devcontainer image installs only Chromium and Firefox, so both skip it.
+const webkitProjects =
+  existsSync("/etc/NIXOS") || process.env.DEVCONTAINER === "true"
+    ? []
+    : [
+        {
+          name: "webkit",
+          testIgnore: apiContractTests,
+          use: { ...devices["Desktop Safari"] },
+        },
+      ];
 
 export default defineConfig({
   testDir: "./src/e2e",
