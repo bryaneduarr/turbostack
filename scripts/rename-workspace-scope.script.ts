@@ -95,9 +95,8 @@ async function renameContainerPrefix(): Promise<void> {
     throw new Error(`"${NEW_CONTAINER_PREFIX}" is not a valid name prefix.`);
   }
 
-  const currentPrefix = prefixAssignmentPattern.exec(
-    await Bun.file(prefixFile).text(),
-  )?.[1];
+  const prefixSource = await Bun.file(prefixFile).text();
+  const currentPrefix = prefixAssignmentPattern.exec(prefixSource)?.[1];
   if (currentPrefix === undefined) {
     throw new Error(`${prefixFile} has no PROJECT_PREFIX assignment.`);
   }
