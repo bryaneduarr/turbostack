@@ -20,6 +20,7 @@ Record each of these:
 - **Decided**: every decision the user made, with the reason when given.
 - **Learned**: discoveries, pitfalls, and limits that prevent repeated discovery.
 - **Next**: the next action and any open questions, kept as unknowns.
+- **Lessons**: each correction, rejection, approval with changes, or praise from the user, and each delivery outcome worth repeating or avoiding, as one line in `.agents/project-context/lessons/` ([format](../thinking-distill/references/learn/proof-and-lessons.md#lessons)). Replace a lesson the user contradicts.
 
 How:
 
@@ -31,7 +32,7 @@ How:
 
 ## Note format
 
-- **Limits**: startup index 120 words, topic note 80, task handoff 120, including evidence. The capability map and plans are exempt.
+- **Limits**: startup index 120 words, topic note 80, task handoff 120, including evidence. The capability map, plans, and lessons files (at most 25 lessons each) are exempt.
 - **Content**: concise bullets and source links. Never copy code, rules, transcripts, raw logs, or speculative inventories.
 - **Stamp**: each topic note records inspected Git revision, relevant uncommitted changes, and evidence paths/symbols or actual commands and results.
 - **Evidence labels**: separate source-inspected facts, user-confirmed intent, and specifically checked outcomes. Never imply runtime verification from inspection or type checks.
