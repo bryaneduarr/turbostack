@@ -1,67 +1,59 @@
 ---
 name: thinking-distill
-description: "Find what the user really wants by asking short, direct questions, then save one specific plan to .agents/plans/<slug>/plan.md. Use when the user asks to plan or scope work, and whenever the goal is unclear or there is not enough context to know what to build."
+description: "Turn a vague or not fully understood request into an approved, visual plan that teaches the user how it works, then prepare its autonomous delivery: parallel tasks in worktrees, a team chat, rules reviewers and auditors on PR lines, the local verify loop, lessons, and a ready-to-paste prompt for a new session. Use when the user asks to plan, scope, or prepare work, when the goal is not 100% clear, or when the user points to a plan to deliver."
 ---
 
 # Thinking distill
 
-The request is a starting point, not a final spec. Find the real goal, show what the user may have missed, and agree on a direction before any work starts.
+A request is a starting point, not a spec. This skill finds the real goal, attacks its own idea until nothing is guessed, teaches the user how the result will work, and, once the user approves, prepares a delivery that a new session runs with no human help. The plan matters more than the code: it sets the direction for every agent after it. Files: [references index](references/README.md).
 
 ## Rules
 
-- Only ask questions and write the plan. Do not edit code, run migrations, or commit until the plan is saved and the user says yes to start.
-- Do not agree just because the user said it. Check each idea against the goal.
-- If the request lacks context and guessing could build the wrong thing, say in one line that you are starting this skill.
-
-## Prepare
-
-1. Read `.agents/project-context/capabilities.md` first. Open only the topic notes the goal touches.
-2. List what to **reuse**, what to **build**, and what is a **gap**, each with its owner path.
-3. If `.agents/plans/<slug>/` exists for this goal, read it and continue from its open points.
-4. Never ask what the project already answers. Treat it as an assumption. That includes the environment: read the [run-in-container skill](../run-in-container/SKILL.md); all building, installing, testing, and running happens in the work tree's devcontainer stack through `scripts/dc`, and resources are managed automatically, never asked.
-
-## Ask
-
-Use the harness question tool (`AskUserQuestion` in Claude Code), up to 4 questions per call. Without one, print numbered questions with lettered options in chat, 5 at a time, and wait.
-
-Repeat until you could write the plan without guessing.
-
-Each question:
-
-- Is direct, about 20 words or fewer, in simple words. Explain any hard term.
-- Covers one decision, with 2 to 4 options. The best option comes first and ends with `(Recommended)`. Do not add "Other"; the tool adds it.
-- Starts with a short line saying how the answer helps reach the goal.
-- Gives each option one line: what it brings or what it costs.
-- Skips choices with one sensible answer. Use a single yes/no question for assumptions instead.
-
-After every answer, drop questions it settled, follow up on vague answers, and challenge anything that conflicts with the goal or an earlier answer.
-
-## Challenge and extend
-
-Only for areas the request really touches (for example goal, scope, risk, growth, verification, upkeep):
-
-- Ask about each risk that needs a decision, with the likely error and a fix.
-- Offer the smallest version that reaches the goal. Include an option the user may not have thought of, such as doing less or using what exists.
-- Suggest a few strong additions that serve the goal, one question each: add now, add later, or skip. Recommend "later" if it would delay the core result. Run each accepted addition through these same rules.
+- Plan and prepare only. Edit no code, run no migration, open no PR. The only commit is the plan folder, through `commit-changes`.
+- If the request lacks context and a guess could build the wrong thing, say in one line that you are starting this skill.
+- Never ask what the project, the rules, or the lessons already answer. Decide it and log the reason in `thinking.md`.
+- Never agree just because the user said it. Check every idea against the goal sentence.
+- Prepare the terrain, do not build the house: every part serves the goal sentence ([scope fence](references/plan/self-critique.md#scope-fence)).
+- Explain everything for a reader with no background; every new idea is taught ([teaching](references/learn/teaching.md)).
+- Write everything in `.agents/plans/<slug>/`, where `<slug>` is a short kebab-case name. Never write secrets.
 
 ## Plan
 
-When nothing is left to guess, summarize the goal, decisions, and risks in a few lines and ask yes/no to save. If no, ask what is wrong and keep going.
+1. **Lessons first.** Read every file in `.agents/project-context/lessons/`, then the startup index, the capability map, the topic notes the goal touches, the five rules, and the [run-in-container skill](../run-in-container/SKILL.md). If `.agents/plans/<slug>/` exists, continue from its `thinking.md`.
+2. **Understand.** Create `thinking.md` from its [template](references/plan/templates/thinking.md) before the first question and keep it current all session: what you searched, where to look, what you decide for the user, and the doubts list ([understand](references/plan/understand.md)).
+3. **Critique.** Run the [self-critique bank](references/plan/self-critique.md) on the draft flow and on every idea that could add value. Each answer changes the plan, adds a doubt, or is logged with its reason.
+4. **Ask.** Clear the doubts list in small rounds printed in chat, never with a question tool ([asking](references/plan/asking.md)). After each answer, rewrite the next questions and their recommendations. No limit on questions or rounds. The last round names the team.
+5. **Critic.** Start one fresh read-only subagent with `thinking.md`, the draft plan, and the bank, and ask how the plan fails. Fold its findings in; new doubts go back to step 4. Without a subagent tool, reread the plan as a stranger with the bank.
+6. **Summary.** Write `plan.md` from its [template](references/plan/templates/plan.md), then show the [summary](references/plan/summary.md): one place, visual, every choice and edge case on the step it affects. Ask yes or no to approve. On no, ask what is wrong and return to step 4.
 
-Save one file, `.agents/plans/<slug>/plan.md`, where `<slug>` is a short kebab-case name. Update it in place if it exists. Link to source paths instead of copying code. Never include secrets.
+## Prepare (starts on approval, without asking again)
 
-The plan must be specific enough to build without questions. It holds, in this order:
+7. **Survey.** One read-only subagent per plan step that touches existing code. Each reads the project context first and reports the files the step edits, mirrors, and shares (routers, catalogs, grants, migrations, `bun.lock`).
+8. **Split** into tasks, waves, worktrees, review slices, and agents at once with the [split rules](references/prepare/split-rules.md).
+9. **Write** the delivery folder from the [templates](references/prepare/templates/):
 
-1. **Request:** the user's own words, the date (UTC), and the Git revision.
-2. **Goal:** what the user finally wants and why, in a few sentences. Say how it differs from the request.
-3. **Done when:** conditions anyone can check.
-4. **Decisions:** every user choice, with the reason and the rejected options.
-5. **Scope:** what is in, what is out, and each addition marked now, later, or skipped.
-6. **Risks:** each risk with its fix, or marked accepted by the user.
-7. **Steps:** ordered, concrete steps. Each names the files or owner paths it touches and how to verify it, in the `scripts/dc` form.
+```text
+.agents/plans/<slug>/
+├── README.md         start here: reading order and status
+├── thinking.md       the planning notebook (doubts, searches, critique, questions)
+├── plan.md           the approved plan: how it works, learn, scope, steps
+├── summary.html      the visual summary, only when it was rendered
+├── prompt.md         the prompt for the new session
+├── board.md          central task board: tasks, waves, reviews, stages, decisions
+├── board-log.md      append-only status lines from every job
+├── chat.md           the team chat
+├── testing.md        `scripts/dc bun run verify` commands and browser scenarios
+├── questions.md      one acceptance question per Done when line
+├── outcomes.md       the scorecard, filled at close
+└── tasks/<task-id>/  task.md (one focused piece with its brief); the handoff at close
+```
 
-Every user request, decision, and goal must appear in the plan. Nothing the user said may be missing. A plan that changes code also holds the Environment decision, and its first step creates the work tree and the first `scripts/dc` call: see the [environment note](references/environment.md).
+10. **Check** that every plan step sits in one task, every Done when line in `questions.md`, tasks without a `needs` link share no file, every task file sits in exactly one review slice, every task brief is complete, and every Subagents row is named or `not provided`.
+11. **Commit** the plan folder on `main` through `commit-changes`, so the delivery worktree contains it. If the checkout is not on `main`, say it must land there first.
+12. **Finish.** Say exactly "Planning of the implementation is complete.", then print the block from `prompt.md` in a fenced block for the user to paste into a new session.
 
-## Finish
+After the session, follow the [project-context skill](../project-context/SKILL.md) and turn each correction, rejection, approval with changes, or praise from the user into a lesson ([proof and lessons](references/learn/proof-and-lessons.md)).
 
-Show the Goal and Steps, then ask yes/no: start now? On yes, begin at step 1. On no, stop; the plan stays saved.
+## Delivery (the new session)
+
+The [prompt](references/prepare/templates/prompt.md) holds the stages (setup, code, merge, draft PR, review, fix, verify, ready, close) and the orchestrator's rules. Every subagent reads the [subagent rules](references/run/subagent-rules.md) and its [job file](references/run/jobs/). Nobody helps the delivery until it ends; the only allowed blocker is an action only a real person can do.

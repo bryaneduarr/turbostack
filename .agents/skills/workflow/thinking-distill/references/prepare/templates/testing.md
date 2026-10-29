@@ -1,6 +1,6 @@
 # Testing <feature> in the container
 
-The verify job runs `verify` once after the review, then `verify --failed` in the fix loop until it passes. Every command runs through `scripts/dc` from the delivery's worktree, in that worktree's own stack with its own PostgreSQL and ports. Nothing runs on the host. `scripts/dc` queues heavy and database commands itself, so no command needs a lock. Send the output to a log file and wait for it; a full run takes about a minute. Without Docker every row is blocked.
+The local CI is one command. The verify job runs it once after the review fixes, then `verify --failed` in the fix loop until it passes. Every command runs through `scripts/dc` from the delivery worktree, in its own stack with its own PostgreSQL and ports. Nothing runs on the host, and nothing runs in a task worktree. `scripts/dc` queues heavy and database commands itself, so no command needs a lock. Send the output to a log file and wait for it; a full run takes about a minute. Without Docker every row is blocked.
 
 | Order | Run | Command | What it covers |
 | --- | --- | --- | --- |
