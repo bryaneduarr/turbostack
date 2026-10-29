@@ -78,7 +78,7 @@ After connecting, `agent-browser snapshot -i` or `chrome-devtools list_pages` gi
 
 ## Delivering a pull request
 
-1. Pass `scripts/dc bun run verify` (or `scripts/dc bun run verify --failed` after a fix). Push only when it passes.
+1. Pass `scripts/dc bun run verify` (or `scripts/dc bun run verify --failed` after a fix). Push only when it passes. A plan delivery is the exception: it pushes a draft PR before verify so reviewers comment on its lines, and marks it ready only after verify passes.
 2. There is no hosted CI. Run what the change touches that `verify` skips, such as `bun run start:docker`, before pushing.
 3. Never open a PR on top of a PR whose checks fail.
 
