@@ -72,7 +72,7 @@ flowchart LR
 ## Predictions
 
 - Riskiest step: <step and why>.
-- Expected: <tasks> tasks, <files> files, <n> must-fix findings or fewer, <n> verify runs.
+- Expected: <tasks> tasks, <files> files, <jobs> jobs (<brain jobs> on the brain), about <minutes> minutes, <n> must-fix findings or fewer, <n> verify runs.
 - Each risk above has its sign; the close stage scores every prediction in `outcomes.md`.
 
 ## Steps

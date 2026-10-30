@@ -8,16 +8,25 @@ Read your job file in [jobs](jobs/) and the [team chat](team-chat.md) rules, the
 
 - `implement`, `fix`, and `review` in `rules` mode: the five rules in `.agents/rules/`, followed strictly, then `.agents/project-context/start-here.md`, `capabilities.md`, and the linked topic notes for the code your job touches. Implement also reads its `task.md` and `testing.md`.
 - `review` in `plan`, `reliability`, or `security` mode: your [question set](reviewers/), `plan.md`, and the topic notes for the owners the change touches.
-- `setup`, `merge`, `verify`: the [run-in-container skill](../../../run-in-container/SKILL.md).
+- `advise`: only the evidence in your Facts and the plan steps and files it names.
+- `setup`, `verify`: the [run-in-container skill](../../../run-in-container/SKILL.md).
 - `publish`: the `commit-changes` and `pr` skills and [PR comments](pr-comments.md).
 - `record`: the `project-context` skill, [proof and lessons](../learn/proof-and-lessons.md), and the README rules in `.agents/rules/code-quality.md` when it edits docs.
 
 Facts in your brief are established; do not re-derive them. Recheck a note's claim in source before relying on it, and report a stale note under `learned`. Read every plan-folder file from the delivery worktree path in your brief, never from another copy.
 
+## Work fast and light
+
+- Read every file you need in one read call: the five rules, the notes, your job file, your `task.md`, and the files to mirror. Chain independent shell commands into one call. Every extra call resends your whole context.
+- Every path you need is in your brief or `task.md`, or in the board: your job file is `run/jobs/<kind>.md`, your task is `tasks/<task id>/task.md`, your slice's files are in `board.md`. Never search for them.
+- Search only inside your worktree and the delivery worktree, by path. Never run `find /`, or search `/`, `~`, or `/mnt`: under WSL `/mnt/c` is the Windows drive, and in a measured 22-task delivery seven jobs each lost 5 minutes to a `find /` that timed out. Library source sits in the delivery worktree's `node_modules`; search it by package path.
+- Stop when your Done when lines are met. Do not polish, rerun, or re-read what you already checked.
+
 ## Work
 
 - Work only in the worktree your brief names. Edit only files your job lists, re-read a file right before editing it, and never run a repo-wide formatter or fixer.
-- Git: only `setup` (branch and worktrees), `merge`, `publish`, and `record` jobs change git state, as their job files say; commits go through `commit-changes`. Everyone else runs read-only git.
+- Git: only `setup` (branch and worktrees), `implement` (removing its own task worktree), `publish`, and `record` jobs change git state, as their job files say; commits go through `commit-changes`. Everyone else runs read-only git.
+- Checks: an implement job runs only its own task check; a fix job runs what its job file says; the verify job runs the full verify. Nobody else runs checks.
 - Installs and generators run only when your job lists them, only through `scripts/dc`, and only in the delivery worktree. Never run `scripts/dc` in a task worktree: task worktrees hold files only.
 - Run every build, install, test, and app command through `scripts/dc`. Install and run nothing on the host (no host `bun`, `bunx`, `turbo`, `node`, PostgreSQL, Playwright, locks, or `.env` copies), never fall back to the host when Docker is missing, and never run `docker compose` on a stack by hand.
 - Never ask about resources. When `scripts/dc list` shows idle stacks, a full cap, or a busy slot, act through `scripts/dc` at once (`stop-idle`, wait, or `prune`). Only the record job in `close` mode stops the delivery's stack; never stop another work tree's stack unless `list` shows it idle.
@@ -35,7 +44,7 @@ Facts in your brief are established; do not re-derive them. Recheck a note's cla
 
 ## Before reporting
 
-Reread your changed lines against your brief's Done when, the Agreed interfaces, and the rules. Read the chat once more for posts that mention you. Append your status line to `board-log.md`.
+Reread your changed lines against your brief's Done when, the Agreed interfaces, and the rules. Read the chat once more for posts that mention you, with the `grep` in [team chat](team-chat.md#read). Append your status line to `board-log.md`.
 
 ## Report (under 200 words, plus the lists your kind asks for)
 

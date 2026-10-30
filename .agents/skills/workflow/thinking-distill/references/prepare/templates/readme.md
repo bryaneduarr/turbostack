@@ -25,4 +25,4 @@ The delivery worktree `~/worktrees/<repo>/<feature>` gets the only container sta
 
 ## Delivery
 
-One branch `<feature>`, one PR against `main`, <count> tasks in <count> waves, <count> review slices, 3 auditors, at most <N> agents at once. Stages: setup, code, merge, draft PR, review, fix, verify, ready, close.
+One branch `<feature>`, one PR against `main`, <count> tasks in <count> waves (longest needs chain <count>), <count> review slices, 3 auditors, at most <N> agents at once, about <minutes> minutes. Stages: setup, code, draft PR, review, fix, verify, ready, close.

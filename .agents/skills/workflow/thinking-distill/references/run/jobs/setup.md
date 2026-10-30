@@ -13,7 +13,7 @@ for task in <task ids marked own>; do
 done
 ```
 
-- The first `scripts/dc` call builds or reuses the shared image, starts the stack, and installs packages, which can take minutes. Start it detached as above and poll the log with short checks until the version prints; never block on it.
+- The first `scripts/dc` call builds or reuses the shared image, starts the stack, and installs packages, which can take minutes. Start it detached as above, create the task worktrees, then poll the log with short checks for at most one minute; if the version has not printed, report the stack as `starting` with the log path. Implement jobs need only files, so they never wait for the stack.
 - Task worktrees are files only: run no `scripts/dc`, install nothing, and copy no `.env` in them.
 - Confirm the plan folder exists in the delivery worktree (`.agents/plans/<feature>/plan.md`); if it does not, the plan was not committed on `main`: report `needs` with that fact.
 - When resuming, reuse existing worktrees and create only the missing ones. If Docker is missing, report `blocked`.

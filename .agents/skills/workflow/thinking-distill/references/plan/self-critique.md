@@ -23,7 +23,7 @@ The agent questions its own plan before the user sees it, and again on every ide
 - **Proof:** Which browser scenario proves each Done when line? What can we not test here, and what proves it instead?
 - **Value:** What would make this clearly more useful for a small cost? Every such idea runs through this whole bank again.
 - **Scope:** Does each part trace to the goal sentence? Is this the terrain or the house?
-- **Plan quality:** Is each task small enough for one agent? Could a new agent misread any step? Is the riskiest step done first? Do parallel tasks share any file?
+- **Plan quality:** Is each task small enough for one agent? Could a new agent misread any step? Is the riskiest step done first? Do parallel tasks share any file? Is the longest needs chain 3 tasks or fewer? Does every task's spec leave nothing to decide, name the helpers it must reuse instead of copying, and give each `Risk: high` task its logic step by step?
 - **Self-check:** Which wrong assumption would waste the most work? Could a new agent build this without asking anything? Which lesson did I ignore, and why?
 
 ## Scope fence
@@ -37,4 +37,4 @@ Prepare the terrain; do not build the house. When the request is X, the plan bui
 
 ## Critic
 
-Step 5 gives the critic subagent `thinking.md`, the draft `plan.md`, and this file, with this mission: "Find how this plan fails. Answer the bank as a stranger who must build it tomorrow. List each problem with the step it hits and a fix. Do not praise." Each finding becomes a plan change or a doubt.
+Step 5 gives the brain critic subagent `thinking.md`, the draft `plan.md`, and this file, with this mission: "Find how this plan fails. Answer the bank as a stranger who must build it tomorrow. List each problem with the step it hits and a fix. Do not praise." Each finding becomes a plan change or a doubt.

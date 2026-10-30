@@ -11,13 +11,13 @@ The approval summary is one screen the user can judge without background, and `p
 5. **Scope:** Building, Not building, Later, one line each.
 6. **Risks:** each risk, what softens it, and the sign we would see if it happened.
 7. **Done when:** conditions anyone can check.
-8. **Delivery at a glance:** tasks, waves, agents at once, reviewers, and what the user does at the end. Fill it after the split, then show it again with the finish message.
+8. **Delivery at a glance:** tasks, waves, the longest needs chain, agents at once, reviewers, the brain and hands team, the expected minutes, and what the user does at the end. The split runs before the summary, so these are real counts; show them again with the finish message.
 
 ## Visuals
 
 Pick the medium automatically; never ask the user and never mention a missing tool.
 
-- **HTML:** when a tool in this session can render HTML in the chat, render the summary as one self-contained page: inline CSS only, no scripts, fonts, or images from the network, readable in light and dark (`prefers-color-scheme`), boxes and arrows drawn with CSS or inline SVG. Save it as `summary.html` in the plan folder.
+- **HTML:** when a tool in this session can render HTML in the chat, a hands writer builds the summary as one self-contained page from `plan.md` and the session renders it: inline CSS only, no scripts, fonts, or images from the network, readable in light and dark (`prefers-color-scheme`), boxes and arrows drawn with CSS or inline SVG. Save it as `summary.html` in the plan folder.
 - **Text:** otherwise, draw the picture in chat with box-drawing characters, at most 80 columns, with a legend: `✓` works, `✗` fails, `◆` a choice, `⚠` an edge case.
 - **Files:** `plan.md` draws its pictures in Mermaid with these colour classes:
 

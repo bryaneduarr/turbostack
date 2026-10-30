@@ -1,6 +1,6 @@
 # <task-id>: <task title>
 
-Branch: `<feature>`. Wave: <n>. Needs: <task ids, or none>. Plan steps: <numbers>. Review slice: <slice id>.
+Branch: `<feature>`. Wave: <n>. Needs: <task ids, or none>. Plan steps: <numbers>. Review slice: <slice id>. Size: <S, M, or L>. Risk: <normal or high>.
 Worktree: <`~/worktrees/<repo>/<feature>.tasks/<task-id>` (own), or the delivery worktree>.
 
 ## Vision
@@ -36,6 +36,16 @@ Omit the table when the task has none.
 - Uses `<path>` from <task id>: exports `<names>`.
 - Provides `<path>` to <task id>: exports `<names>`.
 
+## Reuse
+
+Import these; never copy them:
+
+- `<path>`: `<export>` for <what>.
+
+## Rules that bite
+
+- `<rule file>`, <section>: <what it means for this piece>.
+
 ## Brief
 
 - Read: `<file to mirror>` for <the shape>; <skill paths, or none>.
@@ -43,4 +53,5 @@ Omit the table when the task has none.
 - Scenario: <per browser scenario, the steps and assertions, or none>.
 - Done when: <checkable conditions for this piece only: file and behavior>.
 - Run: <only commands that generate files, such as `drizzle:generate`, in the delivery worktree, or none>.
+- Check: Biome on <your files> and the type check of <owning package names>, in the delivery worktree, once your files are complete.
 - If unclear: post an `ask` in the chat, continue with the plan's best reading, and report it under `decided`.
