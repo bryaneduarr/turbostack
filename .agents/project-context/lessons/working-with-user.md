@@ -10,3 +10,5 @@ Evidence: the user's words in session. Format: one line each, `- <YYYY-MM-DD> ·
 - 2026-10-29 · When the chat can render HTML, show visuals as HTML without being asked; otherwise use text diagrams, because the user rarely asks for a visual.
 - 2026-10-29 · Keep additions inside the goal (prepare the terrain, do not build the house), because wide additions point the next session the wrong way.
 - 2026-10-29 · Do not treat a merged PR as proof the work was right; the user's feedback over time is, because the user may merge and still want it different.
+
+- 2026-10-30 · Keep orchestration, subagent, and model instructions out of rules and skills unless the user asks for them, because the user wants only the rules that apply.
