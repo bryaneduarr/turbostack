@@ -260,7 +260,7 @@ Root `package.json` scripts MUST delegate to `turbo run`, not run tasks directly
 
 ### Using `&&` to Chain Turbo Tasks
 
-Don't chain turbo tasks with `&&`. Let turbo orchestrate.
+Don't chain turbo tasks with `&&`. Let turbo run the dependency graph.
 
 ```json
 // WRONG - turbo task not using turbo run

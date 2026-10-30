@@ -1,6 +1,6 @@
 # Stack commands, limits, and failures
 
-Contract from the [isolated stacks plan](../../../../plans/isolated-stacks/plan.md). Read the project note for what is built.
+Contract from the isolated stacks plan. Read the project note for what is built.
 
 ## Commands
 

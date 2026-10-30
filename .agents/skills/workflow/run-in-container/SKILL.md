@@ -35,7 +35,7 @@ test "${DEVCONTAINER:-}" = true && echo inside || { docker info >/dev/null 2>&1 
 
 ## Standing rule: resources
 
-Any agent on any branch that notices idle stacks, a full stack cap, or a busy slot acts on it through `scripts/dc` at once, without asking the user: `scripts/dc list`, then `stop-idle`, `stop` for a stack you started and finished with, or `prune`. A call that must wait prints progress and exits 75 after 45 minutes; report that, never ask.
+When you notice idle stacks, a full stack cap, or a busy slot, act on it through `scripts/dc` at once, without asking the user: `scripts/dc list`, then `stop-idle`, `stop` for a stack you started and finished with, or `prune`. A call that must wait prints progress and exits 75 after 45 minutes; report that, never ask.
 
 - Stop what you start (`scripts/dc stop` in your work tree) when you finish. Leave stacks you did not start alone unless `list` shows them idle.
 - Never run `docker compose` on a stack by hand, never touch the primary stack's data, and never use `down -v` unless the database password is stale.

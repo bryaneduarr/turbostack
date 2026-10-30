@@ -7,7 +7,6 @@
 | Many scripted steps, loops, or bulk extraction | `agent-browser --cdp "$(agent-chrome port NAME)"` from the shell | No tool-schema overhead; chain commands; load its guide first with `agent-browser skills get core` |
 | Console, network, performance trace, Lighthouse, emulation, heap | Chrome DevTools tools of the MCP servers | Only they expose these |
 | Confirm GPU or WebGL | `evaluate_script` reading `WEBGL_debug_renderer_info` (`UNMASKED_RENDERER_WEBGL`) | Names the graphics card the page really uses |
-| Several agents at once | One instance each: `AGENT_CHROME_INSTANCE=<name>` or `agent-chrome start <name>` | Tabs and logins never mix |
 | Repeatable pass/fail evidence | Playwright suite ([verify-e2e](../../verify-e2e/SKILL.md)) | Only when the user asks for tests, not exploration |
 
 Prefer the MCP tools for interactive work and the shell CLI for scripted work. Do not mix both on the same page at once.

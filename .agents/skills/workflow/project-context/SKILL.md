@@ -1,6 +1,6 @@
 ---
 name: project-context
-description: "Record what a session implemented, rejected, decided, and learned in .agents/project-context/, and keep notes, plans, and task handoffs accurate. Use at the end of every session that changed, decided, or rejected anything; before relying on an existing note; and when writing or updating a plan or task handoff. Skip for explicit read-only requests."
+description: "Record what a session implemented, rejected, decided, and learned in .agents/project-context/, and keep the notes accurate. Use at the end of every session that changed, decided, or rejected anything; before relying on an existing note; and when writing or updating a note. Skip for explicit read-only requests."
 ---
 
 # Project context upkeep
@@ -20,7 +20,7 @@ Record each of these:
 - **Decided**: every decision the user made, with the reason when given.
 - **Learned**: discoveries, pitfalls, and limits that prevent repeated discovery.
 - **Next**: the next action and any open questions, kept as unknowns.
-- **Lessons**: each correction, rejection, approval with changes, or praise from the user, and each delivery outcome worth repeating or avoiding, as one line in `.agents/project-context/lessons/` ([format](../thinking-distill/references/learn/proof-and-lessons.md#lessons)). Replace a lesson the user contradicts.
+- **Lessons**: each correction, rejection, approval with changes, or praise from the user, as one line in `.agents/project-context/lessons/` (`- <YYYY-MM-DD> · When <situation>, <do this>, because <reason>.`). Replace a lesson the user contradicts.
 
 How:
 
@@ -32,7 +32,7 @@ How:
 
 ## Note format
 
-- **Limits**: startup index 120 words, topic note 80, task handoff 120, including evidence. The capability map, plans, and lessons files (at most 25 lessons each) are exempt.
+- **Limits**: startup index 120 words, topic note 80, including evidence. The capability map and lessons files (at most 25 lessons each) are exempt.
 - **Content**: concise bullets and source links. Never copy code, rules, transcripts, raw logs, or speculative inventories.
 - **Stamp**: each topic note records inspected Git revision, relevant uncommitted changes, and evidence paths/symbols or actual commands and results.
 - **Evidence labels**: separate source-inspected facts, user-confirmed intent, and specifically checked outcomes. Never imply runtime verification from inspection or type checks.
@@ -46,14 +46,10 @@ How:
 
 ## Authority
 
-- Agents update facts and progress on their own.
+- Update facts and progress on your own.
 - Priorities, product scope, architecture decisions, and rule changes are user-controlled. Record them only after the user decides.
 - Upkeep adds no background service, automatic commits, or pushes. Syncing across machines needs a deliberate Git step.
 
-## Plans and tasks
+## Editing
 
-- Approved plans live in `.agents/plans/<feature>/`. They hold user-approved decisions and phase scopes. Read the plan before starting or changing a phase. Changing a plan decision needs user approval.
-- Each plan owns its tasks in `.agents/plans/<feature>/tasks/<task-id>/`. Task work and handoffs stay there, never in `.agents/project-context/`.
-- Task owners keep `<feature>-plan.md` current: objective, owner, status, sources, checks/limits, blocker, next action. Never adopt a completed handoff as a new assignment.
-- Use isolated worktrees for parallel tasks.
-- Re-read a file before editing it. Reconcile concurrent changes instead of overwriting another agent's work.
+- Re-read a file before editing it. Reconcile concurrent changes instead of overwriting them.

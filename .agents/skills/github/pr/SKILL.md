@@ -49,7 +49,7 @@ Rules:
 
 ## Open the PR
 
-1. Pass `scripts/dc bun run verify`, or `scripts/dc bun run verify --failed` after a fix. Push only when it passes. The one exception is a plan delivery: it opens the PR with `--draft` before verify so reviewers can comment on its lines, and runs `gh pr ready` only after verify passes.
+1. Pass `scripts/dc bun run verify`, or `scripts/dc bun run verify --failed` after a fix. Push only when it passes.
 2. Choose labels from `gh label list`. Always set:
    - one type label: `enhancement`, `bug`, `refactor`, `documentation`, `chore`, or `dependencies`;
    - one `area: ...` label for each area touched (`area: client`, `area: server`, `area: packages`, `area: tooling`).

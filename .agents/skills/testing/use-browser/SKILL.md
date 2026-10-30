@@ -1,6 +1,6 @@
 ---
 name: use-browser
-description: "Choose and drive the right browser tool when the user explicitly asks to use the browser or Chrome: real headed GPU Chrome through the chrome and chrome-isolated MCP servers or the agent-chrome command. Covers which tool fits, isolated instances for parallel agents, and the cheapest way to inspect, test, and debug a page."
+description: "Choose and drive the right browser tool when the user explicitly asks to use the browser or Chrome: real headed GPU Chrome through the chrome and chrome-isolated MCP servers or the agent-chrome command. Covers which tool fits, isolated instances, and the cheapest way to inspect, test, and debug a page."
 ---
 
 # Use the browser
@@ -19,7 +19,7 @@ Real Chrome on the user's desktop (GPU, WebGL, extensions), driven through the `
 2. Pick the tool and instance with [tools](references/tools.md). Default for testing this app: `chrome-isolated`.
 3. Start the app only if the page needs it: [development commands](../../../project-context/development/commands.md). Never start servers the user already runs.
 4. Work the loop in [efficiency](references/efficiency.md): snapshot, act, wait, read only filtered console and network output.
-5. Use one instance per agent and clean up as in [instances](references/instances.md).
+5. Use one instance and clean up as in [instances](references/instances.md).
 6. Report what you did in the browser, what you observed, and what you did not check. Name any screenshot or trace file you saved.
 
 ## Limits
