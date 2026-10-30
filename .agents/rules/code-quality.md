@@ -95,6 +95,7 @@ These rules are mandatory for code and refactors.
 - Then review the full diff by reading it against these rules, and fix what the review finds.
 - Then run `scripts/dc bun run verify` once. It runs the lockfile, Biome, boundary, rule, compose, migration, type, build, and browser checks in order and stops at the first failure.
 - After a failure, fix the cause and run `scripts/dc bun run verify --failed`. It repeats the fast checks, the type checks and builds (Turbo skips unchanged packages), and only the browser tests that failed, or every remaining step when an earlier step failed. Repeat until it passes.
+- In a plan delivery, each task's code is finished when its task is written: its job then runs Biome and the type check on its own files and packages once, and fixes only its own errors. Browser tests run only in the one `verify` at the end.
 
 ## Required delivery behavior
 

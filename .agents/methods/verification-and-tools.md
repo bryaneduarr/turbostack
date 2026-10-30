@@ -24,6 +24,7 @@ A missing search result calls for a narrower query or `git status` (hidden, igno
 | --- | --- |
 | Docs or instructions | `git diff --check -- <path>`; read new files directly; confirm links resolve |
 | Code, any size | Nothing while writing. When the code is complete, review the scoped diff, then run `scripts/dc bun run verify` once |
+| One task of a plan delivery | When the task's files are complete: `scripts/dc bunx biome check --write <its files>` and `scripts/dc bunx turbo run check-types --filter=<its packages>`; browser tests wait for the delivery's one `verify` |
 | Behavior fix or refactor | Scoped `git diff` and direct consumers while reviewing; the same `verify` run covers them |
 | Tables or migrations | `verify` (it fails when `drizzle:generate` leaves uncommitted migrations) |
 | User flows, validation, permissions, and bug fixes | A Playwright scenario under `apps/client/src/e2e/`, run by `verify` (`api` and `chromium`) |
