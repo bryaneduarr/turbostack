@@ -118,7 +118,6 @@ async function renameContainerPrefix(): Promise<void> {
         `PROJECT_PREFIX=${NEW_CONTAINER_PREFIX}`,
       );
     }
-    if (path.startsWith(".agents/plans/")) return content;
     return content.replace(containerNamePattern, `${NEW_CONTAINER_PREFIX}-`);
   });
   console.info(
