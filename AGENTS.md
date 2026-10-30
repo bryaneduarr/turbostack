@@ -15,9 +15,8 @@ This file says where everything is, when to use it, and what it produces. Apart 
 | [Verification and tools guide](.agents/methods/verification-and-tools.md)                                            | Choosing a search tool, check, test approach, running the app, or debugging step       | Methods only; it adds no rules                               |
 | [Startup index](.agents/project-context/start-here.md) and [capability map](.agents/project-context/capabilities.md) | Starting any task; planning a feature                                    | Pointers to topic notes, reuse items, owners, known gaps     |
 | `.agents/project-context/<category>/<topic>.md`                                                                      | The index links a topic relevant to the task                             | Verified facts, decisions, rejections, next actions          |
-| `.agents/project-context/lessons/`                                                                                   | Starting a plan; after the user corrects, rejects, or praises work       | One-line lessons on how the user works and what is right     |
+| `.agents/project-context/lessons/`                                                                                   | Starting a task; after the user corrects, rejects, or praises work       | One-line lessons on how the user works and what is right     |
 | [Run in the container skill](.agents/skills/workflow/run-in-container/SKILL.md)                                      | Before the first project command of a session                            | Where the project runs, and the command form for that place |
-| `.agents/plans/<feature>/` and `tasks/<task-id>/`                                                                    | A user-approved plan or an assigned task exists                          | Approved decisions, phase scopes, task handoff               |
 | `.agents/skills/<group>/<name>/SKILL.md`                                                                             | A skill's description matches the task                                   | That skill's workflow and output                             |
 | `~/.agents/AGENTS.md`                                                                                                | Always, once per session                                                 | Cross-repo preferences                                       |
 
@@ -28,12 +27,12 @@ This file says where everything is, when to use it, and what it produces. Apart 
 | `coding/` | `typescript-best-practices`, `zod-validation-utilities`, `react-patterns`, `vercel-react-best-practices`, `nextjs-performance`, `tailwind-css-patterns`, `drizzle-orm-patterns`, `turborepo` | Library and framework patterns while writing code |
 | `github/` | `commit-changes`, `pr` | Commits and pull request bodies |
 | `testing/` | `verify-e2e`, `agent-browser`, `use-browser` | End-to-end verification, browser automation, and choosing the browser tool |
-| `workflow/` | `project-context`, `thinking-distill`, `run-in-container`, `update-dependencies` | Session recaps and lessons; clarifying what to build, planning it, and preparing its autonomous delivery; running commands in the devcontainer; and upgrading every dependency |
+| `workflow/` | `project-context`, `run-in-container`, `update-dependencies` | Session recaps and lessons, running commands in the devcontainer, and upgrading every dependency |
 
 ## Before you start
 
-1. Read all five rule files completely before investigating, creating, changing, or reviewing code. A plan-delivery subagent whose job writes no code and judges none against the rules (setup, merge, publish, verify, record, and the plan, reliability, and security auditors) reads only what the [subagent rules](.agents/skills/workflow/thinking-distill/references/run/subagent-rules.md) list for its kind.
-2. Read the startup index and your task's handoff. Claude Code imports the two files below automatically; other harnesses open them by path.
+1. Read all five rule files completely before investigating, creating, changing, or reviewing code.
+2. Read the startup index. Claude Code imports the two files below automatically; other harnesses open them by path.
 3. Open only the linked topics the task needs, never the whole context folder.
 4. Before planning a feature, answer from the capability map's Features, Feature slice, and Known gaps first. Open source only to confirm a named reuse item. Avoid repo-wide `git ls-files` or grep sweeps.
 
@@ -83,5 +82,4 @@ Every commit goes through the [commit-changes skill](.agents/skills/github/commi
 
 - `CLAUDE.md` is a symlink to this file.
 - Skills live in `.agents/skills/<group>/<name>/`. `.claude/skills/<name>` is a symlink to each one, because Claude Code only discovers skills one level deep. After adding, moving, or removing a skill, run `ln -s ../../.agents/skills/<group>/<name> .claude/skills/<name>` (or delete the dead link).
-- `.claude/agents` links to `.agents/agents` when it exists. Add or edit skills and agents only under `.agents/`.
 - Keep personal Claude Code settings in the ignored `.claude/settings.local.json`.

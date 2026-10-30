@@ -14,7 +14,6 @@ Run every command below through `scripts/dc` in the work tree's devcontainer sta
 | Code by shape, not spelling | Structural search, then read the surroundings |
 | A known file or function | Read a bounded slice of it |
 | Git state or a package command | Shell |
-| Independent research | A subagent with one bounded question |
 
 A missing search result calls for a narrower query or `git status` (hidden, ignored, or deleted files).
 
@@ -24,7 +23,6 @@ A missing search result calls for a narrower query or `git status` (hidden, igno
 | --- | --- |
 | Docs or instructions | `git diff --check -- <path>`; read new files directly; confirm links resolve |
 | Code, any size | Nothing while writing. When the code is complete, review the scoped diff, then run `scripts/dc bun run verify` once |
-| One task of a plan delivery | When the task's files are complete: `scripts/dc bunx biome check --write <its files>` and `scripts/dc bunx turbo run check-types --filter=<its packages>`; browser tests wait for the delivery's one `verify` |
 | Behavior fix or refactor | Scoped `git diff` and direct consumers while reviewing; the same `verify` run covers them |
 | Tables or migrations | `verify` (it fails when `drizzle:generate` leaves uncommitted migrations) |
 | User flows, validation, permissions, and bug fixes | A Playwright scenario under `apps/client/src/e2e/`, run by `verify` (`api` and `chromium`) |
@@ -40,7 +38,7 @@ Notes:
 
 ## Running the app
 
-`bun run dev` opens turbo's interactive TUI and locks the terminal, so it suits humans only. Agents use the detached stack ([script](../../scripts/dev-stack.script.ts)):
+`bun run dev` opens turbo's interactive TUI and locks the terminal, so it suits humans only. Use the detached stack ([script](../../scripts/dev-stack.script.ts)):
 
 | Command | Does |
 | --- | --- |
@@ -79,7 +77,7 @@ After connecting, `agent-browser snapshot -i` or `chrome-devtools list_pages` gi
 
 ## Delivering a pull request
 
-1. Pass `scripts/dc bun run verify` (or `scripts/dc bun run verify --failed` after a fix). Push only when it passes. A plan delivery is the exception: it pushes a draft PR before verify so reviewers comment on its lines, and marks it ready only after verify passes.
+1. Pass `scripts/dc bun run verify` (or `scripts/dc bun run verify --failed` after a fix). Push only when it passes.
 2. There is no hosted CI. Run what the change touches that `verify` skips, such as `bun run start:docker`, before pushing.
 3. Never open a PR on top of a PR whose checks fail.
 
@@ -89,7 +87,6 @@ After connecting, `agent-browser snapshot -i` or `chrome-devtools list_pages` gi
 2. Read the evidence first: logs, traces, screenshots, and the Playwright report in `apps/client/playwright-report/`.
 3. After two attempts that do not converge, stop and gather new evidence or build a reproduction.
 4. Fix the cause. Raise timeouts or retries only when measurements show the work needs more time.
-5. Log each attempt in the task handoff, one line: hypothesis, evidence, result.
 
 ## When verification is blocked
 

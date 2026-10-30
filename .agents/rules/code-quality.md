@@ -84,10 +84,9 @@ These rules are mandatory for code and refactors.
 
 ## Isolated environment
 
-- All building, installing, testing, and running happens in the devcontainer stack of the work tree you work in, through `scripts/dc`, for people and agents. Nothing is installed or run on the host. Only git, `gh`, Docker, the agent tool, and the user's browser stay there.
+- All building, installing, testing, and running happens in the devcontainer stack of the work tree you work in, through `scripts/dc`. Nothing is installed or run on the host. Only git, `gh`, Docker, and the user's browser stay there.
 - Never run `bun`, `bunx`, `turbo`, `node`, PostgreSQL, or Playwright on the host, and never copy `.env` files or add host locks or services. If Docker is missing, report the checks as blocked; never fall back to the host.
-- Parallel work uses `git worktree` folders under `~/worktrees/<repo>/<feature>`, one stack each. Stop the stack you started when you finish (`scripts/dc stop`).
-- Any agent on any branch that notices idle stacks, a full stack cap, or a busy slot acts on it through `scripts/dc` at once, without asking the user. Follow the [run-in-container skill](../skills/workflow/run-in-container/SKILL.md).
+- When you notice idle stacks, a full stack cap, or a busy slot, act on it through `scripts/dc` at once, without asking the user. Follow the [run-in-container skill](../skills/workflow/run-in-container/SKILL.md).
 
 ## Work order
 
@@ -95,7 +94,6 @@ These rules are mandatory for code and refactors.
 - Then review the full diff by reading it against these rules, and fix what the review finds.
 - Then run `scripts/dc bun run verify` once. It runs the lockfile, Biome, boundary, rule, compose, migration, type, build, and browser checks in order and stops at the first failure.
 - After a failure, fix the cause and run `scripts/dc bun run verify --failed`. It repeats the fast checks, the type checks and builds (Turbo skips unchanged packages), and only the browser tests that failed, or every remaining step when an earlier step failed. Repeat until it passes.
-- In a plan delivery, each task's code is finished when its task is written: its job then runs Biome and the type check on its own files and packages once, and fixes only its own errors. Browser tests run only in the one `verify` at the end.
 
 ## Required delivery behavior
 

@@ -41,7 +41,7 @@ This is an acceptance condition for all project-owned frontend, backend, schema,
 - Each folder level must identify an actual ownership boundary or useful grouping. There is no fixed minimum or maximum depth, and no requirement to use every hierarchy level.
 - Technical subfolders such as `handlers/`, `components/`, or `schemas/` are allowed beneath a specific owner when they clarify role grouping. They must not replace domain ownership or become dumping grounds. Put files directly in the operation folder when another level adds no meaning.
 - Separate independent responsibilities into focused files in their owning folders. Tightly connected simple steps may remain together when splitting would obscure the operation. Do not create a file or folder for every statement, function, or procedural step.
-- Keep orchestration and execution order understandable. Do not introduce empty scaffolding, speculative folder trees, forwarding wrappers, or artificial layers merely to increase depth.
+- Keep control flow and execution order understandable. Do not introduce empty scaffolding, speculative folder trees, forwarding wrappers, or artificial layers merely to increase depth.
 - Preserve workspace boundaries, schema-package ownership, server/client runtime separation, framework-required routing structures and names, generated code, and external conventions. Root-wide entrypoints, configuration, and meaningful composition may remain at their actual root-wide owner.
 
 ### Give reusable capabilities explicit ownership
@@ -112,7 +112,7 @@ The root `package.json` dependencies and devDependencies must be limited to `@wo
 When creating or restructuring a skill in `.agents/skills/<group>/<name>/`:
 
 - Keep `SKILL.md` brief: when to use it, the steps, and links. Move details and templates out of it.
-- Put every other file under `references/`, never beside `SKILL.md`. Group files into folders by concern, such as `references/<feature>/` or `references/prepare/templates/`, nesting as deep as the content needs.
+- Put every other file under `references/`, never beside `SKILL.md`. Group files into folders by concern, such as `references/<feature>/` or `references/templates/`, nesting as deep as the content needs.
 - Add `references/README.md` listing every folder and file with what it holds. Update it whenever a reference is added, moved, or removed.
 
 ## Decision priority
