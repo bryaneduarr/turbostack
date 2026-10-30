@@ -17,6 +17,7 @@ This file says where everything is, when to use it, and what it produces. Apart 
 | `.agents/project-context/<category>/<topic>.md`                                                                      | The index links a topic relevant to the task                             | Verified facts, decisions, rejections, next actions          |
 | `.agents/project-context/lessons/`                                                                                   | Starting a task; after the user corrects, rejects, or praises work       | One-line lessons on how the user works and what is right     |
 | [Run in the container skill](.agents/skills/workflow/run-in-container/SKILL.md)                                      | Before the first project command of a session                            | Where the project runs, and the command form for that place |
+| `.agents/plans/<feature>/` | A user-approved plan exists | Approved decisions, rules, steps, and checks to follow |
 | `.agents/skills/<group>/<name>/SKILL.md`                                                                             | A skill's description matches the task                                   | That skill's workflow and output                             |
 | `~/.agents/AGENTS.md`                                                                                                | Always, once per session                                                 | Cross-repo preferences                                       |
 
@@ -27,12 +28,12 @@ This file says where everything is, when to use it, and what it produces. Apart 
 | `coding/` | `typescript-best-practices`, `zod-validation-utilities`, `react-patterns`, `vercel-react-best-practices`, `nextjs-performance`, `tailwind-css-patterns`, `drizzle-orm-patterns`, `turborepo` | Library and framework patterns while writing code |
 | `github/` | `commit-changes`, `pr` | Commits and pull request bodies |
 | `testing/` | `verify-e2e`, `agent-browser`, `use-browser` | End-to-end verification, browser automation, and choosing the browser tool |
-| `workflow/` | `project-context`, `run-in-container`, `update-dependencies` | Session recaps and lessons, running commands in the devcontainer, and upgrading every dependency |
+| `workflow/` | `project-context`, `thinking-distill`, `run-in-container`, `update-dependencies` | Session recaps and lessons, clarifying what to build and planning it so a new session can deliver it, running commands in the devcontainer, and upgrading every dependency |
 
 ## Before you start
 
 1. Read all five rule files completely before investigating, creating, changing, or reviewing code.
-2. Read the startup index. Claude Code imports the two files below automatically; other harnesses open them by path.
+2. Read the startup index and the approved plan, if one exists. Claude Code imports the two files below automatically; other harnesses open them by path.
 3. Open only the linked topics the task needs, never the whole context folder.
 4. Before planning a feature, answer from the capability map's Features, Feature slice, and Known gaps first. Open source only to confirm a named reuse item. Avoid repo-wide `git ls-files` or grep sweeps.
 
