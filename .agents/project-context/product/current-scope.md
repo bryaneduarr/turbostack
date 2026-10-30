@@ -1,6 +1,6 @@
 # Purpose and scope
 
-Evidence: 2026-10-26; `31c5212`; user-confirmed intent from the [template port plan](../../plans/template-port/plan.md).
+Evidence: 2026-10-26; `31c5212`; user-confirmed intent from the template port plan.
 
 - User-confirmed: this repository is a product-free template carrying the processes, tooling, infrastructure, and agent instructions learned in a sibling product, not its features.
 - User-confirmed: no object storage, no email or worker, no hosted CI (`.github/` removed).

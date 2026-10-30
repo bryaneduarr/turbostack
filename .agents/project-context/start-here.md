@@ -8,9 +8,8 @@ Read only what the task needs; notes are pointers, not rules.
 - Contracts: [routes](contracts/route-definitions.md), [responses](contracts/success-responses.md).
 - Packages: [database](packages/database.md).
 - Development: [commands](development/commands.md), [devcontainer](development/devcontainer-workflow.md), [pitfalls](development/setup-pitfalls.md), [stack pitfalls](development/stack-pitfalls.md), [e2e](development/e2e-tests.md), [harnesses](development/agent-harnesses.md), [rule enforcement](development/rule-enforcement.md).
-- Plans: [template port](../plans/template-port/plan.md) (approved 2026-10-26; delivered as stacked PRs #8 to #12); [isolated stacks](../plans/isolated-stacks/plan.md) (merged as PR #14); [fast checks](../plans/fast-checks/plan.md) (delivered 2026-10-28; browser tests only, one `verify`).
 - User docs: [docs index](../../docs/README.md).
-- Workflows: [PR](../skills/github/pr/SKILL.md), [plan and deliver](../skills/workflow/thinking-distill/SKILL.md).
-- Lessons (read before planning): [working with the user](lessons/working-with-user.md), [planning](lessons/planning.md), [delivery](lessons/delivery.md).
+- Workflows: [PR](../skills/github/pr/SKILL.md).
+- Lessons (read before starting): [working with the user](lessons/working-with-user.md).
 
 Recheck sources before relying on a note; add pointers only from real evidence.

@@ -1,6 +1,6 @@
 # Capability map
 
-Evidence: 2026-10-26 UTC; `31c5212` plus all 5 steps of the [template port](../plans/template-port/plan.md). Paths source-inspected; no runtime checks for this map.
+Evidence: 2026-10-26 UTC; `31c5212` plus all 5 steps of the template port. Paths source-inspected; no runtime checks for this map.
 
 Planner use: reuse what Features lists, build what Known gaps names, then open the linked topic notes. Owners are the paths to recheck when a line looks stale.
 
