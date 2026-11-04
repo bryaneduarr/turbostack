@@ -16,6 +16,9 @@
         "!playwright.config.ts"
       ]
     },
+    "dev": {
+      "dependsOn": []
+    },
     "test:e2e": {
       "dependsOn": [
         "build",

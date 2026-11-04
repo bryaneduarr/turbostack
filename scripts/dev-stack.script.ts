@@ -7,6 +7,7 @@ const temporaryPidPath = `${pidPath}.${process.pid}.tmp`;
 const turboCommand = ["bunx", "turbo", "dev", "--ui=stream"];
 const readyTimeoutSeconds = 240;
 const stopTimeoutSeconds = 20;
+const pollsPerSecond = 4;
 
 const readinessUrls = [
   "http://localhost:3001/health/live",
@@ -133,8 +134,8 @@ async function start(): Promise<number> {
   fs.renameSync(temporaryPidPath, pidPath);
   console.info(`Dev stack starting: pid ${child.pid}, log ${logPath}.`);
 
-  for (let second = 0; second < readyTimeoutSeconds; second++) {
-    await sleep(1);
+  for (let poll = 0; poll < readyTimeoutSeconds * pollsPerSecond; poll++) {
+    await sleep(1 / pollsPerSecond);
     if (readSessionPids(child.pid).length === 0) {
       removePidFileOwnedBy(leader);
       return fail(`The dev stack exited early; see ${logPath}.`);
