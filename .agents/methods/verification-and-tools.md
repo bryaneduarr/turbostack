@@ -2,7 +2,7 @@
 
 Pick the row or section that matches the task. This guide chooses methods; it adds no coding rules. Permission to act comes from the task, not from this file.
 
-Run every command below through `scripts/dc` in the work tree's devcontainer stack (inside the container, run it as written). Nothing runs on the host; without Docker, report the check as blocked. The [run-in-container skill](../skills/workflow/run-in-container/SKILL.md) says how to tell where you are.
+Run every command below in the work tree's devcontainer stack: `bun run <script>` forwards itself there, and anything else goes through `scripts/dc` (inside the container, run it as written). Nothing runs on the host; without Docker, report the check as blocked. The [run-in-container skill](../skills/workflow/run-in-container/SKILL.md) says how to tell where you are.
 
 ## Find things
 
@@ -22,12 +22,12 @@ A missing search result calls for a narrower query or `git status` (hidden, igno
 | Change | Run |
 | --- | --- |
 | Docs or instructions | `git diff --check -- <path>`; read new files directly; confirm links resolve |
-| Code, any size | Nothing while writing. When the code is complete, review the scoped diff, then run `scripts/dc bun run verify` once |
+| Code, any size | Nothing while writing. When the code is complete, review the scoped diff, then run `bun run verify` once |
 | Behavior fix or refactor | Scoped `git diff` and direct consumers while reviewing; the same `verify` run covers them |
 | Tables or migrations | `verify` (it fails when `drizzle:generate` leaves uncommitted migrations) |
 | User flows, validation, permissions, and bug fixes | A Playwright scenario under `apps/client/src/e2e/`, run by `verify` (`api` and `chromium`) |
 | Firefox or WebKit | `scripts/dc bun run test:e2e -- --project=firefox`, only when the user asks |
-| After a failed `verify` | Fix the cause, then `scripts/dc bun run verify --failed` |
+| After a failed `verify` | Fix the cause, then `bun run verify --failed` |
 
 Notes:
 
@@ -38,19 +38,7 @@ Notes:
 
 ## Running the app
 
-`bun run dev` opens turbo's interactive TUI and locks the terminal, so it suits humans only. Use the detached stack ([script](../../scripts/dev-stack.script.ts)):
-
-| Command | Does |
-| --- | --- |
-| `bun run dev:start` | Runs the API and client in the background; writes plain text to `.turbo/dev-stack/dev-stack.log` and the process ID with its start time to `.turbo/dev-stack/dev-stack.pid`. Returns once API live/ready and the client home page answer 200. Exits 1 on a busy port (3000-3001), an already-running stack, an early exit, or no readiness after 240 s (the timeout also stops the stack and clears the process ID file) |
-| `bun run dev:status` | Prints the process ID and the status of the readiness URLs; exits 1 unless the stack is running from its process ID file and every URL answers 200 |
-| `bun run dev:stop` | Stops the whole stack (SIGTERM, then SIGKILL after 20 s); leaves PostgreSQL up. A process ID file whose process is gone, has a different start time, or holds only a number is stale: it is removed and the command reports `Not running.` without signalling anything |
-
-- Read the log with `grep -E "Ready in|server.started|seed:dev" .turbo/dev-stack/dev-stack.log`, and `grep -iE "error|failed"` for problems.
-- After `dev:stop`, confirm ports 3000-3001 are free (`ss -ltn`).
-- PostgreSQL already runs in the work tree's stack; `scripts/dc ports` prints the URLs. See [setup pitfalls](../project-context/development/setup-pitfalls.md).
-- Point a browser at this stack. Use `agent-browser` only when the user names it; a plain request for "the browser" or Chrome means the `agent-chrome` tools. Follow the [use-browser skill](../skills/testing/use-browser/SKILL.md) and the Browser automation section below.
-- The e2e suite runs its own servers on ports 3100-3101 inside the stack. Run `scripts/dc bun run test:e2e` detached with output going to a log file, and poll that file with short checks instead of blocking on it. The stack installs Chromium and Firefox itself; WebKit is skipped in the container.
+Starting, checking, restarting, and stopping the dev server, finding its URLs and logs, and running several work trees at once follow the [dev-server skill](../skills/workflow/dev-server/SKILL.md). The e2e suite runs its own servers on ports 3100-3101 inside the stack; run `bun run test:e2e` detached with output going to a log file, and poll that file with short checks instead of blocking on it. The stack installs Chromium and Firefox itself; WebKit is skipped in the container. Point `agent-browser` at the stack only when the user asks for the browser, following the [agent-browser skill](../skills/testing/agent-browser/SKILL.md).
 
 ## Investigating without changing code
 
@@ -58,18 +46,16 @@ Start from the reported behavior, find the definitions, trace the consumers, and
 
 ## Browser automation
 
-A plain request for "the browser" or Chrome uses the `chrome` and `chrome-isolated` MCP servers or the `agent-chrome` command, as the [use-browser skill](../skills/testing/use-browser/SKILL.md) describes. The commands below apply only when the user names `agent-browser` or Chrome DevTools, and then only for that tool. Try localhost first, then the default gateway:
+A request for "the browser" or Chrome uses `agent-browser`, as its skill describes. Load the guide with `agent-browser skills get core`. Each agent runs in its own session, so parallel agents never share a browser:
 
 ```sh
-timeout 10s agent-browser connect "http://localhost:9222"
-timeout 10s chrome-devtools start --browserUrl http://localhost:9222
-
-GATEWAY_IP="$(ip route show | grep default | awk '{print $3}')"
-timeout 10s agent-browser connect "http://${GATEWAY_IP}:9222"
-timeout 10s chrome-devtools start --browserUrl "http://${GATEWAY_IP}:9222"
+S=$(agent-browser session id --scope worktree --prefix task)
+agent-browser --session "$S" open "<url from scripts/dc ports>"
+agent-browser --session "$S" snapshot -i
+agent-browser --session "$S" close
 ```
 
-After connecting, `agent-browser snapshot -i` or `chrome-devtools list_pages` gives the starting context. If neither connects, report the problem and do not act without a session.
+If the browser does not launch, run `agent-browser doctor`, report the problem, and do not act without a session.
 
 ## Rules review
 

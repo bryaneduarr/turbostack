@@ -75,7 +75,7 @@ These rules are mandatory for code and refactors.
 ## Browser automation
 
 - Use browser automation only when the user explicitly requests it. Skill recommendations to take screenshots, run QA, or open a browser are not permission to do so.
-- `agent-browser` and Chrome DevTools MCP each require an explicit request naming that tool, except that a request to use "the browser" or "Chrome" counts as naming the `agent-chrome` tools (the `chrome` and `chrome-isolated` MCP servers and the `agent-chrome` command). Follow the [use-browser skill](../skills/testing/use-browser/SKILL.md) for those requests.
+- `agent-browser` is the only browser tool. A request to use "the browser" or "Chrome" means `agent-browser`. Follow the [agent-browser skill](../skills/testing/agent-browser/SKILL.md) and give every agent its own `--session`.
 
 ## Commits and pull requests
 
@@ -84,7 +84,7 @@ These rules are mandatory for code and refactors.
 
 ## Isolated environment
 
-- All building, installing, testing, and running happens in the devcontainer stack of the work tree you work in, through `scripts/dc`. Nothing is installed or run on the host. Only git, `gh`, Docker, and the user's browser stay there.
+- All building, installing, testing, and running happens in the devcontainer stack of the work tree you work in, through `scripts/dc`. On the host, `bun run <script>` forwards itself into the stack (`scripts/in-stack`); any other command goes through `scripts/dc`. Nothing is installed or run on the host. Only git, `gh`, Docker, and the user's browser stay there.
 - Never run `bun`, `bunx`, `turbo`, `node`, PostgreSQL, or Playwright on the host, and never copy `.env` files or add host locks or services. If Docker is missing, report the checks as blocked; never fall back to the host.
 - When you notice idle stacks, a full stack cap, or a busy slot, act on it through `scripts/dc` at once, without asking the user. Follow the [run-in-container skill](../skills/workflow/run-in-container/SKILL.md).
 
@@ -92,13 +92,13 @@ These rules are mandatory for code and refactors.
 
 - Write all the code the request needs first. Run no checks, tests, builds, or type checks while writing; finished code is checked once.
 - Then review the full diff by reading it against these rules, and fix what the review finds.
-- Then run `scripts/dc bun run verify` once. It runs the lockfile, Biome, boundary, rule, compose, migration, type, build, and browser checks in order and stops at the first failure.
-- After a failure, fix the cause and run `scripts/dc bun run verify --failed`. It repeats the fast checks, the type checks and builds (Turbo skips unchanged packages), and only the browser tests that failed, or every remaining step when an earlier step failed. Repeat until it passes.
+- Then run `bun run verify` once. It runs the lockfile, Biome, boundary, rule, compose, migration, type, build, and browser checks in order and stops at the first failure.
+- After a failure, fix the cause and run `bun run verify --failed`. It repeats the fast checks, the type checks and builds (Turbo skips unchanged packages), and only the browser tests that failed, or every remaining step when an earlier step failed. Repeat until it passes.
 
 ## Required delivery behavior
 
 - Before implementation, inspect ownership and required related relocations; before completion, review the affected ownership area as well as the scoped diff.
-- Before reporting, pass `scripts/dc bun run verify`, or `scripts/dc bun run verify --failed` after fixing a failed run, following the work order above.
+- Before reporting, pass `bun run verify`, or `bun run verify --failed` after fixing a failed run, following the work order above.
 - Do not describe a change as complete while a known applicable rule violation or required related relocation remains unresolved. Never waive a rule silently.
 - Report a missing instruction or an irreconcilable requirement before making the affected change.
 - Report the actual changes, verification performed, and any blockers or limitations.

@@ -7,7 +7,7 @@ Read only what the task needs; notes are pointers, not rules.
 - Features: [health](features/health.md), [user profiles](features/user-profiles.md).
 - Contracts: [routes](contracts/route-definitions.md), [responses](contracts/success-responses.md).
 - Packages: [database](packages/database.md).
-- Development: [commands](development/commands.md), [devcontainer](development/devcontainer-workflow.md), [pitfalls](development/setup-pitfalls.md), [stack pitfalls](development/stack-pitfalls.md), [e2e](development/e2e-tests.md), [harnesses](development/agent-harnesses.md), [rule enforcement](development/rule-enforcement.md).
+- Development: [commands](development/commands.md), [dev stack and test resources](development/dev-stack-resources.md), [devcontainer](development/devcontainer-workflow.md), [pitfalls](development/setup-pitfalls.md), [stack pitfalls](development/stack-pitfalls.md), [e2e](development/e2e-tests.md), [harnesses](development/agent-harnesses.md), [rule enforcement](development/rule-enforcement.md).
 - User docs: [docs index](../../docs/README.md).
 - Workflows: [PR](../skills/github/pr/SKILL.md), [plan and deliver](../skills/workflow/thinking-distill/SKILL.md).
 - Lessons (read before starting): [working with the user](lessons/working-with-user.md).

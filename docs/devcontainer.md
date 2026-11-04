@@ -8,15 +8,16 @@ From the repository root:
 
 ```sh
 scripts/dc up
-scripts/dc bun run dev
+bun run dev
 ```
 
 The first start builds the image, installs the packages, and creates the `apps/*/.env` files, which takes a minute or two. Later starts take seconds. The URLs match the host setup in [run the app](run-the-app.md).
 
-`scripts/dc <command>` runs any command inside the container and starts the container first when it is down. Examples:
+Every root script, such as `bun run verify` or `bun run dev:start`, forwards itself into the container of the work tree you are in and starts that container first when it is down. `scripts/dc <command>` does the same for any other command. Examples:
 
 ```sh
-scripts/dc bun run verify
+bun run verify
+scripts/dc bunx biome ci .
 scripts/dc shell
 ```
 
@@ -74,11 +75,11 @@ The container publishes two services on `127.0.0.1` of your machine only: the we
 `scripts/dc` handles busy ports. When a wanted port is taken, it uses the next free one, then the next, and so on. Run `scripts/dc ports` to see the address of each service on your machine:
 
 ```text
-client http://localhost:3001
-api http://localhost:3002
+client http://example-feature-1a2b3c.localhost:3003
+api http://example-feature-1a2b3c.localhost:3004
 ```
 
-The API's allowed client origin follows the client port. A running container keeps its ports until `scripts/dc down`. To start the search from other ports, set `DEVCONTAINER_CLIENT_PORT` or `DEVCONTAINER_API_PORT`. A second copy of the project gets its own stack and ports when you run `scripts/dc` from its folder.
+A work tree created with `git worktree add` gets its own address, `<stack>.localhost`, so several work trees can stay signed in at once in one browser. Chrome and Firefox send `*.localhost` to your machine. The primary checkout stays on `localhost`. The API's allowed client origin follows the client host and port. A running container keeps its ports until `scripts/dc down`. To start the search from other ports, set `DEVCONTAINER_CLIENT_PORT` or `DEVCONTAINER_API_PORT`. A second copy of the project gets its own stack and ports when you run `scripts/dc` from its folder.
 
 From VS Code the ports are fixed, so stop whatever holds them first, or set those variables before opening the container. PostgreSQL publishes no port. Only the containers reach it.
 
