@@ -6,6 +6,26 @@ setting() {
   printf '%s\n' "${!variable:-$2}"
 }
 
+default_heavy_slots() {
+  local cores=${1:-$(nproc)} memory_mb=${2:-$(awk '/MemTotal/ { print int($2 / 1024) }' /proc/meminfo)} slots by_memory
+  slots=$((cores / 8))
+  by_memory=$(((memory_mb - 4096) / 3072))
+  [ "$by_memory" -lt "$slots" ] && slots=$by_memory
+  [ "$slots" -gt 3 ] && slots=3
+  [ "$slots" -lt 1 ] && slots=1
+  echo "$slots"
+}
+
+heavy_slot_count() {
+  setting HEAVY_SLOTS "$(default_heavy_slots)"
+}
+
+max_stack_count() {
+  local slots
+  slots=$(heavy_slot_count)
+  setting MAX_STACKS "$((slots > 2 ? slots : 2))"
+}
+
 to_seconds() {
   awk -v minutes="$1" 'BEGIN { printf "%d\n", minutes * 60 }'
 }

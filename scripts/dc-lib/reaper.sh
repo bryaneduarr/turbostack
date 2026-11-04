@@ -40,12 +40,13 @@ reap_idle() {
 }
 
 make_room_step() {
-  local victim
-  while [ "$(running_other_count)" -ge "$(setting MAX_STACKS 2)" ]; do
+  local victim limit
+  limit=$(max_stack_count)
+  while [ "$(running_other_count)" -ge "$limit" ]; do
     victim=$(lru_idle_victim)
     [ -n "$victim" ] || return 1
     stop_if_unused "$victim" || return 1
-    echo "dc: stopped idle stack $victim to stay within $(setting MAX_STACKS 2) running stacks." >&2
+    echo "dc: stopped idle stack $victim to stay within $limit running stacks." >&2
   done
 }
 

@@ -102,7 +102,7 @@ run_command() {
 # Takes the first free heavy slot; the descriptor stays open for the life of this script.
 take_heavy_slot() {
   local slot
-  for slot in $(seq 1 "$(setting HEAVY_SLOTS 1)"); do
+  for slot in $(seq 1 "$(heavy_slot_count)"); do
     lock_try HEAVY_LOCK "$STATE/heavy.$slot" -x && return 0
   done
   return 1
