@@ -2,7 +2,7 @@
 
 FROM node:24-bookworm-slim AS node
 
-FROM oven/bun:1.4.0
+FROM oven/bun:1.4.4
 ARG PLAYWRIGHT_VERSION=latest
 COPY --from=node /usr/local/bin/node /usr/local/bin/node
 RUN apt-get update \

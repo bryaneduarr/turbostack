@@ -21,9 +21,9 @@ services:
     labels:
       dc.managed: "true"
     shm_size: 1gb
-    # Ten browser test workers peak at about 6 GiB.
-    mem_limit: ${DEVCONTAINER_WORKSPACE_MEMORY:-8g}
-    memswap_limit: ${DEVCONTAINER_WORKSPACE_MEMORY:-8g}
+    # The browser tests use a few hundred MiB per worker and a cold build peaks near 3 GiB; the rest is file cache.
+    mem_limit: ${DEVCONTAINER_WORKSPACE_MEMORY:-6g}
+    memswap_limit: ${DEVCONTAINER_WORKSPACE_MEMORY:-6g}
     cpus: ${DEVCONTAINER_WORKSPACE_CPUS:-8}
     logging: *logging
     command: ["sh", ".devcontainer/start-workspace.sh"]
@@ -37,13 +37,14 @@ services:
       - "127.0.0.1:${DEVCONTAINER_CLIENT_PORT:-3000}:3000"
       - "127.0.0.1:${DEVCONTAINER_API_PORT:-3001}:3001"
     # Service hostnames replace the localhost values in apps/*/.env; process values win over .env files.
+    # A linked work tree is served as <stack>.localhost so its cookies stay apart from other stacks on localhost.
     environment:
       DEVCONTAINER: "true"
       PLAYWRIGHT_BROWSERS_PATH: /home/dev/.playwright-browsers
       TURBO_CACHE_DIR: /workspace/.turbo/cache
       DB_HOST: postgres
       DB_PORT: "5432"
-      CLIENT_URL: http://localhost:${DEVCONTAINER_CLIENT_PORT:-3000}
+      CLIENT_URL: http://${DEVCONTAINER_HOST:-localhost}:${DEVCONTAINER_CLIENT_PORT:-3000}
       SERVER_URL: http://localhost:3001
     volumes:
       - ..:/workspace
