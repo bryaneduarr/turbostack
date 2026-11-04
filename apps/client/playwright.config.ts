@@ -8,6 +8,7 @@ import {
   E2E_CLIENT_PORT,
   E2E_CLIENT_URL,
 } from "@/e2e/config/servers/e2e-servers.constant";
+import { chooseWorkerCount } from "@/e2e/config/workers/choose-worker-count.service";
 
 loadDatabaseEnvironment();
 loadNixosBrowserLibraries();
@@ -31,18 +32,22 @@ export default defineConfig({
   testDir: "./src/e2e",
   testMatch: /.*\.e2e\.ts$/,
   fullyParallel: true,
-  // Measured on a 119-test suite in the 8 GiB container: 10 workers peak at 6.1 GiB
-  // (76 %); 12 saved 2 s at 87 %. GitHub runners have 4 cores, so CI keeps 4.
-  workers: process.env.CI === undefined ? 10 : 4,
+  // Four workers peak at about 2 GiB and finish in 53 s; each one more saves 4 s
+  // for 300 MiB. A machine with less free memory gets fewer. GitHub runners have 4 cores.
+  workers: process.env.CI === undefined ? chooseWorkerCount() : 4,
   forbidOnly: process.env.CI !== undefined,
   retries: 0,
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
     baseURL: E2E_CLIENT_URL,
+    // The software GPU process spent three quarters of its CPU painting transitions.
+    reducedMotion: "reduce",
     // Without it a click on a missing element waits out the whole test timeout.
     actionTimeout: 5_000,
-    trace: "retain-on-failure",
-    video: "retain-on-failure",
+    // Recording a trace and a video in every test costs an ffmpeg process and
+    // memory per worker; a failing local run keeps only its screenshot and error context.
+    trace: process.env.CI === undefined ? "off" : "retain-on-failure",
+    video: process.env.CI === undefined ? "off" : "retain-on-failure",
     screenshot: "only-on-failure",
   },
   projects: [
@@ -74,6 +79,8 @@ export default defineConfig({
         PORT: String(E2E_API_PORT),
         CLIENT_URL: E2E_CLIENT_URL,
         LOG_LEVEL: "warn",
+        NODE_OPTIONS: "",
+        BUN_OPTIONS: "--smol",
       },
       reuseExistingServer: false,
     },
@@ -83,6 +90,9 @@ export default defineConfig({
       env: {
         PORT: String(E2E_CLIENT_PORT),
         SERVER_URL: E2E_API_URL,
+        // Next binds to HOSTNAME, which a shell sets to the machine name; turbo hides it.
+        HOSTNAME: "0.0.0.0",
+        NODE_OPTIONS: "--max-old-space-size=160 --max-semi-space-size=2",
       },
       reuseExistingServer: false,
     },

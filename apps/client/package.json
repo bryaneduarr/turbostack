@@ -11,7 +11,7 @@
     "format": "biome format --write .",
     "lint": "biome lint .",
     "start": "node --env-file-if-exists=.env .next/standalone/apps/client/server.js",
-    "test:e2e": "playwright test",
+    "test:e2e": "NODE_OPTIONS='--max-old-space-size=192 --max-semi-space-size=2' MALLOC_ARENA_MAX=2 playwright test",
     "test:e2e:install": "playwright install chromium firefox",
     "test:e2e:report": "playwright show-report",
     "test:e2e:ui": "playwright test --ui"
