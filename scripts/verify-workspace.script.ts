@@ -3,12 +3,9 @@ import { mkdir } from "node:fs/promises";
 const migrationsPath = "packages/database/src/migrations";
 const resultDirectory = ".turbo/verify";
 const resultPath = `${resultDirectory}/last-result.json`;
-// Turbo adds arguments after `--` to the build's cache key too, so the tests run
-// with `--only` after the types and builds step has built every app.
-const browserCommand =
-  "bunx turbo run test:e2e --only -- --project=api --project=chromium";
+const browserCommand = "bun scripts/run-browser-tests.script.ts";
 const prepareTestDatabase = "bunx turbo run api-server#db:test:prepare";
-const lastRunPath = "apps/client/test-results/.last-run.json";
+const installBrowsers = "bun run --cwd apps/client test:e2e:install";
 
 /** A verification step; fix-loop-only steps run again unless they passed last time. */
 interface VerificationStep {
@@ -82,14 +79,6 @@ async function readPreviousResult(): Promise<VerificationResult> {
   return { failedStep, passedSteps };
 }
 
-// Any later Playwright run rewrites this list, so the fix loop reruns only
-// failures it can still see and otherwise runs every browser test.
-async function hasRecordedBrowserFailures(): Promise<boolean> {
-  const lastRun = await readRecord(lastRunPath);
-  if (lastRun === null || !("failedTests" in lastRun)) return false;
-  return Array.isArray(lastRun.failedTests) && lastRun.failedTests.length > 0;
-}
-
 async function recordResult(result: VerificationResult): Promise<void> {
   await mkdir(resultDirectory, { recursive: true });
   await Bun.write(resultPath, `${JSON.stringify(result, null, 2)}\n`);
@@ -122,15 +111,21 @@ function createSteps(browserArgs: string): VerificationStep[] {
       run: checkMigrationsMatchTables,
       rerunOnlyAfterFailure: true,
     },
+    // Ten parallel type checks and Next builds peak far higher than two at a time, which cost about 1 s.
     commandStep(
       "types-builds",
       "Types and builds",
-      "bunx turbo run check-types build",
+      "bunx turbo run check-types build --concurrency=2",
     ),
     {
       id: "browser",
       name: "Browser tests (API and Chromium)",
-      run: () => runCommand(prepareTestDatabase, browserCommand + browserArgs),
+      run: () =>
+        runCommand(
+          installBrowsers,
+          prepareTestDatabase,
+          browserCommand + browserArgs,
+        ),
       rerunOnlyAfterFailure: false,
     },
   ];
@@ -140,9 +135,11 @@ const fixLoop = Bun.argv.includes("--failed");
 const previous: VerificationResult = fixLoop
   ? await readPreviousResult()
   : { failedStep: null, passedSteps: [] };
-const rerunFailedOnly =
-  previous.failedStep === "browser" && (await hasRecordedBrowserFailures());
-const allSteps = createSteps(rerunFailedOnly ? " --last-failed" : "");
+// After a browser failure only the tests that failed run again; with an earlier
+// failure the code changed since, so every test runs.
+const allSteps = createSteps(
+  previous.failedStep === "browser" ? " --failed" : "",
+);
 const plan = allSteps.filter(
   (step) =>
     !fixLoop ||
