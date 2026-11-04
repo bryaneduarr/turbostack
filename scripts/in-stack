@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -eu
+
+# CI runners have no stack, so they run the command directly.
+if [ "${DEVCONTAINER:-}" = true ] || [ -n "${CI:-}" ]; then
+  exec "$@"
+fi
+DC_SCRIPT=${npm_lifecycle_event:-} exec "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/dc" "$@"

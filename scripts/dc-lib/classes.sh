@@ -8,9 +8,9 @@ command_has_word() {
   printf ' %s ' "$2" | grep -qE " ($1) "
 }
 
-# Prints "heavy" and "stack" for the words of a command line; only bun, bunx, turbo, and node commands are classified.
+# Prints "heavy" and "stack" for the words of a command line and the package script that started it (DC_SCRIPT); only bun, bunx, turbo, and node commands are classified.
 command_classes() {
-  local line="$*" lock=${DC_LOCK:-}
+  local line="$* ${DC_SCRIPT:-}" lock=${DC_LOCK:-}
   case "$lock" in
     none) return ;;
     stack) echo stack; return ;;

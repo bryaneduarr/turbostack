@@ -47,6 +47,8 @@ expect "a linked tree gets slug and path hash" "$PROJECT_PREFIX-example-feature"
 expect "the same path gives the same name" "$name" "$(stack_name_for /home/user/worktrees/app/example-feature 0)"
 other=$(stack_name_for /home/other/worktrees/app/example-feature 0)
 fails "another path with the same folder name gets another name" test "$name" = "$other"
+expect "the primary tree is served on localhost" localhost "$(host_for "$PROJECT_PREFIX-devcontainer" 1)"
+expect "a linked tree is served on its own localhost subdomain" "$PROJECT_PREFIX-feature-abc123.localhost" "$(host_for "$PROJECT_PREFIX-feature-abc123" 0)"
 expect "a messy folder name becomes a safe slug" "my-feature-2" "$(slugify 'My Feature_2!')"
 
 echo "legacy stacks"
@@ -87,6 +89,25 @@ expect "git takes no lock" "" "$(classes_of git rev-parse --show-toplevel)"
 expect "DC_LOCK=none removes every lock" "" "$(DC_LOCK=none classes_of bun run build)"
 expect "DC_LOCK=stack keeps only the stack lock" "stack" "$(DC_LOCK=stack classes_of sleep 1)"
 expect "DC_LOCK=heavy takes both locks" "heavy stack" "$(DC_LOCK=heavy classes_of sleep 1)"
+
+expect "the package script name classifies a script file" "heavy stack" "$(DC_SCRIPT=verify classes_of bun scripts/verify-workspace.script.ts)"
+expect "the package script name classifies a turbo build" "heavy" "$(DC_SCRIPT=build classes_of bunx turbo build)"
+expect "a package script that is not heavy stays unlocked" "" "$(DC_SCRIPT=check:rules classes_of bun run --cwd config/rules check-rules)"
+
+expect "a stack never used shows never" never "$(human_age 1793826000)"
+expect "a day-old stack shows days" "1d ago" "$(human_age 90000)"
+
+echo "limits"
+expect "28 cores and 15 GiB allow three heavy commands" 3 "$(default_heavy_slots 28 15860)"
+expect "8 cores allow one heavy command" 1 "$(default_heavy_slots 8 32768)"
+expect "little memory allows one heavy command" 1 "$(default_heavy_slots 32 8192)"
+expect "memory limits the slots below the cores" 2 "$(default_heavy_slots 32 11000)"
+expect "a huge machine stays at three" 3 "$(default_heavy_slots 128 262144)"
+expect "a tiny machine still gets one" 1 "$(default_heavy_slots 2 2048)"
+expect "the slot count is a setting" 2 "$(DC_HEAVY_SLOTS=2 heavy_slot_count)"
+expect "the stack cap follows the slots" 3 "$(DC_HEAVY_SLOTS=3 max_stack_count)"
+expect "the stack cap never drops below two" 2 "$(DC_HEAVY_SLOTS=1 max_stack_count)"
+expect "the stack cap is a setting" 5 "$(DC_MAX_STACKS=5 max_stack_count)"
 
 echo "idle rules"
 succeeds "an unused old stack is idle" decide_idle no 1000 2000 900

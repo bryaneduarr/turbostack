@@ -39,6 +39,6 @@ print_urls() {
     echo "The stack is not running." >&2
     return 1
   fi
-  echo "client http://localhost:$client"
-  echo "api http://localhost:$(published_port workspace 3001)"
+  echo "client http://$HOST:$client"
+  echo "api http://$HOST:$(published_port workspace 3001)"
 }

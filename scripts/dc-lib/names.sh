@@ -49,6 +49,10 @@ legacy_project_for() {
   return 0
 }
 
+host_for() {
+  if [ "$2" = 1 ]; then echo localhost; else echo "$1.localhost"; fi
+}
+
 # Only containers that carry the marker label belong to this tool; any other devcontainer project is left alone.
 workspace_labels() {
   docker ps -a --filter label=dc.managed=true --filter label=com.docker.compose.service=workspace \
@@ -78,6 +82,7 @@ resolve_stack() {
   canonical=$(stack_name_for "$ROOT" "$primary")
   existing=$(workspace_labels | cut -d'|' -f1,2 | legacy_project_for "$ROOT" "$canonical")
   PROJECT=${existing:-$canonical}
+  HOST=$(host_for "$PROJECT" "$primary")
   IS_PRIMARY=$primary
   check_name_is_free
   echo "$ROOT" >"$STATE/stacks/$PROJECT.root"

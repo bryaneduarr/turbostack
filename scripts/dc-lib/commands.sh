@@ -4,7 +4,8 @@
 
 human_age() {
   local seconds=$1
-  if [ "$seconds" -ge 86400 ]; then echo "$((seconds / 86400))d ago"
+  if [ "$seconds" -ge 1000000000 ]; then echo never
+  elif [ "$seconds" -ge 86400 ]; then echo "$((seconds / 86400))d ago"
   elif [ "$seconds" -ge 3600 ]; then echo "$((seconds / 3600))h ago"
   elif [ "$seconds" -ge 60 ]; then echo "$((seconds / 60))m ago"
   else echo "${seconds}s ago"; fi
