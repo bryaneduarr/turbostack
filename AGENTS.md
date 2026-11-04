@@ -27,8 +27,8 @@ This file says where everything is, when to use it, and what it produces. Apart 
 | --- | --- | --- |
 | `coding/` | `typescript-best-practices`, `zod-validation-utilities`, `react-patterns`, `vercel-react-best-practices`, `nextjs-performance`, `tailwind-css-patterns`, `drizzle-orm-patterns`, `turborepo` | Library and framework patterns while writing code |
 | `github/` | `commit-changes`, `pr` | Commits and pull request bodies |
-| `testing/` | `verify-e2e`, `agent-browser`, `use-browser` | End-to-end verification, browser automation, and choosing the browser tool |
-| `workflow/` | `project-context`, `thinking-distill`, `run-in-container`, `update-dependencies` | Session recaps and lessons, clarifying what to build and planning it so a new session can deliver it, running commands in the devcontainer, and upgrading every dependency |
+| `testing/` | `verify-e2e`, `agent-browser` | End-to-end verification and browser automation |
+| `workflow/` | `project-context`, `thinking-distill`, `run-in-container`, `dev-server`, `update-dependencies` | Session recaps and lessons, clarifying what to build and planning it so a new session can deliver it, running commands in the devcontainer, running the dev server per work tree, and upgrading every dependency |
 
 ## Before you start
 

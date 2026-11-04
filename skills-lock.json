@@ -2,11 +2,10 @@
   "version": 1,
   "skills": {
     "agent-browser": {
-      "source": "skills.sh",
-      "sourceUrl": "https://skills.sh/p/HQaXdwg6Y66QuDsG",
-      "sourceType": "well-known",
-      "computedHash": "548a1f92c7ff55081c65ec1577ff5136beb1d0f58252d448d5bd43f05fefc703",
-      "wellKnownDigest": "sha256:a674b7d81066e3cc471a7512ddb4ae724418cbfefa75cbb050b0dc430e4d57a0"
+      "source": "vercel-labs/agent-browser",
+      "sourceType": "github",
+      "skillPath": "skills/agent-browser/SKILL.md",
+      "computedHash": "60a9cbe5af176150582c019e16e5d3703a41bb02d88438e881349876120d7944"
     },
     "drizzle-orm-patterns": {
       "source": "skills.sh",
