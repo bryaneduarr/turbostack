@@ -28,10 +28,11 @@ Run every command through `scripts/dc` ([run-in-container](../run-in-container/S
 6. Pass `scripts/dc bun run verify` once the fixes are done, or `scripts/dc bun run verify --failed` after a fix, as the [code quality](../../../rules/code-quality.md) Work order and Required delivery behavior describe. Restore `apps/client/next-env.d.ts` with `git checkout` if the build rewrote it.
 7. Commit with [commit message](references/commit-message.md), then run `scripts/dc stop`.
 
-## Stop instead of committing
+## Keep going until it passes
 
-- A check still fails after the smallest correct fix: report the failing output and what was changed, and leave the work uncommitted.
-- A dependency was added or removed rather than updated: the script warns; report it.
+- A check still fails: find the cause, apply the smallest correct fix, and run `verify --failed` again, as many rounds as it takes. Pin or replace a package only when its new version cannot work; never skip the update.
+- A dependency was added or removed rather than updated: the script warns; check that it was intended and fix the manifest if not.
+- Stop only for something impossible for you, such as a registry login you lack; name it.
 
 ## Report
 

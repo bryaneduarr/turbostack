@@ -7,7 +7,7 @@ The user chose this format for dependency upgrades. For this commit it replaces 
 Never type versions by hand. After the upgrade and the checks, with the changes still uncommitted:
 
 ```sh
-scripts/dc bun scripts/dependency-commit-message.script.ts > "$(git rev-parse --git-dir)/DEPENDENCY_COMMIT_MESSAGE"
+scripts/dc bun scripts/dependencies/dependency-commit-message.script.ts > "$(git rev-parse --git-dir)/DEPENDENCY_COMMIT_MESSAGE"
 ```
 
 The script compares each changed `package.json` with `HEAD` and prints only `dependencies`, `devDependencies`, `peerDependencies`, and `optionalDependencies` whose version range changed. Docker progress goes to stderr, so the file holds only the message. Read it before committing.

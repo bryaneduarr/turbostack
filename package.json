@@ -35,7 +35,7 @@
     "test:e2e:install": "scripts/in-stack bun run --cwd apps/client test:e2e:install",
     "test:e2e:only": "scripts/in-stack bun scripts/run-browser-tests.script.ts",
     "update": "scripts/in-stack bun update --interactive --recursive",
-    "update:toolchain": "scripts/in-stack bun scripts/update-toolchain.script.ts",
+    "update:toolchain": "scripts/in-stack bun scripts/dependencies/update-toolchain.script.ts",
     "verify": "scripts/in-stack bun scripts/verify-workspace.script.ts"
   },
   "workspaces": [
