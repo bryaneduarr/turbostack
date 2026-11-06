@@ -25,7 +25,7 @@ A request is a starting point, not a spec. This skill finds the real goal, attac
 3. **Critique.** Run the [self-critique bank](references/plan/self-critique.md) on the draft flow and on every idea that could add value. Each answer changes the plan, adds a doubt, or is logged with its reason.
 4. **Ask.** Clear the doubts list in rounds printed in chat, never with a question tool ([asking](references/plan/asking.md)). After each answer, rewrite the next questions and their recommendations. No limit on questions or rounds.
 5. **Reread as a stranger.** Read the draft plan as someone who must build it tomorrow, with the bank. New doubts go back to step 4.
-6. **Summary.** Write the [steps](references/prepare/steps.md) in `thinking.md`, then write `plan.md` from its [template](references/plan/templates/plan.md), plus `summary.html` when the chat renders HTML. Show the [summary](references/plan/summary.md): one place, visual, every choice and edge case on the step it affects. Ask yes or no to approve. On no, ask what is wrong and return to step 4.
+6. **Summary.** Write the [steps](references/prepare/steps.md) in `thinking.md`, then write `plan.md` from its [template](references/plan/templates/plan.md). Show the [summary](references/plan/summary.md): one place, visual, every choice and edge case on the step it affects. Ask yes or no to approve. On no, ask what is wrong and return to step 4.
 
 ## Prepare (starts on approval, without asking again)
 
@@ -36,7 +36,6 @@ A request is a starting point, not a spec. This skill finds the real goal, attac
 ├── README.md         start here: reading order and status
 ├── thinking.md       the planning notebook (doubts, searches, critique, questions)
 ├── plan.md           the approved plan: how it works, learn, scope, choices, rules
-├── summary.html      the visual summary, only when it was rendered
 ├── steps.md          every step in detail: files, reuse, behavior, done when
 ├── testing.md        `scripts/dc bun run verify` commands and browser scenarios
 ├── questions.md      one acceptance question per Done when line

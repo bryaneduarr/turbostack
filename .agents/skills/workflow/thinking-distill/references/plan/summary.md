@@ -15,10 +15,9 @@ The approval summary is one screen the user can judge without background, and `p
 
 ## Visuals
 
-Pick the medium automatically; never ask the user and never mention a missing tool.
+Everything is shown in the chat as markdown, tables, and text diagrams. Never build HTML pages or artifacts.
 
-- **HTML:** when a tool in this session can render HTML in the chat, build the summary as one self-contained page from `plan.md` and render it: inline CSS only, no scripts, fonts, or images from the network, readable in light and dark (`prefers-color-scheme`), boxes and arrows drawn with CSS or inline SVG. Save it as `summary.html` in the plan folder.
-- **Text:** otherwise, draw the picture in chat with box-drawing characters, at most 80 columns, with a legend: `✓` works, `✗` fails, `◆` a choice, `⚠` an edge case.
+- **Text:** draw the picture in chat with box-drawing characters, at most 80 columns, with a legend: `✓` works, `✗` fails, `◆` a choice, `⚠` an edge case.
 - **Files:** `plan.md` draws its pictures in Mermaid with these colour classes:
 
 ```text
@@ -31,4 +30,4 @@ classDef outside fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
 
 ## In chat
 
-The summary fits the report headings: the goal under "We are working on", the picture, example, learn, scope, risks, and Done when under "We accomplished", and the yes or no approval question under "You should do this next". Keep the chat version to about one screen plus the picture; `plan.md` holds the full text.
+The summary opens with the bold goal sentence of the [chat report format](../../../../../../AGENTS.md#chat-report-format); the picture, example, learn, scope, risks, and Done when go under "How it works", and the yes or no approval question under "Next". Keep the chat version to about one screen plus the picture; `plan.md` holds the full text.

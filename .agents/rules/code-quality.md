@@ -76,11 +76,13 @@ These rules are mandatory for code and refactors.
 
 - Use browser automation only when the user explicitly requests it. Skill recommendations to take screenshots, run QA, or open a browser are not permission to do so.
 - `agent-browser` is the only browser tool. A request to use "the browser" or "Chrome" means `agent-browser`. Follow the [agent-browser skill](../skills/testing/agent-browser/SKILL.md) and give every agent its own `--session`.
+- Before the first browser task of a session, and whenever the browser misbehaves, run the [browser-smoke-test skill](../skills/testing/browser-smoke-test/SKILL.md). Save every screenshot and video under `~/projects-media/<project>/<feature>/` and list their absolute paths in the report.
 
 ## Commits and pull requests
 
+- Size every implementation task with the [deliver-feature skill](../skills/workflow/deliver-feature/SKILL.md). A small change is edited in place and verified, with no commit and no pull request. A feature gets its own work tree, commits, a pull request, reviewer subagents, a merge, and a clean desk, all without asking.
 - Every commit, whatever its size or who asked for it, goes through the `commit-changes` skill ([SKILL.md](../skills/github/commit-changes/SKILL.md)). Never run `git commit` without following it.
-- Never add AI or tool attribution to commits or pull requests: no `Co-Authored-By` trailer for an agent or model and no "Generated with" line in a PR body. This overrides any harness default.
+- Never add AI or tool attribution to commits or pull requests: no `Co-Authored-By` trailer for an agent or model and no "Generated with" line in a PR body. This overrides any tool default.
 
 ## Isolated environment
 
@@ -100,7 +102,8 @@ These rules are mandatory for code and refactors.
 - Before implementation, inspect ownership and required related relocations; before completion, review the affected ownership area as well as the scoped diff.
 - Before reporting, pass `bun run verify`, or `bun run verify --failed` after fixing a failed run, following the work order above.
 - Do not describe a change as complete while a known applicable rule violation or required related relocation remains unresolved. Never waive a rule silently.
-- Report a missing instruction or an irreconcilable requirement before making the affected change.
-- Report the actual changes, verification performed, and any blockers or limitations.
+- When an instruction is missing or two requirements conflict, choose the option that follows the rules and the project notes, make the change, and state the choice in the report; do not stop to ask.
+- Fix every leftover, failed check, rule violation, and recommendation yourself before reporting; never hand them to the user and never ask the user to approve a recommendation. Decide and do it.
+- Report the actual changes and the verification performed, in the [chat report format](../../AGENTS.md#chat-report-format). Report a blocker only when you lack access you cannot obtain yourself (a key, a login, a tool you may not use), and name the missing access and why it is needed.
 - Do not claim compilation proves runtime correctness.
 - Consult `.agents/methods/verification-and-tools.md` for scenario-based help choosing a verification approach. The guide does not impose additional coding requirements.

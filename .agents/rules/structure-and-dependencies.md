@@ -60,9 +60,9 @@ This is an acceptance condition for all project-owned frontend, backend, schema,
 ### Enforce ownership before implementation and completion
 
 - Before implementation, inspect the existing architectural roots, related files, consumers, and ownership boundaries. Determine where new responsibilities belong and which existing files must move or adapt.
-- Make straightforward placements using established ownership. Ask the user before proceeding when plausible alternatives imply materially different domain boundaries or architectural changes; do not guess or ask for permission for every folder.
+- Make straightforward placements using established ownership. When plausible alternatives imply different domain boundaries, pick the one the existing ownership and project notes support and state it in the report; do not ask.
 - Before completion, review the scoped diff and affected ownership area for meaningful depth, specific naming, complete relocations, and preserved runtime boundaries. Then run `scripts/dc bun run verify` once; instruction-only changes require documentation checks rather than TypeScript compilation.
-- Do not declare affected work complete while a known applicable structural violation or required relocation remains unresolved. Report blockers and verification limits explicitly. Correctness and type safety take precedence over cosmetic nesting.
+- Do not declare affected work complete while a known applicable structural violation or required relocation remains unresolved. Fix them rather than reporting them; report only missing access you cannot obtain yourself. Correctness and type safety take precedence over cosmetic nesting.
 
 ## Keep changes scoped
 

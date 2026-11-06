@@ -24,7 +24,7 @@ One picture of every service and store the feature touches (screen, server, data
 
 ## In the delivery report
 
-The final report adds **What you learned** under "We accomplished":
+The final report adds **What you learned** inside "How it works":
 
 - How the main ideas were really built, with one tested example in plain words.
 - What failed during delivery and why, as a lesson anyone could reuse.

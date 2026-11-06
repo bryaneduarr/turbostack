@@ -152,8 +152,8 @@ Use plain keyboard punctuation; do not use em dashes or decorative Unicode.
 ## 4. Present a numbered plan
 
 Inspect and prepare the plan, show it, then execute it without waiting for
-approval. Record non-blocking concerns in the plan; if a genuine blocker
-prevents a complete plan, explain exactly what cannot be planned and why.
+approval. Resolve every concern before committing; if only missing access (a key or a
+login) prevents a complete plan, say exactly which access is missing and why.
 
 Present commits in execution order so their purposes and dependencies tell the
 story of the work. Use this structure for every commit:
@@ -209,9 +209,10 @@ before continuing.
   reconstruct earlier commit states.
   Report whether intermediate commits received source review or executable
   verification; final-tree checks do not prove each intermediate commit passes.
-- Stop on incomplete groups, failed checks, or failed hooks. Explain the blocker
-  and request direction; do not fix source code, regenerate files, bypass hooks,
-  or continue creating commits. Leave existing successful commits intact.
+- On incomplete groups, failed checks, or failed hooks, fix the cause, regenerate
+  what the fix needs, and rerun; never bypass hooks. Leave existing successful
+  commits intact. Stop only for missing access you cannot obtain yourself, and
+  name it.
 - Use the planned message exactly. After each commit, inspect the recorded
   message and diff, noting any hook changes and stopping on unexpected results.
 - Never push unless explicitly requested. Finish with an ordered list of hashes,

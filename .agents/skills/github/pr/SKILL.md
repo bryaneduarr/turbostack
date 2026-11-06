@@ -5,13 +5,13 @@ description: "Write a short pull request body from a fixed What / How / Why temp
 
 # Pull request
 
-A reader should understand the PR in under a minute: what it does, how, and why. Fill the template below every time. Do not add, rename, or reorder sections.
+A reader should understand the PR in under a minute: what it does, how, and why. Fill the template below every time. Do not add, rename, or reorder sections; the one optional section is `Preview`, for features with visible behavior.
 
 ## Before writing
 
 - Read the diff of the PR's own commits against the base (`git diff <base>...HEAD`). The base is `main`, or the branch of the PR below it in a stack. Ignore unrelated working-tree edits.
-- State only what the diff and the commits show. Ask when the reason for the change is unclear; never invent one.
-- Writing the body does not authorize pushing or opening the PR. Do those only when asked.
+- State only what the diff, the commits, and the task show. When the reason is unclear, derive it from the task and the project notes; never invent one.
+- Pushing and opening the PR are part of the [deliver-feature skill](../../workflow/deliver-feature/SKILL.md) for a feature. Outside it, push and open a PR only when the user asks.
 
 ## Title
 
@@ -34,6 +34,10 @@ A reader should understand the PR in under a minute: what it does, how, and why.
 
 <One or two sentences: the problem or need this solves.>
 
+## Preview
+
+<Only for a feature with visible behavior: one line per screenshot or video saying what to look at, followed by its link. Leave the whole section out otherwise.>
+
 ## Checked
 
 <Commands actually run and their result, or "Not run: <reason>".>
@@ -41,11 +45,15 @@ A reader should understand the PR in under a minute: what it does, how, and why.
 
 Rules:
 
-- Keep the whole body under 150 words. Cut anything that is not needed to review the change.
+- Keep the whole body under 150 words, not counting the `Preview` links. Cut anything that is not needed to review the change.
 - Plain, third-person sentences. Define project-specific terms once. No file inventories, diagrams, or commit logs.
 - `How` names behavior and decisions, not files. Link a file only when it is the one place a reviewer must look.
 - `Checked` lists only what ran, such as `scripts/dc bun run verify` or a CI link. Never write a check as done when it was not. Say what was not checked when it matters.
 - Never add AI or tool attribution or a "Generated with" line.
+
+## Media
+
+A feature with visible behavior gets screenshots and a video in `Preview`. Record, upload, and link them with [media](references/media.md) before creating the PR.
 
 ## Open the PR
 

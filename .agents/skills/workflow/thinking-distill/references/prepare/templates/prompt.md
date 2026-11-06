@@ -29,13 +29,14 @@ Stage 5, close: fill outcomes.md, write the lessons and project notes through th
 
 Stop limits: when the same failure survives 3 fix rounds, stop patching, gather new evidence, and try a different approach. After 8 rounds in any stage, stop that stage, record it as a failure in outcomes.md, and report.
 
-Allowed: the work tree and its stack, `scripts/dc` commands, commits through commit-changes, pushes, one PR. Not allowed: merging the PR, changing a plan choice, more branches or PRs, running anything on the host, or browser tools other than the Playwright suite.
+Allowed: the work tree and its stack, `scripts/dc` commands, commits through commit-changes, pushes, one PR, reviewer subagents, merging the PR, and cleaning the work tree and branch as the deliver-feature skill describes. Not allowed: changing a plan choice, more branches or PRs, running anything on the host, or browser tools other than the Playwright suite.
 
 If this session restarts, read README.md Status and continue at the first unfinished step.
 
-When done, give me a very short report in this chat for someone who knows nothing about the code, in very easy words, with exactly these markdown headings and bold key words:
-- "## We are working on": the PR link and one plain sentence on what it adds.
-- "## We accomplished": the flow from nothing to the finished feature in a few steps; one real tested example; the verify rounds (what failed, what was fixed, what passed at the end); the decisions made during delivery; the scorecard in one line; and "What you learned": how the main ideas were really built and what failed and why.
-- "## There are blockers": only a real-person action or something not tested, in easy words with a simple everyday example of why it matters, and the exact steps for me; otherwise leave the heading out.
-- "## You should do this next": review the PR and merge it, and answer the success/failure checks from outcomes.md.
+When done, give me the report defined in "Chat report format" in AGENTS.md: one bold first sentence saying what was done and that it works, then these headings:
+- "## What we did": a table of changes and what each does now, starting with the PR link.
+- "## How it works": plain words for each main idea, one tested example, and what failed during delivery and why.
+- "## Checks": a table of every check and its result, the verify rounds, and the scorecard in one line.
+- "## Could not do": only missing access you cannot get yourself, with the exact steps for me; otherwise leave the heading out. Fix everything else yourself and never ask me to accept a recommendation.
+- "## Next": answer the success/failure checks from outcomes.md.
 ```
